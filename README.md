@@ -1,15 +1,15 @@
 # pathstd
 
-* Efficient, lightweight containers and routines optimized for the Path game engine.
+* Efficient, lightweight containers and routines, optimized for the Path game engine.
 * For Windows, x86_64 platforms that support the AVX2 instruction set.
 * To use, just include the root 'pathstd' folder, no external dependencies required.
-* Techniques explained at www.path.blog.
+* Descriptions and analysis provided by the links below (www.path.blog).
 
 ---------------------------
 
 - pathstd
   - string
-    - <b>'avx_strlen.h'</b>
+    - <b>['avx_strlen.h'](https://path.blog/posts/avx_strlen)</b>
       - <i>AVX optimized replacement for strlen().</i>
     - <b>'stack_string.h'</b>
       - <i>AVX optimized short strings held on the stack.</i>
