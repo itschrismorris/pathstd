@@ -20,29 +20,27 @@
 static inline size_t avx_strlen(const char* s)
 {
   __m256i zero = _mm256_setzero_si256();
-  uint32_t counted = 0;
+  uint64_t counted = 0;
   const char* _s = (const char*)((uintptr_t)s & (~127));
   int32_t ignore_bytes = s - _s;
-  if (ignore_bytes < 128) {
-    if (ignore_bytes < 64) {
-      uint64_t check32 = GET_CMP_MASK(_s);
-      uint64_t check64 = GET_CMP_MASK(_s + 32);
-      uint64_t zero_mask64 = (check32 | (check64 << 32)) & 
-                             (0xFFFFFFFFFFFFFFFFLLU << ignore_bytes);
-      if (zero_mask64) {
-        return _tzcnt_u64(zero_mask64) - ignore_bytes;
-      }
+  if (ignore_bytes < 64) {
+    uint64_t check32 = GET_CMP_MASK(_s);
+    uint64_t check64 = GET_CMP_MASK(_s + 32);
+    uint64_t zero_mask64 = (check32 | (check64 << 32)) & 
+                           (UINT64_MAX << ignore_bytes);
+    if (zero_mask64) {
+      return _tzcnt_u64(zero_mask64) - ignore_bytes;
     }
-    uint64_t check96 = GET_CMP_MASK(_s + 64);
-    uint64_t check128 = GET_CMP_MASK(_s + 96);
-    uint64_t zero_mask128 = (check96 | (check128 << 32)) & 
-                            (0xFFFFFFFFFFFFFFFFLLU << std::max(0, ignore_bytes - 64));
-    if (zero_mask128) {
-      return (64 - ignore_bytes + _tzcnt_u64(zero_mask128));
-    }
-    counted += 128 - ignore_bytes;
-    s = _s + 128;
   }
+  uint64_t check96 = GET_CMP_MASK(_s + 64);
+  uint64_t check128 = GET_CMP_MASK(_s + 96);
+  uint64_t zero_mask128 = (check96 | (check128 << 32)) & 
+                          (UINT64_MAX << std::max(0, ignore_bytes - 64));
+  if (zero_mask128) {
+    return (64 - ignore_bytes + _tzcnt_u64(zero_mask128));
+  }
+  counted += 128 - ignore_bytes;
+  s = _s + 128;
   while (true) {
     uint64_t check32 = GET_CMP_MASK(s);
     uint64_t check64 = GET_CMP_MASK(s + 32);
