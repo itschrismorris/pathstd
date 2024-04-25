@@ -9,7 +9,7 @@
 
 - pathstd
   - string
-    - <b>'avx_strlen.h'</b>
+    - <b>['avx_strlen.h'](https://path.blog/posts/avx_strlen)</b>
       - <i>AVX optimized replacement for strlen().</i>
     - <b>'stack_string.h'</b>
       - <i>AVX optimized short strings held on the stack.</i>
