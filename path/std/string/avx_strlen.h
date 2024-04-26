@@ -1,11 +1,10 @@
-/* 'pathstd/string/avx_strlen.h'
+/* 'std/string/avx_strlen.h'
 
-  + Utilizes AVX SIMD to read length of string.
+  + Utilizes AVX2 to read length of string.
   + Protected against bad page boundary crossing.
   + To check 128 bytes per iteration, we first read previous 128-byte aligned address and mask out unused bits.
-  + Then we can continue to loop over aligned 128-byte reads without paging issues.
 
-  Path game engine: https://www.path.blog
+    Path game engine: https://www.path.blog
 */
 
 #pragma once
@@ -19,7 +18,7 @@ static inline u64 avx_strlen(const char* str)
 {
   I8 zero = I8_SETZERO();
   uint64_t counted = 0;
-  const char* _s = (const char*)((uintptr_t)str & (~127));
+  const char* _s = Math::align_previous<128>(str);
   int64_t ignore_bytes = str - _s;
   if (ignore_bytes < 64) {
     uint64_t check32 = (u32)I8_MOVEMASK(I8_CMP_EQ8(I8_LOAD((I8*)(_s)), zero));

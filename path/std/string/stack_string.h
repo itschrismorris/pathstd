@@ -2,20 +2,23 @@
 
   + Stack-allocated and bound to CAPACITY length.
   + Utilizes AVX for fast comparisons and copies.
+
+    Path game engine: https://www.path.blog
 */
 
 #pragma once
-#include "std/memory/avx_memcpy.h"
-#include "std/string/avx_strlen.h"
-#include "std/types.h"
+#include <string>
+#include "../memory/avx_memcpy.h"
+#include "../string/avx_strlen.h"
+#include "../types.h"
 
 namespace Path::Std::String {
 
 /**/
 template <u64 CAPACITY>
-struct String
+struct StackString
 {
-  static_assert(Math::is_multiple(CAPACITY, 32LLU), "String capacity must be a multiple of 32 (AVX-width).");
+  static_assert(Math::is_multiple(CAPACITY, 32LLU), "Stack string capacity must be a multiple of 32 (AVX-width).");
 
   /**/
   alignas(32) char str[CAPACITY];
@@ -23,17 +26,17 @@ struct String
   u32 length;
   
   /**/
-  String()
+  StackString()
   {
     clear();
   }
-  ~String() {}
+  ~StackString() {}
   
   /**/
-  String(const char* string) 
+  StackString(const char* string)
   {
     if (string) { 
-      length = Math::min(CAPACITY - 1, avx_strlen<false>(string));
+      length = Math::min(CAPACITY - 1, String::avx_strlen(string));
       avx_memcpy<true, false>(str, string, length + 1);
       str[length] = '\0';
     } else {

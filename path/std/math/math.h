@@ -1,5 +1,6 @@
 /* 'std/math.h'
 
+    Path game engine: https://www.path.blog
 */
 
 #pragma once
@@ -15,13 +16,21 @@ namespace Path::Std::Math {
   template<typename T> constexpr bool is_power_of_two(T value) { return ((value & (value - 1)) == 0); }
   static inline u32 first_bit_set(u32 mask) { return _tzcnt_u32(mask); }
   static inline u64 first_bit_set(u64 mask) { return _tzcnt_u64(mask); }
-  template<typename T> static inline T* align_previous_32(T* ptr) { return (T*)((u64)ptr & (~31)); };
-  template<typename T> static inline T* align_next_32(T* ptr) { return (T*)(((u64)ptr + 31) & (~31)); };
-  template<typename T> static inline T* align_previous_64(T* ptr) { return (T*)((u64)ptr & (~63)); };
-  template<typename T> static inline T* align_next_64(T* ptr) { return (T*)(((u64)ptr + 63) & (~63)); };
-  template<typename T> static inline T* align_previous_128(T* ptr) { return (T*)((u64)ptr & (~127)); };
-  template<typename T> static inline T* align_next_128(T* ptr) { return (T*)(((u64)ptr + 127) & (~127)); };
-  template<typename T> static inline bool is_aligned_32(T* ptr) { return (((u64)ptr & 31) == 0); }
+  template<u64 ALIGNMENT, typename T> static inline T* align_previous(T* ptr)
+  {
+    static_assert(Math::is_power_of_two(ALIGNMENT), "Template parameter ALIGNMENT must be power of two.");
+    return (T*)((u64)ptr & (~(ALIGNMENT - 1)));
+  };
+  template<u64 ALIGNMENT, typename T> static inline T* align_next(T* ptr)
+  {
+    static_assert(Math::is_power_of_two(ALIGNMENT), "Template parameter ALIGNMENT must be power of two.");
+    return (T*)(((u64)ptr + (ALIGNMENT - 1)) & (~(ALIGNMENT - 1)));
+  };
+  template<u64 ALIGNMENT, typename T> static inline bool is_aligned(T* ptr)
+  {
+    static_assert(Math::is_power_of_two(ALIGNMENT), "Template parameter ALIGNMENT must be power of two.");
+    return (((u64)ptr & (ALIGNMENT - 1)) == 0);
+  }
 }
 
 /**/
