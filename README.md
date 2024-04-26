@@ -3,7 +3,7 @@
 * Efficient, lightweight containers and routines, optimized for the Path game engine.
 * For Windows, x86_64 platforms that support the AVX2 instruction set.
 * To use, just include the root 'pathstd' folder, no external dependencies required.
-* Descriptions and analysis provided by the links below (www.path.blog).
+* Descriptions and analysis provided at the links below (www.path.blog).
 
 ---------------------------
 
