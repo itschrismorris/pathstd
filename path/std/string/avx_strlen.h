@@ -4,6 +4,8 @@
   + Protected against bad page boundary crossing.
   + To check 128 bytes per iteration, we first read previous 128-byte aligned address and mask out unused bits.
   + Then we can continue to loop over aligned 128-byte reads without paging issues.
+
+  Path game engine: https://www.path.blog
 */
 
 #pragma once
