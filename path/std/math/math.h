@@ -10,12 +10,24 @@
 namespace Path::Std::Math {
 
   /**/
-  template<typename T> static inline T min(T a, T b) { return (a < b) ? a : b; }
-  template<typename T> static inline T max(T a, T b) { return (a > b) ? a : b; }
+  template<typename T> constexpr inline T min(T a, T b) { return (a < b) ? a : b; }
+  template<typename T> constexpr inline T max(T a, T b) { return (a > b) ? a : b; }
   template<typename T> constexpr bool is_multiple(T value, T multiple) { return ((value % multiple) == 0); }
   template<typename T> constexpr bool is_power_of_two(T value) { return ((value & (value - 1)) == 0); }
-  static inline u32 first_bit_set(u32 mask) { return _tzcnt_u32(mask); }
-  static inline u64 first_bit_set(u64 mask) { return _tzcnt_u64(mask); }
+  template<u32 MULTIPLE, typename T> constexpr T previous_power_of_two_multiple(T value)
+  { 
+    static_assert(is_power_of_two(MULTIPLE), "Template parameter MULTIPLE must be a power of two.");  
+    return (value & (MULTIPLE - 1));
+  }
+  template<u32 MULTIPLE, typename T> constexpr T next_power_of_two_multiple(T value)
+  { 
+    static_assert(is_power_of_two(MULTIPLE), "Template parameter MULTIPLE must be a power of two.");
+    return ((value + (value == 0) + (MULTIPLE - 1)) & (~(MULTIPLE - 1)));
+  }
+  constexpr inline u32 next_power_of_two(u32 value) { return (0x1 << (32 - __builtin_clz(value - (value != 1)))); }
+  constexpr inline u64 next_power_of_two(u64 value) { return (0x1LLU << (32 - __builtin_clzl(value - (value != 1)))); }
+  static inline u32 lsb_set(u32 mask) { return _tzcnt_u32(mask); }
+  static inline u64 lsb_set(u64 mask) { return _tzcnt_u64(mask); }
   template<u64 ALIGNMENT, typename T> static inline T* align_previous(T* ptr)
   {
     static_assert(Math::is_power_of_two(ALIGNMENT), "Template parameter ALIGNMENT must be power of two.");
@@ -183,4 +195,6 @@ namespace Path::Std::Math {
 #define I8_SHIFTR(A, B) _mm256_srli_epi32(A, B)
 #define I8_MUL(A, B) _mm256_mullo_epi32(A, B)
 #define I8_XOR(A, B) _mm256_xor_si256(A, B)
+#define I8_CMP_EQ(A, B) _mm256_cmpeq_epi32(A, B)
 #define I8_CMP_EQ8(A, B) _mm256_cmpeq_epi8(A, B)
+#define I8_CMP_EQ8_MASK(A, B) _mm256_cmpeq_epi8_mask(A, B)

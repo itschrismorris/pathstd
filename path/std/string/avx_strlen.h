@@ -1,8 +1,8 @@
 /* 'std/string/avx_strlen.h'
 
-  + Utilizes AVX2 to read length of string.
-  + Protected against bad page boundary crossing.
-  + To check 128 bytes per iteration, we first read previous 128-byte aligned address and mask out unused bits.
+  + Utilizes AVX2 to read length of an aligned or unaligned string.
+  + Protected against page boundary segfaults.
+  + Fast path for AVX aligned strings with a known upper-bound on length.
 
     Path game engine: https://www.path.blog
 */
@@ -14,45 +14,40 @@
 namespace Path::Std::String {
 
 /**/
-static inline u64 avx_strlen(const char* str) 
+template <bool ALIGNED_32 = false, u64 MAX_LENGTH = UINT64_MAX>
+static inline u64 avx_strlen(const char* str)
 {
   I8 zero = I8_SETZERO();
-  u64 counted = 0;
-  const char* _s = Math::align_previous<128>(str);
-  i64 ignore_bytes = str - _s;
-  if (ignore_bytes < 64) {
-    u64 check32 = (u32)I8_MOVEMASK(I8_CMP_EQ8(I8_LOAD((I8*)(_s)), zero));
-    u64 check64 = (u32)I8_MOVEMASK(I8_CMP_EQ8(I8_LOAD((I8*)(_s + 32)), zero));
-    u64 zero_mask64 = (check32 | (check64 << 32)) &
-                      (UINT64_MAX << ignore_bytes);
-    if (zero_mask64) {
-      return Math::first_bit_set(zero_mask64) - ignore_bytes;
+  if ((MAX_LENGTH < UINT64_MAX) && (ALIGNED_32 || Math::is_aligned<32>(str))) {
+    constexpr u32 register_count = (Math::next_power_of_two_multiple<32>(MAX_LENGTH) >> 5);
+    #pragma unroll
+    for (u32 r = 0; r < register_count; ++r) {
+      u32 mask = I8_MOVEMASK(I8_CMP_EQ8(I8_LOAD((I8*)(str + (r << 5))), zero));
+      if (mask) {
+        return (((r << 5) + Math::lsb_set(mask)));
+      }
     }
-  }
-  u64 check96 = (u32)I8_MOVEMASK(I8_CMP_EQ8(I8_LOAD((I8*)(_s + 64)), zero));
-  u64 check128 = (u32)I8_MOVEMASK(I8_CMP_EQ8(I8_LOAD((I8*)(_s + 96)), zero));
-  u64 zero_mask128 = (check96 | (check128 << 32)) &
-                     (UINT64_MAX << Math::max(0LL, ignore_bytes - 64LL));
-  if (zero_mask128) {
-    return (64 - ignore_bytes + Math::first_bit_set(zero_mask128));
-  }
-  counted += 128 - ignore_bytes;
-  str = _s + 128;
-  while (true) {
-    u64 check32 = (u32)I8_MOVEMASK(I8_CMP_EQ8(I8_LOAD((I8*)(str)), zero));
-    u64 check64 = (u32)I8_MOVEMASK(I8_CMP_EQ8(I8_LOAD((I8*)(str + 32)), zero));
-    u64 zero_mask64 = (check32 | (check64 << 32));
-    if (zero_mask64) {
-      return (counted + Math::first_bit_set(zero_mask64));
+  } else {
+    const char* _s = Math::align_previous<64>(str);
+    i64 ignore_bytes = str - _s;
+    u64 mask32 = (u32)I8_MOVEMASK(I8_CMP_EQ8(I8_LOAD((I8*)(_s)), zero));
+    u64 mask64 = (u32)I8_MOVEMASK(I8_CMP_EQ8(I8_LOAD((I8*)(_s + 32)), zero));
+    u64 zero_mask = (mask32 | (mask64 << 32)) & (UINT64_MAX << ignore_bytes);
+    if (zero_mask) {
+      return Math::lsb_set(zero_mask) - ignore_bytes;
     }
-    u64 check96 = (u32)I8_MOVEMASK(I8_CMP_EQ8(I8_LOAD((I8*)(str + 64)), zero));
-    u64 check128 = (u32)I8_MOVEMASK(I8_CMP_EQ8(I8_LOAD((I8*)(str + 96)), zero));
-    u64 zero_mask128 = (check96 | (check128 << 32));
-    if (zero_mask128) {
-      return (counted + 64 + Math::first_bit_set(zero_mask128));
+    _s += 64;
+    u32 previous_bytes = 64 - ignore_bytes;
+    while (true) {
+      u64 mask32 = (u32)I8_MOVEMASK(I8_CMP_EQ8(I8_LOAD((I8*)_s), zero));
+      u64 mask64 = (u32)I8_MOVEMASK(I8_CMP_EQ8(I8_LOAD((I8*)(_s + 32)), zero));
+      u64 mask = (mask32 | (mask64 << 32));
+      if (mask) {
+        return (previous_bytes + Math::lsb_set(mask));
+      }
+      _s += 64;
+      previous_bytes += 64;
     }
-    counted += 128;
-    str += 128;
   }
   return 0;
 }
