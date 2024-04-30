@@ -1,0 +1,79 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="src">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="src\errors">
+      <UniqueIdentifier>{833e8a44-fe04-4ed6-b93a-15faf682f0c5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\log">
+      <UniqueIdentifier>{497846fd-64f3-4164-b392-2c52df3fa143}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\timer">
+      <UniqueIdentifier>{2b376509-a07e-4c1f-aff7-a66fbe4882d8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\memory">
+      <UniqueIdentifier>{76f6eae3-6af2-42d2-9767-a3203251b3b3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\containers">
+      <UniqueIdentifier>{2dd9c127-58df-4517-851f-7a1b8ce572fd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\string">
+      <UniqueIdentifier>{d9ca9502-6b15-4c5d-a2b2-0d83b2e67223}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\math">
+      <UniqueIdentifier>{cc017e24-fbd4-454f-806a-654d251a7b05}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\src\errors\errors.cpp">
+      <Filter>src\errors</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\log\log.cpp">
+      <Filter>src\log</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\timer\timer.cpp">
+      <Filter>src\timer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\memory\memory.cpp">
+      <Filter>src\memory</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\include\types.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\errors\errors.h">
+      <Filter>src\errors</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\log\log.h">
+      <Filter>src\log</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\memory\avx_memcpy.h">
+      <Filter>src\memory</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\memory\avx_memset.h">
+      <Filter>src\memory</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\memory\memory.h">
+      <Filter>src\memory</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\timer\timer.h">
+      <Filter>src\timer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\containers\hashmap.h">
+      <Filter>src\containers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\string\avx_strlen.h">
+      <Filter>src\string</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\string\stack_string.h">
+      <Filter>src\string</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\math\math.h">
+      <Filter>src\math</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>
