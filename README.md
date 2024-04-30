@@ -1,8 +1,8 @@
-# pathstd
+# pathlib
 
-* Lightweight, AVX-optimized containers and routines for the Path game engine.
+* This library is shared between the Path game engine itself and scripting within the engine.
+* It provides a version of libc++ as well as custom lightweight, AVX-optimized containers and routines.
 * For Windows x86_64 platforms that support the AVX2 instruction set.
-* To use, just include the root 'path' folder, no external dependencies required.
 * Documentation at www.path.blog.
 
 ---------------------------
