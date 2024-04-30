@@ -1,7 +1,7 @@
 # pathlib
 
-* This library is shared between the Path game engine itself and scripting within the engine.
-* It provides a version of libc++ as well as custom lightweight, AVX-optimized containers and routines.
+* This library is used in the Path game engine itself, as well as for runtime scripting within the engine.
+* It provides a build of libc++, as well as Path's lightweight, AVX-optimized containers and routines.
 * For Windows x86_64 platforms that support the AVX2 instruction set.
 * Documentation at www.path.blog.
 
