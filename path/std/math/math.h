@@ -10,37 +10,118 @@
 namespace Path::Std::Math {
 
   /**/
-  template<typename T> constexpr inline T min(T a, T b) { return (a < b) ? a : b; }
-  template<typename T> constexpr inline T max(T a, T b) { return (a > b) ? a : b; }
-  template<typename T> constexpr bool is_multiple(T value, T multiple) { return ((value % multiple) == 0); }
-  template<typename T> constexpr bool is_power_of_two(T value) { return ((value & (value - 1)) == 0); }
-  template<u32 MULTIPLE, typename T> constexpr T previous_power_of_two_multiple(T value)
+  template<typename T>
+  constexpr inline T min(T a, T b) 
   { 
-    static_assert(is_power_of_two(MULTIPLE), "Template parameter MULTIPLE must be a power of two.");  
-    return (value & (MULTIPLE - 1));
+    return (a < b) ? a : b; 
   }
-  template<u32 MULTIPLE, typename T> constexpr T next_power_of_two_multiple(T value)
+
+  /**/
+  template<typename T>
+  constexpr inline T max(T a, T b) 
   { 
-    static_assert(is_power_of_two(MULTIPLE), "Template parameter MULTIPLE must be a power of two.");
-    return ((value + (value == 0) + (MULTIPLE - 1)) & (~(MULTIPLE - 1)));
+    return (a > b) ? a : b; 
   }
-  constexpr inline u32 next_power_of_two(u32 value) { return (0x1 << (32 - __builtin_clz(value - (value != 1)))); }
-  constexpr inline u64 next_power_of_two(u64 value) { return (0x1LLU << (32 - __builtin_clzl(value - (value != 1)))); }
-  static inline u32 lsb_set(u32 mask) { return _tzcnt_u32(mask); }
-  static inline u64 lsb_set(u64 mask) { return _tzcnt_u64(mask); }
-  template<u64 ALIGNMENT, typename T> static inline T* align_previous(T* ptr)
+  
+  /**/
+  template<typename T>
+  constexpr inline bool is_pot(T value)
+  { 
+    return ((value & (value + (value == 0) - 1)) == 0);
+  }
+
+  /**/
+  template<u32 MULTIPLE, typename T>
+  constexpr inline bool is_multiple_of(T value)
   {
-    static_assert(Math::is_power_of_two(ALIGNMENT), "Template parameter ALIGNMENT must be power of two.");
-    return (T*)((u64)ptr & (~(ALIGNMENT - 1)));
+    if constexpr (Math::is_pot(MULTIPLE)) {
+      return ((value & (MULTIPLE - 1)) == 0);
+    } else {
+      return ((value % MULTIPLE) == 0);
+    }
+  }
+
+  /**/
+  template <u32 MULTIPLE, typename T>
+  constexpr inline T previous_multiple_of(T value)
+  { 
+    if constexpr (Math::is_pot(MULTIPLE)) {
+      return (value & ~(MULTIPLE - 1));
+    } else {
+      return (value - (value % MULTIPLE));
+    }
+  }
+
+  /**/
+  template <u32 MULTIPLE, typename T>
+  constexpr inline T next_multiple_of(T value)
+  {
+    if constexpr (Math::is_pot(MULTIPLE)) {
+      return (value + (value == 0) + (MULTIPLE - 1)) & -MULTIPLE;
+    } else {
+      return ((value + (value == 0) + (MULTIPLE - 1)) / MULTIPLE) * MULTIPLE;
+    }
+  }
+  
+  /**/
+  template <typename T>
+  constexpr inline T next_pot(T value) 
+  {
+    if constexpr (sizeof(T) == 4) {
+      value = Math::max(1, value);
+      return (0x1 << (32 - __builtin_clz(value + (value == 0))));
+    } else {
+      value = Math::max(1LLU, value);
+      return (0x1LLU << (64 - __builtin_clzl(value + (value == 0))));
+    }
+  }
+
+  /**/
+  template <typename T>
+  static inline T lsb_set(T value)
+  {
+    if constexpr (sizeof(T) == 4) {
+      return _tzcnt_u32(value);
+    } else {
+      return _tzcnt_u64(value);
+    }
+  }
+
+  /**/
+  template <typename T>
+  static inline T msb_set(T value)
+  {
+    if constexpr (sizeof(T) == 4) {
+      return _lzcnt_u32(value);
+    } else {
+      return _lzcnt_u64(value);
+    }
+  }
+
+  /**/
+  template<u64 ALIGNMENT, typename T>
+  inline T* align_previous(T* ptr)
+  {
+    static_assert(Math::is_pot(ALIGNMENT), 
+                  "Template parameter ALIGNMENT must be power of two.");
+    return (T*)((u64)ptr & ~(ALIGNMENT - 1));
   };
-  template<u64 ALIGNMENT, typename T> static inline T* align_next(T* ptr)
+
+  /**/
+  template<u64 ALIGNMENT, typename T>
+  inline T* align_next(T* ptr)
   {
-    static_assert(Math::is_power_of_two(ALIGNMENT), "Template parameter ALIGNMENT must be power of two.");
-    return (T*)(((u64)ptr + (ALIGNMENT - 1)) & (~(ALIGNMENT - 1)));
+    static_assert(Math::is_pot(ALIGNMENT), 
+                  "Template parameter ALIGNMENT must be power of two.");
+    return (T*)(((u64)ptr + (ALIGNMENT - 1)) & ~(ALIGNMENT - 1));
   };
-  template<u64 ALIGNMENT, typename T> static inline bool is_aligned(T* ptr)
+
+  /**/
+  template<u64 ALIGNMENT, typename T>
+  inline bool is_aligned(T* ptr)
   {
-    static_assert(Math::is_power_of_two(ALIGNMENT), "Template parameter ALIGNMENT must be power of two.");
+    static_assert(Math::is_pot(ALIGNMENT), 
+                  "Template parameter ALIGNMENT must be power of two.");
     return (((u64)ptr & (ALIGNMENT - 1)) == 0);
   }
 }
@@ -100,12 +181,12 @@ namespace Path::Std::Math {
 #define PREFETCH_L1(A) _mm_prefetch((const char*)A, _MM_HINT_T0)
 #define PREFETCH_L2(A) _mm_prefetch((const char*)A, _MM_HINT_T1)
 #define PREFETCH_L3(A) _mm_prefetch((const char*)A, _MM_HINT_T2)
-#define PREFETCH_NONTEMPORAL(A) _mm_prefetch((const char*)A, _MM_HINT_NTA)
+#define PREFETCH_NOCACHE(A) _mm_prefetch((const char*)A, _MM_HINT_NTA)
 #define FENCE() _mm_sfence()
 
 /**/
-#define F4_LOAD(A) _mm_load_ps((F4*)(A))
-#define F4_LOADU(A) _mm_loadu_ps((F4*)(A))
+#define F4_LOAD(A) _mm_load_ps(A)
+#define F4_LOADU(A) _mm_loadu_ps(A)
 #define F4_STORE(A, B) _mm_store_ps(A, B)
 #define F4_STOREU(A, B) _mm_storeu_ps(A, B)
 #define F4_BROADCAST(A) _mm_broadcast_ss(A)
@@ -151,12 +232,20 @@ namespace Path::Std::Math {
 #define F4_CMP_LT(A, B) _mm_cmplt_ps(A, B)
 
 /**/
+#define F8_LOAD(A) _mm256_load_ps(A)
+#define F8_LOADU(A) _mm256_loadu_ps(A)
+#define F8_STORE(A, B) _mm256_store_ps(A, B)
+#define F8_STOREU(A, B) _mm256_storeu_ps(A, B)
+#define F8_CMP_EQ(A, B) _mm256_cmpeq_ps(A, B)
+#define F8_MOVEMASK(A) _mm256_movemask_ps(A)
+
+/**/
 #define I4_LOAD(A) _mm_load_si128((I4*)(A))
 #define I4_LOADU(A) _mm_loadu_si128((I4*)(A))
 #define I4_STORE(A, B) _mm_store_si128(A, B)
 #define I4_STOREU(A, B) _mm_storeu_si128(A, B)
-#define I4_STORE_NONTEMPORAL(A, B) _mm_stream_si128(A, B)
-#define I4_MOVEMASK(A) _mm_movemask_epi8(A)
+#define I4_STORE_NOCACHE(A, B) _mm_stream_si128(A, B)
+#define I4_MOVEMASK8(A) _mm_movemask_epi8(A)
 #define I4_SETZERO() _mm_setzero_si128()
 #define I4_SET(A, B, C, D) _mm_setr_epi32(A, B, C, D)
 #define I16_SET _mm_setr_epi8
@@ -187,8 +276,8 @@ namespace Path::Std::Math {
 #define I8_LOADU(A) _mm256_loadu_si256((I8*)(A))
 #define I8_STORE(A, B) _mm256_store_si256(A, B)
 #define I8_STOREU(A, B) _mm256_storeu_si256(A, B)
-#define I8_STORE_NONTEMPORAL(A, B) _mm256_stream_si256(A, B)
-#define I8_MOVEMASK(A) _mm256_movemask_epi8(A)
+#define I8_STORE_NOCACHE(A, B) _mm256_stream_si256(A, B)
+#define I8_MOVEMASK8(A) _mm256_movemask_epi8(A)
 #define I8_SETZERO() _mm256_setzero_si256()
 #define I8_SET(A, B, C, D, E, F, G, H) _mm256_setr_epi32(A, B, C, D, E, F, G, H)
 #define I8_SET1(A) _mm256_set1_epi32(A)

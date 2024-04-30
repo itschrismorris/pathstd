@@ -18,8 +18,8 @@ namespace Path::Std::String {
 template <u64 CAPACITY>
 struct StackString
 {
-  static_assert(Math::is_multiple(CAPACITY, 32LLU), "Stack string capacity must be a multiple of 32 (AVX-width).");
-  static_assert(CAPACITY <= 256, "Stack string capacity must be less than or equal to 256.");
+  static_assert(Math::is_multiple_of<32>(CAPACITY), 
+                "Template parameter CAPACITY must be a multiple of 32 (AVX-width).");
 
   /**/
   alignas(32) char str[CAPACITY];
