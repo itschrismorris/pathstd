@@ -1,6 +1,6 @@
 # pathstd
 
-* Efficient, lightweight containers and routines for the Path game engine.
+* Lightweight, AVX-optimized containers and routines for the Path game engine.
 * For Windows x86_64 platforms that support the AVX2 instruction set.
 * To use, just include the root 'path' folder, no external dependencies required.
 * Documentation at www.path.blog.
