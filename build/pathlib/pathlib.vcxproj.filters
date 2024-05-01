@@ -76,4 +76,9 @@
       <Filter>src\math</Filter>
     </ClInclude>
   </ItemGroup>
+  <ItemGroup>
+    <MASM Include="..\..\src\memory\avx_memcpy_asm.asm">
+      <Filter>src\memory</Filter>
+    </MASM>
+  </ItemGroup>
 </Project>

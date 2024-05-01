@@ -166,6 +166,9 @@
     <ClInclude Include="..\..\include\timer\timer.h" />
     <ClInclude Include="..\..\include\types.h" />
   </ItemGroup>
+  <ItemGroup>
+    <MASM Include="..\..\src\memory\avx_memcpy_asm.asm" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
     <Import Project="$(VCTargetsPath)\BuildCustomizations\masm.targets" />
