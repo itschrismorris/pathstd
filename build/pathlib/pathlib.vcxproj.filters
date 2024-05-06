@@ -77,7 +77,7 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <MASM Include="..\..\src\memory\memcpy_small.asm">
+    <MASM Include="..\..\src\memory\asm_memcpy.asm">
       <Filter>src\memory</Filter>
     </MASM>
   </ItemGroup>
