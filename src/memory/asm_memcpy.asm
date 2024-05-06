@@ -59,8 +59,8 @@ _16_to_64:
 _32_to_64:
   vmovdqa ymm0, ymmword ptr [rdx]             ; Load AVX register from src.
   vmovdqa ymmword ptr [rax], ymm0             ; Store into dst.
-  vmovdqa ymm0, ymmword ptr [rdx + r8 - 32]   ; Load AVX register from end of src.
-  vmovdqa ymmword ptr [rax + r8 - 32], ymm0   ; Store into end of dst.
+  vmovdqu ymm0, ymmword ptr [rdx + r8 - 32]   ; Load AVX register from end of src.
+  vmovdqu ymmword ptr [rax + r8 - 32], ymm0   ; Store into end of dst.
   vzeroupper                                  ; Clean up registers.
   ret
 
@@ -86,7 +86,7 @@ _above_64:
   ja _above_128
 
   ; 64-128
-  vmovaps ymm0, ymmword ptr [rdx + r8 - 32]  ; Load AVX register from end of src (save for later).
+  vmovups ymm0, ymmword ptr [rdx + r8 - 32]  ; Load AVX register from end of src (save for later).
   vmovaps ymm1, ymmword ptr [rdx]            ; Load AVX register from src.
   vmovaps ymm2, ymmword ptr [rdx + 32]       ; Load second AVX register from src.
   cmp r8, 96                                 ; if (size <= 96) _64_to_128();
@@ -101,7 +101,7 @@ ALIGN 4
 _64_to_128:
   vmovaps ymmword ptr [rax], ymm1            ; Store first AVX register into beginning of dst.
   vmovaps ymmword ptr [rax + 32], ymm2       ; Store next AVX register into beginning of dst.
-  vmovaps ymmword ptr [rax + r8 - 32], ymm0  ; Store last AVX register into end of dst.
+  vmovups ymmword ptr [rax + r8 - 32], ymm0  ; Store last AVX register into end of dst.
   vzeroupper                                 ; Clean up registers.
   ret
   
@@ -129,20 +129,20 @@ _above_128_loop:
 
   cmp rcx, r9                                ; if (last_register < byte_counter) _last_register();
   jb _last_register
-  vmovdqu ymm0, ymmword ptr [rdx + r9]       ; Load an AVX register from src, at end of last loop.
-  vmovdqu ymmword ptr [rax + r9], ymm0       ; Store in dst.
+  vmovdqa ymm0, ymmword ptr [rdx + r9]       ; Load an AVX register from src, at end of last loop.
+  vmovdqa ymmword ptr [rax + r9], ymm0       ; Store in dst.
   add r9, 32                                 ; Iterate byte_counter to the next AVX register.
 
   cmp rcx, r9                                ; if (last_register < byte_counter) _last_register();
   jb _last_register
-  vmovdqu ymm0, ymmword ptr [rdx + r9]       ; Load an AVX register from src, at end of last iteration.
-  vmovdqu ymmword ptr [rax + r9], ymm0       ; Store in dst.
+  vmovdqa ymm0, ymmword ptr [rdx + r9]       ; Load an AVX register from src, at end of last iteration.
+  vmovdqa ymmword ptr [rax + r9], ymm0       ; Store in dst.
   add r9, 32                                 ; Iterate byte_counter to the next AVX register.
   
   cmp rcx, r9                                ; if (last_register < byte_counter) _last_register();
   jb _last_register
-  vmovdqu ymm0, ymmword ptr [rdx + r9]       ; Load an AVX register from src, at end of last iteration.
-  vmovdqu ymmword ptr [rax + r9], ymm0       ; Store in dst.
+  vmovdqa ymm0, ymmword ptr [rdx + r9]       ; Load an AVX register from src, at end of last iteration.
+  vmovdqa ymmword ptr [rax + r9], ymm0       ; Store in dst.
   ; Fall through to _last_register.
 
 _last_register:
