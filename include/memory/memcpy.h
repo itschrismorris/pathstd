@@ -25,7 +25,7 @@ static inline void memcpy(u8* dst,
 {
   if ((DST_AVX_ALIGNED || Math::is_aligned<32>(dst)) &&
       (SRC_AVX_ALIGNED || Math::is_aligned<32>(src))) {
-    //avx_memcpy_aligned_asm((void*)dst, (const void*)src, (size_t)size);
+    asm_memcpy(dst, src, size);
   } else {
     asm_memcpy(dst, src, size);
   }
