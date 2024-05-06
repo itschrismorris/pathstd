@@ -1,9 +1,8 @@
-/* 'std/string/avx_memcpy.h'
+/* 'memory/avx_memcpy.h'
 
   + Invokes hand-written assembly that utilizes AVX to copy from src to dst.
-  + Utilizes AVX to copy data from src to dst.
   + Protected against page boundary segfaults.
-  + Fast path for AVX-aligned src and/or dst.
+  + Fast path for AVX-aligned src and dst.
   + Copies a cache-line (64B) per iteration.
 
     Path game engine: https://www.path.blog

@@ -1,8 +1,8 @@
-/* 'std/string/avx_strlen.h'
+/* 'string/strlen.h'
 
   + Utilizes AVX to read length of an aligned or unaligned string.
   + Protected against page boundary segfaults.
-  + Fast path for AVX-aligned short strings.
+  + Fast path for AVX-aligned short (<= 512 chars) strings.
   + Reads a cache-line (64B) per iteration and combines masks, to perform a 64-bit leading zero count.
 
     Path game engine: https://www.path.blog
