@@ -42,13 +42,13 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>Intel C++ Compiler 2024</PlatformToolset>
+    <PlatformToolset>Intel C++ Compiler 2023</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>Intel C++ Compiler 2024</PlatformToolset>
+    <PlatformToolset>Intel C++ Compiler 2023</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
@@ -158,16 +158,16 @@
     <ClInclude Include="..\..\include\errors\errors.h" />
     <ClInclude Include="..\..\include\log\log.h" />
     <ClInclude Include="..\..\include\math\math.h" />
-    <ClInclude Include="..\..\include\memory\avx_memcpy.h" />
-    <ClInclude Include="..\..\include\memory\avx_memset.h" />
+    <ClInclude Include="..\..\include\memory\memcpy.h" />
+    <ClInclude Include="..\..\include\memory\memset.h" />
     <ClInclude Include="..\..\include\memory\memory.h" />
-    <ClInclude Include="..\..\include\string\avx_strlen.h" />
+    <ClInclude Include="..\..\include\string\strlen.h" />
     <ClInclude Include="..\..\include\string\stack_string.h" />
     <ClInclude Include="..\..\include\timer\timer.h" />
     <ClInclude Include="..\..\include\types.h" />
   </ItemGroup>
   <ItemGroup>
-    <MASM Include="..\..\src\memory\avx_memcpy_asm.asm" />
+    <MASM Include="..\..\src\memory\asm_memcpy.asm" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

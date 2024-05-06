@@ -51,10 +51,10 @@
     <ClInclude Include="..\..\include\log\log.h">
       <Filter>src\log</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\include\memory\avx_memcpy.h">
+    <ClInclude Include="..\..\include\memory\memcpy.h">
       <Filter>src\memory</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\include\memory\avx_memset.h">
+    <ClInclude Include="..\..\include\memory\memset.h">
       <Filter>src\memory</Filter>
     </ClInclude>
     <ClInclude Include="..\..\include\memory\memory.h">
@@ -66,7 +66,7 @@
     <ClInclude Include="..\..\include\containers\hashmap.h">
       <Filter>src\containers</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\include\string\avx_strlen.h">
+    <ClInclude Include="..\..\include\string\strlen.h">
       <Filter>src\string</Filter>
     </ClInclude>
     <ClInclude Include="..\..\include\string\stack_string.h">
@@ -77,7 +77,7 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <MASM Include="..\..\src\memory\avx_memcpy_asm.asm">
+    <MASM Include="..\..\src\memory\asm_memcpy.asm">
       <Filter>src\memory</Filter>
     </MASM>
   </ItemGroup>

@@ -13,22 +13,22 @@
 #include "memory/memory.h"
 #include "math/math.h"
 
-extern "C" { void avx_memcpy_asm(u8* dst, const u8* src, u64 size); }
+extern "C" { void asm_memcpy(u8* dst, const u8* src, u64 size); }
 
 namespace Pathlib::Memory {
 
 /**/
 template <bool DST_AVX_ALIGNED = false,
           bool SRC_AVX_ALIGNED = false>
-static inline void avx_memcpy(u8* dst, 
-                              const u8* src,
-                              u64 size)
+static inline void memcpy(u8* dst, 
+                          const u8* src,
+                          u64 size)
 {
   if ((DST_AVX_ALIGNED || Math::is_aligned<32>(dst)) &&
       (SRC_AVX_ALIGNED || Math::is_aligned<32>(src))) {
     //avx_memcpy_aligned_asm((void*)dst, (const void*)src, (size_t)size);
   } else {
-    avx_memcpy_asm(dst, src, size);
+    asm_memcpy(dst, src, size);
   }
 }
 }

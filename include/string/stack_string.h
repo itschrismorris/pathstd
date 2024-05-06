@@ -7,8 +7,8 @@
 */
 
 #pragma once
-#include "../memory/avx_memcpy.h"
-#include "../string/avx_strlen.h"
+#include "../memory/memcpy.h"
+#include "../string/strlen.h"
 #include "../types.h"
 
 namespace Pathlib::String {
