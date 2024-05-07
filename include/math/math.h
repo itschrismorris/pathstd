@@ -250,6 +250,7 @@ namespace Pathlib::Math {
 #define I4_SET(A, B, C, D) _mm_setr_epi32(A, B, C, D)
 #define I16_SET _mm_setr_epi8
 #define I4_SET1(A) _mm_set1_epi32(A)
+#define I4_SET1_8(A) _mm_set1_epi8(A)
 #define I4_SETZERO() _mm_setzero_si128()
 #define I4_EXTRACT(A) _mm_extract_epi32(A, 0x0)
 #define I4_CVT_F4(A) _mm_cvtepi32_ps(A)
@@ -281,6 +282,7 @@ namespace Pathlib::Math {
 #define I8_SETZERO() _mm256_setzero_si256()
 #define I8_SET(A, B, C, D, E, F, G, H) _mm256_setr_epi32(A, B, C, D, E, F, G, H)
 #define I8_SET1(A) _mm256_set1_epi32(A)
+#define I8_SET1_8(A) _mm256_set1_epi8(A)
 #define I8_SHIFTR(A, B) _mm256_srli_epi32(A, B)
 #define I8_MUL(A, B) _mm256_mullo_epi32(A, B)
 #define I8_XOR(A, B) _mm256_xor_si256(A, B)

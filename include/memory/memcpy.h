@@ -1,4 +1,4 @@
-/* 'memory/avx_memcpy.h'
+/* 'memory/memcpy.h'
 
   + Copies 'size' bytes from 'src' to 'dst'.
   + Uses AVX and an optimized jump table for small sizes.
