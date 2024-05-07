@@ -11,7 +11,7 @@
 - path
   - std
     - string
-      - <b>['avx_strlen.h'](https://path.blog/docs/strlen.html)</b>
+      - <b>['strlen.h'](https://path.blog/docs/strlen.html)</b>
         - <i>AVX optimized replacement for strlen().</i>
       - <b>'stack_string.h'</b>
         - <i>AVX optimized short strings held on the stack.</i>
@@ -31,11 +31,11 @@
       - <b>'spsc_queue.h'</b>
         - <i>Fast lock-free single-producer, single-consumer queue.</i>
     - memory
-      - <b>['avx_strlen.h'](https://path.blog/docs/memcpy.html)</b>
+      - <b>['strlen.h'](https://path.blog/docs/memcpy.html)</b>
         - <i>AVX and jump table optimized replacement for memcpy().</i>
       - <b>'avx_memcmp'</b>
         - <i>AVX optimized replacement for memcmp().</i>
-      - <b>['avx_strlen.h'](https://path.blog/docs/memset.html)</b>
+      - <b>['strlen.h'](https://path.blog/docs/memset.html)</b>
         - <i>AVX and jump table optimized replacement for memset().</i>
 
 ---------------------------
