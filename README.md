@@ -1,9 +1,9 @@
 # pathlib
 
-* This library is used in the Path game engine itself, as well as for runtime scripting within the engine.
-* It provides a build of libc++ for standard library use, as well as Path's lightweight, AVX-optimized containers and routines.
-* Memory allocations use with mimalloc library: https://github.com/microsoft/mimalloc.
-* For Windows x86_64 platforms that support the AVX2 instruction set.
+* Pathlib is a small and highly optimized standard library, used in the Path game engine.
+* Written in C++, utilizing AVX2 instructions.
+* Uses mimalloc for memory management: https://github.com/microsoft/mimalloc.
+* Requires Windows and the AVX2 instruction set.
 * Documentation at www.path.blog.
 
 ---------------------------
@@ -11,7 +11,7 @@
 - path
   - std
     - string
-      - <b>['avx_strlen.h'](https://path.blog/docs/avx_strlen.html)</b>
+      - <b>['avx_strlen.h'](https://path.blog/docs/strlen.html)</b>
         - <i>AVX optimized replacement for strlen().</i>
       - <b>'stack_string.h'</b>
         - <i>AVX optimized short strings held on the stack.</i>
@@ -31,12 +31,12 @@
       - <b>'spsc_queue.h'</b>
         - <i>Fast lock-free single-producer, single-consumer queue.</i>
     - memory
-      - <b>'avx_memcpy'</b>
-        - <i>AVX optimized replacement for memcpy().</i>
+      - <b>['avx_strlen.h'](https://path.blog/docs/memcpy.html)</b>
+        - <i>AVX and jump table optimized replacement for memcpy().</i>
       - <b>'avx_memcmp'</b>
         - <i>AVX optimized replacement for memcmp().</i>
-      - <b>'avx_memset'</b>
-        - <i>AVX optimized replacement for memset().</i>
+      - <b>['avx_strlen.h'](https://path.blog/docs/memset.html)</b>
+        - <i>AVX and jump table optimized replacement for memset().</i>
 
 ---------------------------
 
