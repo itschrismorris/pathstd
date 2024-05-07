@@ -6,9 +6,6 @@
 */
 
 #pragma once
-#include <stdio.h>
-#include <stdarg.h>
-#include <time.h>
 #include "types.h"
 
 namespace Pathlib {
@@ -17,10 +14,10 @@ namespace Pathlib {
 struct Log
 {
   /**/
-  FILE* file;
+  //FILE* file;
 
   /**/
-  Log() : file(nullptr) {}
+ // Log() : file(nullptr) {}
   ~Log() {}
 
   /**/
