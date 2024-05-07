@@ -10,11 +10,11 @@
 
 - pathlib
   - memory
-    - <b>['strlen.h'](https://path.blog/docs/memcpy.html)</b>
+    - <b>['memcpy.h'](https://path.blog/docs/memcpy.html)</b>
       - <i>AVX and jump table optimized replacement for memcpy().</i>
     - <b>'avx_memcmp'</b>
       - <i>AVX optimized replacement for memcmp().</i>
-    - <b>['strlen.h'](https://path.blog/docs/memset.html)</b>
+    - <b>['memset.h'](https://path.blog/docs/memset.html)</b>
       - <i>AVX and jump table optimized replacement for memset().</i>
   - string
     - <b>['strlen.h'](https://path.blog/docs/strlen.html)</b>
