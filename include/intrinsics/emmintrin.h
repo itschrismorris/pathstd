@@ -14,7 +14,7 @@
 #error "This header is only meant to be used on x86 and x64 architecture"
 #endif
  
-#include "std/intrinsics/xmmintrin.h"
+#include "xmmintrin.h"
  
 typedef double __m128d __attribute__((__vector_size__(16), __aligned__(16)));
 typedef long long __m128i __attribute__((__vector_size__(16), __aligned__(16)));

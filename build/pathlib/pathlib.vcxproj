@@ -113,7 +113,7 @@
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(ProjectDir)..\..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpplatest</LanguageStandard>
-      <AdditionalOptions>/Fa"$(IntDir)/" %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>/Fa"$(IntDir)/" -Wno-ignored-attributes %(AdditionalOptions)</AdditionalOptions>
       <TreatWarningAsError>true</TreatWarningAsError>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <EnableEnhancedInstructionSet>NotSet</EnableEnhancedInstructionSet>
@@ -141,7 +141,7 @@
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(ProjectDir)..\..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpplatest</LanguageStandard>
-      <AdditionalOptions>/Fa"$(IntDir)/" %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>/Fa"$(IntDir)/" -Wno-ignored-attributes %(AdditionalOptions)</AdditionalOptions>
       <TreatWarningAsError>true</TreatWarningAsError>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <Optimization>MaxSpeedHighLevel</Optimization>
@@ -174,6 +174,13 @@
   <ItemGroup>
     <ClInclude Include="..\..\include\containers\hashmap.h" />
     <ClInclude Include="..\..\include\errors\errors.h" />
+    <ClInclude Include="..\..\include\intrinsics\avx2intrin.h" />
+    <ClInclude Include="..\..\include\intrinsics\avxintrin.h" />
+    <ClInclude Include="..\..\include\intrinsics\bmiintrin.h" />
+    <ClInclude Include="..\..\include\intrinsics\emmintrin.h" />
+    <ClInclude Include="..\..\include\intrinsics\intrinsics.h" />
+    <ClInclude Include="..\..\include\intrinsics\mmintrin.h" />
+    <ClInclude Include="..\..\include\intrinsics\xmmintrin.h" />
     <ClInclude Include="..\..\include\log\log.h" />
     <ClInclude Include="..\..\include\math\math.h" />
     <ClInclude Include="..\..\include\memory\memcpy.h" />

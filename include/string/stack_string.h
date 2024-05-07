@@ -36,7 +36,7 @@ struct StackString
   StackString(const char* string)
   {
     length = avx_strlen<CAPACITY, true>(string);
-    avx_memcpy<true, false>(str, string, length + 1);
+    memcpy<true, false>(str, string, length + 1);
   }
 
   /**/

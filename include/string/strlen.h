@@ -16,7 +16,7 @@ namespace Pathlib::String {
 
 /**/
 template <u32 AVX_ALIGNED = false, 
-          u64 MAX_LENGTH = UINT64_MAX>
+          u64 MAX_LENGTH = U64_MAX>
 static inline u64 strlen(const char* str)
 {
   I8 zero = I8_SETZERO();
@@ -26,6 +26,7 @@ static inline u64 strlen(const char* str)
     for (u32 r = 0; r < register_count; ++r) {
       u32 mask = I8_MOVEMASK8(I8_CMP_EQ8(I8_LOAD(str_v), zero));
       if (mask) {
+        
         return (((r << 5) + Math::lsb_set(mask)));
       }
       str_v += 1;

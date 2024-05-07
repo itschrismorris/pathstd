@@ -26,6 +26,9 @@
     <Filter Include="src\math">
       <UniqueIdentifier>{cc017e24-fbd4-454f-806a-654d251a7b05}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\intrinsics">
+      <UniqueIdentifier>{371e1ce6-3735-4f21-bed2-41447b41c6b2}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\errors\errors.cpp">
@@ -74,6 +77,27 @@
     </ClInclude>
     <ClInclude Include="..\..\include\math\math.h">
       <Filter>src\math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\intrinsics\avx2intrin.h">
+      <Filter>src\intrinsics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\intrinsics\avxintrin.h">
+      <Filter>src\intrinsics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\intrinsics\bmiintrin.h">
+      <Filter>src\intrinsics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\intrinsics\emmintrin.h">
+      <Filter>src\intrinsics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\intrinsics\intrinsics.h">
+      <Filter>src\intrinsics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\intrinsics\mmintrin.h">
+      <Filter>src\intrinsics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\intrinsics\xmmintrin.h">
+      <Filter>src\intrinsics</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

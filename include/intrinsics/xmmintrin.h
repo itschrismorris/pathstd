@@ -14,7 +14,7 @@
 #error "This header is only meant to be used on x86 and x64 architecture"
 #endif
  
-#include "std/intrinsics/mmintrin.h"
+#include "mmintrin.h"
  
 typedef int __v4si __attribute__((__vector_size__(16)));
 typedef float __v4sf __attribute__((__vector_size__(16)));
@@ -3195,7 +3195,7 @@ do { \
  
 /* Ugly hack for backwards-compatibility (compatible with gcc) */
 #if defined(__SSE2__) && !__building_module(_Builtin_intrinsics)
-#include "std/intrinsics/emmintrin.h"
+#include "emmintrin.h"
 #endif
  
 #endif /* __XMMINTRIN_H */

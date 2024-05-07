@@ -5,6 +5,7 @@
 #pragma once
 
 #define EXPORT __declspec(dllexport)
+#define U64_MAX 0xFFFFFFFFFFFFFFFFLLU
 
 /**/
 typedef signed __int32 Error;

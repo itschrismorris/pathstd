@@ -15,6 +15,53 @@
 namespace Pathlib::Memory {
 
 /**/
+template <bool DST_AVX_ALIGNED = false>
+static inline void memset(u8* dst,
+                          const u8 value,
+                          u64 size)
+{
+  if (size <= 256) {
+    memset_small(dst, value, size);
+    return;
+  }
+  I8* dst_v = (I8*)dst;
+  I8 v = I8_SET1_8(value);
+  if (!(DST_AVX_ALIGNED || Math::is_aligned<32>(dst))) {
+    u64 padding = (32 - (((u64)dst) & 31)) & 31;
+    I8_STOREU(dst_v, v);
+    dst_v = (I8*)(dst + padding);
+    size -= padding;
+  }
+  if (size <= (MEGABYTE << 4)) {
+    u32 loop_count = (size >> 6);
+    for (u32 r = 0; r < loop_count; ++r) {
+      I8_STORE(dst_v, v);
+      I8_STORE(dst_v + 1, v);
+      PREFETCH_NOCACHE(dst_v + 2);
+      dst_v += 2;
+      size -= 64;
+    }
+  } else {
+    u32 loop_count = (size >> 8);
+    for (u32 r = 0; r < loop_count; ++r) {
+      I8_STORE_NOCACHE(dst_v, v);
+      I8_STORE_NOCACHE(dst_v + 1, v);
+      I8_STORE_NOCACHE(dst_v + 2, v);
+      I8_STORE_NOCACHE(dst_v + 3, v);
+      I8_STORE_NOCACHE(dst_v + 4, v);
+      I8_STORE_NOCACHE(dst_v + 5, v);
+      I8_STORE_NOCACHE(dst_v + 6, v);
+      I8_STORE_NOCACHE(dst_v + 7, v);
+      dst_v += 8;
+      size -= 256;
+    }
+    FENCE();
+  }
+  dst = (u8*)dst_v;
+  memset_small(dst, value, size);
+}
+
+/**/
 template <typename T>
 static inline T broadcast_byte(const u8 byte)
 {
@@ -35,9 +82,10 @@ static inline void memset_sse(u8* dst,
                               const u8 value) 
 {
   I4 v = I4_SET1_8(value);
+  I4* dst_v = (I4*)dst;
   #pragma unroll
   for (u32 r = 0; r < REGISTER_COUNT; ++r) {
-    I4_STOREU((I4*)dst + r, v);
+    I4_STOREU(dst_v + r, v);
   }
 }
 
@@ -47,9 +95,10 @@ static inline void memset_avx(u8* dst,
                               const u8 value) 
 {
   I8 v = I8_SET1_8(value);
+  I8* dst_v = (I8*)dst;
   #pragma unroll
   for (u32 r = 0; r < REGISTER_COUNT; ++r) {
-    I8_STOREU((I8*)dst + r, v);
+    I8_STOREU(dst_v + r, v);
   }
 }
 
@@ -318,73 +367,5 @@ static inline void memset_small(u8* dst,
     case 127: memset_avx<2>(dst - 127, value); memset_avx<2>(dst - 64, value); break;
     case 256: memset_avx<8>(dst - 256, value); break;
   }
-}
-
-/**/
-template <bool DST_AVX_ALIGNED = false>
-static inline void memset(u8* dst, 
-                          const u8 value,
-                          u64 size)
-{
-  if (size <= 256) {
-    memset_small(dst, value, size);
-    return;
-  }
-  /*
-  const I8* src_v = (const I8*)src;
-  I8* dst_v = (I8*)dst;
-  if (!(DST_AVX_ALIGNED || Math::is_aligned<32>(dst))) {
-    u64 padding = (32 - (((size_t)dst) & 31)) & 31;
-    I8_STOREU(dst_v, I8_LOADU(src_v));
-    dst_v = (I8*)(dst + padding);
-    src_v = (I8*)(src + padding);
-    size -= padding;
-  }
-  u32 loop_count = (size >> 6);
-  if (size <= MEGABYTE) {
-    if (SRC_AVX_ALIGNED || Math::is_aligned<32>(src_v)) {
-      for (u32 r = 0; r < loop_count; ++r) {
-        I8 m[2] = { I8_LOAD(src_v), I8_LOAD(src_v + 1) };
-        I8_STORE(dst_v, m[0]);
-        I8_STORE(dst_v + 1, m[1]);
-        dst_v += 2;
-        src_v += 2;
-        size -= 64;
-      }
-    } else {
-      for (u32 r = 0; r < loop_count; ++r) {
-        I8 m[2] = { I8_LOADU(src_v), I8_LOADU(src_v + 1) };
-        I8_STORE(dst_v, m[0]);
-        I8_STORE(dst_v + 1, m[1]);
-        dst_v += 2;
-        src_v += 2;
-        size -= 64;
-      }
-    }
-  } else {
-    if (SRC_AVX_ALIGNED || Math::is_aligned<32>(src_v)) {
-      for (u32 r = 0; r < loop_count; ++r) {
-        I8 m[2] = { I8_LOAD(src_v), I8_LOAD(src_v + 1) };
-        I8_STORE_NOCACHE(dst_v, m[0]);
-        I8_STORE_NOCACHE(dst_v + 1, m[1]);
-        dst_v += 2;
-        src_v += 2;
-        size -= 64;
-      }
-    } else {
-      for (u32 r = 0; r < loop_count; ++r) {
-        I8 m[2] = { I8_LOADU(src_v), I8_LOADU(src_v + 1) };
-        I8_STORE_NOCACHE(dst_v, m[0]);
-        I8_STORE_NOCACHE(dst_v + 1, m[1]);
-        dst_v += 2;
-        src_v += 2;
-        size -= 64;
-      }
-    }
-    FENCE();
-  }
-  src = (u8*)src_v;
-  dst = (u8*)dst_v;
-  memset_small(dst, src, size);*/
 }
 }
