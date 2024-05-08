@@ -1,7 +1,10 @@
-/* 'std/string/string.h'
+/* 'string/local_string.h'
 
-  + Stack-allocated and bound to CAPACITY length.
-  + Utilizes AVX for fast comparisons and copies.
+  + Recommended for small strings.
+  + Bound to CAPACITY length, which must be a multiple of 32 chars for AVX purposes.
+  + Allocated "local" to where it is created, so can be stack or heap.
+  + Bound to CAPACITY length.
+  + Utilizes AVX for faster operations.
 
     Path game engine: https://www.path.blog
 */
@@ -15,27 +18,24 @@ namespace Pathlib::String {
 
 /**/
 template <u64 CAPACITY>
-struct StackString
+struct LocalString
 {
-  static_assert(Math::is_multiple_of<32>(CAPACITY), 
-                "Template parameter CAPACITY must be a multiple of 32 (AVX-width).");
-
   /**/
   alignas(32) char str[CAPACITY];
   char scratch[32];
   u32 length;
   
   /**/
-  StackString()
+  LocalString()
   {
     clear();
   }
-  ~StackString() {}
+  ~LocalString() {}
   
   /**/
-  StackString(const char* string)
+  LocalString(const char* string)
   {
-    length = avx_strlen<CAPACITY, true>(string);
+    length = strlen<false, CAPACITY>(string);
     memcpy<true, false>(str, string, length + 1);
   }
 

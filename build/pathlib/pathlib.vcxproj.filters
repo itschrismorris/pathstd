@@ -72,7 +72,7 @@
     <ClInclude Include="..\..\include\string\strlen.h">
       <Filter>src\string</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\include\string\stack_string.h">
+    <ClInclude Include="..\..\include\string\local_string.h">
       <Filter>src\string</Filter>
     </ClInclude>
     <ClInclude Include="..\..\include\math\math.h">
