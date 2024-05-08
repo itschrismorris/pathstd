@@ -1,4 +1,4 @@
-/* 'mindows.h'
+﻿/* 'mindows.h'
 
   + Minimal interface to Windows API functions we use.
 
@@ -7,14 +7,17 @@
 
 #pragma once
 #include "mindows.h"
+#include "types.h"
+#include "string/strlen.h"
 
 namespace Pathlib::Win32 {
 
-static void printf(const char* message)
+/**/
+static void console(const char8_t* message)
 {
   void* out = GetStdHandle(STD_OUTPUT_HANDLE);
-  unsigned long written = 0;
-  WriteFile(out, L"Hello World!!", 26, &written, nullptr);
+  u64 length = String::strlen(message);
+  WriteConsoleA(out, message, length, nullptr, nullptr);
   CloseHandle(out);
 }
 }

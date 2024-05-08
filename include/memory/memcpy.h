@@ -1,10 +1,5 @@
-/* 'memory/memcpy.h'
-
-  + Copies 'size' bytes from 'src' to 'dst'.
-  + Uses AVX and an optimized jump table for small sizes.
-  + Fast path for AVX-aligned src and dst.
-
-    Path: https://www.path.blog
+/*
+  Documentation: https://www.path.blog/docs/memcpy.html
 */
 
 #pragma once
@@ -79,9 +74,7 @@ static inline void memcpy(u8* dst,
     }
     FENCE();
   }
-  src = (u8*)src_v;
-  dst = (u8*)dst_v;
-  memcpy_small(dst, src, size);
+  memcpy_small((u8*)dst_v, (u8*)src_v, size);
 }
 
 /**/

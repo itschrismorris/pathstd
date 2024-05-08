@@ -196,11 +196,11 @@
     <ClInclude Include="..\..\include\memory\memset.h" />
     <ClInclude Include="..\..\include\memory\memory.h" />
     <ClInclude Include="..\..\include\string\strlen.h" />
-    <ClInclude Include="..\..\include\string\local_string.h" />
+    <ClInclude Include="..\..\include\string\local_wstring.h" />
     <ClInclude Include="..\..\include\timer\timer.h" />
     <ClInclude Include="..\..\include\types.h" />
     <ClInclude Include="..\..\include\win32\mindows.h" />
-    <ClInclude Include="..\..\include\win32\printf.h" />
+    <ClInclude Include="..\..\include\win32\console.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

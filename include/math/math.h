@@ -1,6 +1,5 @@
-/* 'std/math.h'
-
-    Path: https://www.path.blog
+/*
+  Documentation: https://www.path.blog/docs/math.html
 */
 
 #pragma once
@@ -288,4 +287,4 @@ namespace Pathlib::Math {
 #define I8_XOR(A, B) _mm256_xor_si256(A, B)
 #define I8_CMP_EQ(A, B) _mm256_cmpeq_epi32(A, B)
 #define I8_CMP_EQ8(A, B) _mm256_cmpeq_epi8(A, B)
-#define I8_CMP_EQ8_MASK(A, B) _mm256_cmpeq_epi8_mask(A, B)
+#define I8_CMP_EQ16(A, B) _mm256_cmpeq_epi16(A, B)

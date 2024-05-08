@@ -75,7 +75,7 @@
     <ClInclude Include="..\..\include\string\strlen.h">
       <Filter>src\string</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\include\string\local_string.h">
+    <ClInclude Include="..\..\include\string\local_wstring.h">
       <Filter>src\string</Filter>
     </ClInclude>
     <ClInclude Include="..\..\include\math\math.h">
@@ -105,7 +105,7 @@
     <ClInclude Include="..\..\include\win32\mindows.h">
       <Filter>src\win32</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\include\win32\printf.h">
+    <ClInclude Include="..\..\include\win32\console.h">
       <Filter>src\win32</Filter>
     </ClInclude>
   </ItemGroup>

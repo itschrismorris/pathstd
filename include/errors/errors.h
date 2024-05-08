@@ -9,7 +9,7 @@
 #pragma once
 #include "../types.h"
 #include "../log/log.h"
-#include "../string/local_string.h"
+#include "../string/local_wstring.h"
 
 namespace Pathlib::Errors {
 
@@ -25,7 +25,7 @@ enum Codes
 };
 
 /**/
-static String::LocalString<32> extra;
+static String::LocalWString<32> extra;
 
 /**/
 static const wchar_t* eng_error_strings[] = 

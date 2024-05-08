@@ -1,10 +1,5 @@
-/* 'memory/memset.h'
-
-  + Writes 'size' bytes of a value into 'dst'.
-  + Uses AVX and an optimized jump table for small sizes.
-  + Fast path for AVX-aligned dst.
-
-    Path: https://www.path.blog
+/*
+  Documentation: https://www.path.blog/docs/memset.html
 */
 
 #pragma once
