@@ -2,9 +2,9 @@
 
 * Pathlib is a small and highly optimized library of common functions and containers, used in the Path game engine.
 * No dependency on any standard library (libc, libc++, etc.).
-* Written in C++, utilizing AVX2 instructions.
+* Written in C++20, with full unicode support.
 * Only dependency is mimalloc, for memory management: https://github.com/microsoft/mimalloc.
-* Requires Windows and the AVX2 instruction set.
+* Requires Windows, C++20, and the AVX2 instruction set.
 * Documentation at www.path.blog.
 
 ---------------------------
