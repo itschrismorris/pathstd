@@ -1,10 +1,10 @@
 /* 'memory/memset.h'
 
-  + Copies 'size' bytes of a value into 'dst'.
+  + Writes 'size' bytes of a value into 'dst'.
   + Uses AVX and an optimized jump table for small sizes.
   + Fast path for AVX-aligned dst.
 
-    Path game engine: https://www.path.blog
+    Path: https://www.path.blog
 */
 
 #pragma once

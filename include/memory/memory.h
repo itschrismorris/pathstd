@@ -1,10 +1,10 @@
-/* 'std/memory/memory.h' 
+/* 'memory/memory.h' 
 
   + Uses Microsoft's mimalloc library: https://github.com/microsoft/mimalloc
   + All allocations are 128-byte aligned for memory access efficiency.
   + Names are fed to memory profiler, but are optional.
 
-    Path game engine: https://www.path.blog
+    Path: https://www.path.blog
 */
 
 #pragma once

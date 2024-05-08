@@ -6,7 +6,7 @@
   + Bound to CAPACITY length.
   + Utilizes AVX for faster operations.
 
-    Path game engine: https://www.path.blog
+    Path: https://www.path.blog
 */
 
 #pragma once

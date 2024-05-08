@@ -5,7 +5,7 @@
   + Fast path for AVX-aligned short (<= 512 chars) strings.
   + Reads a cache-line (64B) per iteration and combines masks, to perform a 64-bit leading zero count.
 
-    Path game engine: https://www.path.blog
+    Path: https://www.path.blog
 */
 
 #pragma once
@@ -36,7 +36,7 @@ static inline u64 strlen(const char* str)
     i64 ignore_bytes = str - (const char*)str_v;
     u64 mask32 = (u32)I8_MOVEMASK8(I8_CMP_EQ8(I8_LOAD(str_v), zero));
     u64 mask64 = (u32)I8_MOVEMASK8(I8_CMP_EQ8(I8_LOAD(str_v + 1), zero));
-    u64 zero_mask_64 = (mask32 | (mask64 << 32)) & (UINT64_MAX << ignore_bytes);
+    u64 zero_mask_64 = (mask32 | (mask64 << 32)) & (U64_MAX << ignore_bytes);
     if (zero_mask_64) {
       return (Math::lsb_set(zero_mask_64) - ignore_bytes);
     }

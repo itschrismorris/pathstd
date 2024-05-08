@@ -3,7 +3,7 @@
   + Open-addressed, relocating (Robinhood), not thread-safe, no duplicate keys.
   + Key/Value pairs are stored contigously for fast iterating.
 
-    Path game engine: https://www.path.blog
+    Path: https://www.path.blog
 */
 
 #pragma once

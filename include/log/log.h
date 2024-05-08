@@ -2,7 +2,7 @@
 
   + All logging includes timestamps.
 
-    Path game engine: https://www.path.blog
+    Path: https://www.path.blog
 */
 
 #pragma once

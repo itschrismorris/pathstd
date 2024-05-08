@@ -1,6 +1,6 @@
 /* 'std/math.h'
 
-    Path game engine: https://www.path.blog
+    Path: https://www.path.blog
 */
 
 #pragma once

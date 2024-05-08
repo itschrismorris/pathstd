@@ -1,5 +1,8 @@
 /* 'std/types.h'
 
+  + Mostly shorthand of long-winded types.
+
+    Path: https://www.path.blog
 */
 
 #pragma once
@@ -38,6 +41,6 @@ struct f32_4 { f32 x, y, z, w; };
 #define I4 __m128i
 #define I8 __m256i
 #define F4_SCALAR alignas(16) f32
-#define F8_SCALAR alignas(32) f32
 #define I4_SCALAR alignas(16) i32
+#define F8_SCALAR alignas(32) f32
 #define I8_SCALAR alignas(32) i32

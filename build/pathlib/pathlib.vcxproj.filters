@@ -29,6 +29,9 @@
     <Filter Include="src\intrinsics">
       <UniqueIdentifier>{371e1ce6-3735-4f21-bed2-41447b41c6b2}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\win32">
+      <UniqueIdentifier>{16d2d0b7-e002-4fd8-9b3e-c83e9186dfe6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\errors\errors.cpp">
@@ -98,6 +101,12 @@
     </ClInclude>
     <ClInclude Include="..\..\include\intrinsics\xmmintrin.h">
       <Filter>src\intrinsics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\win32\mindows.h">
+      <Filter>src\win32</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\win32\printf.h">
+      <Filter>src\win32</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

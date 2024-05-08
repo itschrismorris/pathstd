@@ -3,7 +3,7 @@
   + A success will return >= 0.
   + Anything < 0 is an error code from the Codes enum, that associates with an error_string[].
 
-    Path game engine: https://www.path.blog
+    Path: https://www.path.blog
 */
 
 #pragma once

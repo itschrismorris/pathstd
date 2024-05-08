@@ -4,7 +4,7 @@
   + Uses AVX and an optimized jump table for small sizes.
   + Fast path for AVX-aligned src and dst.
 
-    Path game engine: https://www.path.blog
+    Path: https://www.path.blog
 */
 
 #pragma once
