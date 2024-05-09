@@ -1,8 +1,5 @@
-﻿/* 'mindows.h'
-
-  + Minimal interface to Windows API functions we use.
-
-    Path: https://www.path.blog
+﻿/*
+  Documentation: https://www.path.blog/docs/console.html
 */
 
 #pragma once
@@ -16,11 +13,11 @@ namespace Pathlib::Win32 {
 
 /**/
 template <typename T>
-void print_arg(void* out,
-               T arg)
+inline void print_arg(void* out,
+                      T arg)
 {
-  static_assert(!SAME_TYPE(T, const char*), "Argument to Win32::console() must use utf8 type (example: u8\"Hello world\")");
-  static_assert(!SAME_TYPE(T, char*), "Argument to Win32::console() must use utf8 type (example: u8\"Hello world\")");
+  static_assert(!SAME_TYPE(T, const char*), "String literals must be prepended with u8 for utf-8 encoding: u8\"Hello world!\"");
+  static_assert(!SAME_TYPE(T, char*), "Replace string usages of char with utf8, for utf-8 encoding.");
   if constexpr (SAME_TYPE(T, const utf8*) || SAME_TYPE(T, utf8*)) {
     u64 length = String::strlen(arg);
     WriteConsoleA(out, arg, length, nullptr, nullptr);
@@ -39,8 +36,16 @@ void print_arg(void* out,
 }
 
 /**/
+template <u64 CAPACITY>
+inline void print_arg(void* out,
+                      String::LocalString<CAPACITY> arg)
+{
+  WriteConsoleA(out, arg.str, arg.length, nullptr, nullptr);
+}
+
+/**/
 template <typename... Args>
-static void console(Args... args)
+static inline void console(Args&&... args)
 {
   void* out = GetStdHandle(STD_OUTPUT_HANDLE);
   (print_arg(out, args), ...);

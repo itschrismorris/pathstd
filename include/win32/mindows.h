@@ -1,8 +1,5 @@
-/* 'mindows.h'
-
-  + Minimal interface to Windows API functions we use.
-
-    Path: https://www.path.blog
+/*
+  Documentation: https://www.path.blog/docs/mindows.html
 */
 
 #pragma once

@@ -311,7 +311,7 @@ namespace Pathlib::Math {
 #define I8_STORE(A, B) _mm256_store_si256(A, B)
 #define I8_STOREU(A, B) _mm256_storeu_si256(A, B)
 #define I8_STORE_NOCACHE(A, B) _mm256_stream_si256(A, B)
-#define I8_MOVEMASK8(A) _mm256_movemask_epi8(A)
+#define I8_MOVEMASK(A) _mm256_movemask_epi8(A)
 #define I8_SETZERO() _mm256_setzero_si256()
 #define I8_SET(A, B, C, D, E, F, G, H) _mm256_setr_epi32(A, B, C, D, E, F, G, H)
 #define I8_SET1(A) _mm256_set1_epi32(A)

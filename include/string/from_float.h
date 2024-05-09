@@ -42,7 +42,7 @@ static inline utf8* from_float(T value,
   utf8* fraction_string = fractional_start;
   fraction_string = from_int((i32)fractional_number, fraction_string);
   u32 fraction_length = strlen(fraction_string);
-  Memory::memcpy((u8*)fractional_start, (u8*)fraction_string, sizeof(utf8) * fraction_length);
+  Memory::memcpy(fractional_start, fraction_string, sizeof(utf8) * fraction_length);
   output[whole_number_length + 1 + 6] = '\0';
   return output;
 }

@@ -41,10 +41,10 @@ static inline utf8* from_int(T value,
     u64 const old = v;
     output -= 2;
     v /= 100;
-    Memory::memcpy((u8*)output, (u8*)&two_digits[old - (v * 100)], sizeof(u16));
+    Memory::memcpy(output, &two_digits[old - (v * 100)], sizeof(u16));
   }
   output -= 2;
-  Memory::memcpy((u8*)output, (u8*)&two_digits[v], sizeof(u16));
+  Memory::memcpy(output, &two_digits[v], sizeof(u16));
   if (value < 0) {
     output[(v < 10) - 1] = '-';
     return &output[(v < 10) - 1];
