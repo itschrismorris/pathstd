@@ -21,9 +21,9 @@ struct Log
   ~Log() {}
 
   /**/
-  Error initiate(const wchar_t* log_path);
+  Error initiate(const utf8* log_path);
   void shutdown();
-  Error log(const wchar_t* message, ...);
-  Error error(const wchar_t* message, ...);
+  Error log(const utf8* message, ...);
+  Error error(const utf8* message, ...);
 };
 }

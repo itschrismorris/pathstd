@@ -11,7 +11,7 @@ namespace Pathlib::String {
 /**/
 template <u32 AVX_ALIGNED = false, 
           u64 MAX_LENGTH = U64_MAX>
-static inline u64 strlen(const char8_t* str)
+static inline u64 strlen(const utf8* str)
 {
   I8 zero = I8_SETZERO();
   if ((MAX_LENGTH <= 512) && (AVX_ALIGNED || Math::is_aligned<32>(str))) {

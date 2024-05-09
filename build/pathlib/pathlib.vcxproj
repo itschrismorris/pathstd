@@ -195,8 +195,10 @@
     <ClInclude Include="..\..\include\memory\memcpy.h" />
     <ClInclude Include="..\..\include\memory\memset.h" />
     <ClInclude Include="..\..\include\memory\memory.h" />
+    <ClInclude Include="..\..\include\string\ftoa.h" />
+    <ClInclude Include="..\..\include\string\itoa.h" />
     <ClInclude Include="..\..\include\string\strlen.h" />
-    <ClInclude Include="..\..\include\string\local_wstring.h" />
+    <ClInclude Include="..\..\include\string\local_string.h" />
     <ClInclude Include="..\..\include\timer\timer.h" />
     <ClInclude Include="..\..\include\types.h" />
     <ClInclude Include="..\..\include\win32\mindows.h" />

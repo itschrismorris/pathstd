@@ -4,7 +4,7 @@
 namespace Pathlib {
 
 /**/
-Error Log::initiate(const wchar_t* log_path)
+Error Log::initiate(const utf8* log_path)
 {
   /*
   errno_t _errno = _wfopen_s(&file, log_path, L"w");
@@ -26,7 +26,7 @@ void Log::shutdown()
 }
 
 /**/
-Error Log::log(const wchar_t* message, ...)
+Error Log::log(const utf8* message, ...)
 {
   /*
   if (file) {
@@ -55,7 +55,7 @@ Error Log::log(const wchar_t* message, ...)
 }
 
 /**/
-Error Log::error(const wchar_t* message, ...)
+Error Log::error(const utf8* message, ...)
 {
   /*
   if (file) {

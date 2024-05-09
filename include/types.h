@@ -9,6 +9,7 @@
 
 #define EXPORT __declspec(dllexport)
 #define U64_MAX 0xFFFFFFFFFFFFFFFFLLU
+#define SAME_TYPE(A, B) __is_same(A, B)
 
 /**/
 typedef signed __int32 Error;
@@ -23,6 +24,7 @@ typedef   signed __int64 i64;
 typedef __int16 f16;
 typedef float  f32;
 typedef double f64;
+typedef char8_t utf8;
 
 /**/
 struct i32_2 { i32 x, y; };

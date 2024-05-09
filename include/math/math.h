@@ -9,19 +9,30 @@
 namespace Pathlib::Math {
 
   /**/
-  template<typename T>
+  template <typename T>
   constexpr inline T min(T a, T b) 
   { 
     return (a < b) ? a : b; 
   }
 
   /**/
-  template<typename T>
+  template <typename T>
   constexpr inline T max(T a, T b) 
   { 
-    return (a > b) ? a : b; 
+    return (a > b) ? a : b;
   }
-  
+
+  /**/
+  template <typename T>
+  constexpr inline T abs(T value)
+  {
+    if constexpr(SAME_TYPE(T, i32)) {
+      return __builtin_abs(value);
+    } else if constexpr(SAME_TYPE(T, f32)) {
+      return __builtin_fabsf(value);
+    }
+  }
+   
   /**/
   template<typename T>
   constexpr inline bool is_pot(T value)
@@ -30,7 +41,7 @@ namespace Pathlib::Math {
   }
 
   /**/
-  template<u32 MULTIPLE, typename T>
+  template <u32 MULTIPLE, typename T>
   constexpr inline bool is_multiple_of(T value)
   {
     if constexpr (Math::is_pot(MULTIPLE)) {
@@ -66,11 +77,10 @@ namespace Pathlib::Math {
   template <typename T>
   constexpr inline T next_pot(T value) 
   {
-    if constexpr (sizeof(T) == 4) {
-      value = Math::max(1, value);
+    static_assert(SAME_TYPE(T, u32) || SAME_TYPE(T, u64), "Argument for next_pot() must be unsigned.");
+    if constexpr (SAME_TYPE(T, u32)) {
       return (0x1 << (32 - __builtin_clz(value + (value == 0))));
-    } else {
-      value = Math::max(1LLU, value);
+    } else if constexpr (SAME_TYPE(T, u64)) {
       return (0x1LLU << (64 - __builtin_clzl(value + (value == 0))));
     }
   }
@@ -79,9 +89,10 @@ namespace Pathlib::Math {
   template <typename T>
   static inline T lsb_set(T value)
   {
-    if constexpr (sizeof(T) == 4) {
+    static_assert(SAME_TYPE(T, u32) || SAME_TYPE(T, u64), "Argument for lsb_set() must be unsigned.");
+    if constexpr (SAME_TYPE(T, u32)) {
       return _tzcnt_u32(value);
-    } else {
+    } else if constexpr (SAME_TYPE(T, u64)) {
       return _tzcnt_u64(value);
     }
   }
@@ -90,15 +101,16 @@ namespace Pathlib::Math {
   template <typename T>
   static inline T msb_set(T value)
   {
-    if constexpr (sizeof(T) == 4) {
+    static_assert(SAME_TYPE(T, u32) || SAME_TYPE(T, u64), "Argument for msb_set() must be unsigned.");
+    if constexpr (SAME_TYPE(T, u32)) {
       return _lzcnt_u32(value);
-    } else {
+    } else if constexpr (SAME_TYPE(T, u64)) {
       return _lzcnt_u64(value);
     }
   }
 
   /**/
-  template<u64 ALIGNMENT, typename T>
+  template <u64 ALIGNMENT, typename T>
   inline T* align_previous(T* ptr)
   {
     static_assert(Math::is_pot(ALIGNMENT), 
@@ -107,7 +119,7 @@ namespace Pathlib::Math {
   };
 
   /**/
-  template<u64 ALIGNMENT, typename T>
+  template <u64 ALIGNMENT, typename T>
   inline T* align_next(T* ptr)
   {
     static_assert(Math::is_pot(ALIGNMENT), 
@@ -116,7 +128,7 @@ namespace Pathlib::Math {
   };
 
   /**/
-  template<u64 ALIGNMENT, typename T>
+  template <u64 ALIGNMENT, typename T>
   inline bool is_aligned(T* ptr)
   {
     static_assert(Math::is_pot(ALIGNMENT), 

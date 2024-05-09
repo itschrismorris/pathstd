@@ -11,22 +11,22 @@ namespace Pathlib::String {
 
 /**/
 template <u64 CAPACITY>
-struct LocalWString
+struct LocalString
 {
   /**/
-  alignas(32) wchar_t str[CAPACITY];
+  alignas(32) utf8 str[CAPACITY];
   wchar_t scratch[32];
   u64 length;
   
   /**/
-  LocalWString()
+  LocalString()
   {
     clear();
   }
-  ~LocalWString() {}
+  ~LocalString() {}
   
   /**/
-  LocalWString(const char* string)
+  LocalString(const char* string)
   {
     length = strlen<false, CAPACITY>(string);
     memcpy<true, false>(str, string, length + 1);
