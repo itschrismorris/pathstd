@@ -328,7 +328,6 @@ static inline void memcpy(u8* dst,
         I8 m[2] = { I8_LOAD(src_v), I8_LOAD(src_v + 1) };
         I8_STORE(dst_v, m[0]);
         I8_STORE(dst_v + 1, m[1]);
-        PREFETCH_NOCACHE(dst_v + 2);
         dst_v += 2;
         src_v += 2;
         size -= 64;
@@ -338,7 +337,6 @@ static inline void memcpy(u8* dst,
         I8 m[2] = { I8_LOADU(src_v), I8_LOADU(src_v + 1) };
         I8_STORE(dst_v, m[0]);
         I8_STORE(dst_v + 1, m[1]);
-        PREFETCH_NOCACHE(dst_v + 2);
         dst_v += 2;
         src_v += 2;
         size -= 64;

@@ -10,53 +10,6 @@
 namespace Pathlib::Memory {
 
 /**/
-template <bool DST_AVX_ALIGNED = false>
-static inline void memset(u8* dst,
-                          const u8 value,
-                          u64 size)
-{
-  if (size <= 256) {
-    memset_small(dst, value, size);
-    return;
-  }
-  I8* dst_v = (I8*)dst;
-  I8 v = I8_SET1_8(value);
-  if (!(DST_AVX_ALIGNED || Math::is_aligned<32>(dst))) {
-    u64 padding = (32 - (((u64)dst) & 31)) & 31;
-    I8_STOREU(dst_v, v);
-    dst_v = (I8*)(dst + padding);
-    size -= padding;
-  }
-  if (size <= (MEGABYTE << 4)) {
-    u32 loop_count = (size >> 6);
-    for (u32 r = 0; r < loop_count; ++r) {
-      I8_STORE(dst_v, v);
-      I8_STORE(dst_v + 1, v);
-      PREFETCH_NOCACHE(dst_v + 2);
-      dst_v += 2;
-      size -= 64;
-    }
-  } else {
-    u32 loop_count = (size >> 8);
-    for (u32 r = 0; r < loop_count; ++r) {
-      I8_STORE_NOCACHE(dst_v, v);
-      I8_STORE_NOCACHE(dst_v + 1, v);
-      I8_STORE_NOCACHE(dst_v + 2, v);
-      I8_STORE_NOCACHE(dst_v + 3, v);
-      I8_STORE_NOCACHE(dst_v + 4, v);
-      I8_STORE_NOCACHE(dst_v + 5, v);
-      I8_STORE_NOCACHE(dst_v + 6, v);
-      I8_STORE_NOCACHE(dst_v + 7, v);
-      dst_v += 8;
-      size -= 256;
-    }
-    FENCE();
-  }
-  dst = (u8*)dst_v;
-  memset_small(dst, value, size);
-}
-
-/**/
 template <typename T>
 static inline T broadcast_byte(const u8 byte)
 {
@@ -362,5 +315,51 @@ static inline void memset_small(u8* dst,
     case 127: memset_avx<2>(dst - 127, value); memset_avx<2>(dst - 64, value); break;
     case 256: memset_avx<8>(dst - 256, value); break;
   }
+}
+
+/**/
+template <bool DST_AVX_ALIGNED = false>
+static inline void memset(u8* dst,
+                          const u8 value,
+                          u64 size)
+{
+  if (size <= 256) {
+    memset_small(dst, value, size);
+    return;
+  }
+  I8* dst_v = (I8*)dst;
+  I8 v = I8_SET1_8(value);
+  if (!(DST_AVX_ALIGNED || Math::is_aligned<32>(dst))) {
+    u64 padding = (32 - (((u64)dst) & 31)) & 31;
+    I8_STOREU(dst_v, v);
+    dst_v = (I8*)(dst + padding);
+    size -= padding;
+  }
+  if (size <= (MEGABYTE << 4)) {
+    u32 loop_count = (size >> 6);
+    for (u32 r = 0; r < loop_count; ++r) {
+      I8_STORE(dst_v, v);
+      I8_STORE(dst_v + 1, v);
+      dst_v += 2;
+      size -= 64;
+    }
+  } else {
+    u32 loop_count = (size >> 8);
+    for (u32 r = 0; r < loop_count; ++r) {
+      I8_STORE_NOCACHE(dst_v, v);
+      I8_STORE_NOCACHE(dst_v + 1, v);
+      I8_STORE_NOCACHE(dst_v + 2, v);
+      I8_STORE_NOCACHE(dst_v + 3, v);
+      I8_STORE_NOCACHE(dst_v + 4, v);
+      I8_STORE_NOCACHE(dst_v + 5, v);
+      I8_STORE_NOCACHE(dst_v + 6, v);
+      I8_STORE_NOCACHE(dst_v + 7, v);
+      dst_v += 8;
+      size -= 256;
+    }
+    FENCE();
+  }
+  dst = (u8*)dst_v;
+  memset_small(dst, value, size);
 }
 }

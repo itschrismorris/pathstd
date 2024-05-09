@@ -9,6 +9,9 @@
 
 #define EXPORT __declspec(dllexport)
 #define U64_MAX 0xFFFFFFFFFFFFFFFFLLU
+#define U32_MAX 0xFFFFFFFFU
+#define I64_MAX 0x7FFFFFFFFFFFFFFFLL
+#define I32_MAX 0x7FFFFFFF
 #define SAME_TYPE(A, B) __is_same(A, B)
 
 /**/

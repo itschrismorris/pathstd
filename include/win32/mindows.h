@@ -28,6 +28,19 @@ typedef struct _OVERLAPPED {
 } OVERLAPPED, *LPOVERLAPPED;
 
 /**/
+typedef union _LARGE_INTEGER {
+  struct {
+    unsigned long LowPart;
+    long HighPart;
+  } DUMMYSTRUCTNAME;
+  struct {
+    unsigned long LowPart;
+    long HighPart;
+  } u;
+  long long QuadPart;
+} LARGE_INTEGER;
+
+/**/
 __declspec(dllimport) int __stdcall SetConsoleOutputCP(unsigned int wCodePageID);
 __declspec(dllimport) void* __stdcall GetStdHandle(unsigned long nStdHandle);
 __declspec(dllimport) int __stdcall CloseHandle(void* hObject);
@@ -38,4 +51,6 @@ __declspec(dllimport) int __stdcall WriteConsoleA(void*  hConsoleOutput,
                                                   void* lpReserved);
 __declspec(dllimport) int __stdcall WriteFile(void* hFile, const void* lpBuffer, unsigned long nNumberOfBytesToWrite,
                                               unsigned long* lpNumberOfBytesWritten, LPOVERLAPPED lpOverlapped);
+__declspec(dllimport) int __stdcall QueryPerformanceFrequency(LARGE_INTEGER* lpFrequency);
+__declspec(dllimport) int __stdcall QueryPerformanceCounter(LARGE_INTEGER *lpPerformanceCount);
 }

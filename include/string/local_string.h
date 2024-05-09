@@ -15,7 +15,7 @@ struct LocalString
 {
   /**/
   alignas(32) utf8 str[CAPACITY];
-  wchar_t scratch[32];
+  utf8 scratch[32];
   u64 length;
   
   /**/
