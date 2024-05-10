@@ -1,4 +1,4 @@
-# pathlib
+# Pathlib
 
 * Pathlib is a highly optimized library of common functions and containers, used in [Path](https://path.blog).
 * Written in C++20, with full unicode support, and zero use of any standard library (libc, libc++, etc.).
