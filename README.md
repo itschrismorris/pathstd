@@ -7,7 +7,7 @@
 
 ---------------------------
 
-- pathlib
+- pathlib/include
   - memory
     - <b>['memcpy.h'](https://path.blog/docs/memcpy.html)</b>
     - <b>['memset.h'](https://path.blog/docs/memset.html)</b>
