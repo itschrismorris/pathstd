@@ -12,19 +12,19 @@
 - pathlib
   - memory
     - <b>['memcpy.h'](https://path.blog/docs/memcpy.html)</b>
-    - <b>'avx_memcmp'</b>
     - <b>['memset.h'](https://path.blog/docs/memset.html)</b>
   - string
+    - <b>['local_string.h'](https://path.blog/docs/local_string.html)</b>
     - <b>['strlen.h'](https://path.blog/docs/strlen.html)</b>
-    - <b>'stack_string.h'</b>
-  - containers
-    - <b>'stack_vector.h'</b>
-    - <b>'hashmap.h'</b>
-    - <b>'pool.h'</b>
-    - <b>'pools.h'</b>
-    - <b>'heap.h'</b>
-    - <b>'virtual_heap.h'</b>
-    - <b>'spsc_queue.h'</b>
+    - <b>['from_int.h'](https://path.blog/docs/from_int.html)</b>
+    - <b>['from_float.h'](https://path.blog/docs/from_float.html)</b>
+  - math
+    - <b>['math.h'](https://path.blog/docs/math.html)</b>
+    - <b>['simd_math.h'](https://path.blog/docs/simd_math.html)</b>
+  - win32
+    - <b>['mindows.h'](https://path.blog/docs/mindows.html)</b>
+    - <b>['console.h'](https://path.blog/docs/console.html)</b>
+    
 
 ---------------------------
 
