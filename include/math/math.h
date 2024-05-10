@@ -26,7 +26,7 @@ namespace Pathlib::Math {
   template <typename T>
   constexpr inline T abs(T value)
   {
-    if constexpr (SAME_TYPE(T, i32)) {
+    if constexpr (SAME_TYPE(T, i32) || SAME_TYPE(T, i16) || SAME_TYPE(T, i8)) {
       return __builtin_abs(value);
     } else if constexpr (SAME_TYPE(T, i64)) {
       return __builtin_llabs(value);
@@ -105,9 +105,9 @@ namespace Pathlib::Math {
   template <typename T>
   constexpr inline T next_pot(T value) 
   {
-    if constexpr (SAME_TYPE(T, u32)) {
+    if constexpr (sizeof(T) == 4) {
       return (0x1 << (32 - __builtin_clz(value + (value == 0))));
-    } else if constexpr (SAME_TYPE(T, u64)) {
+    } else if constexpr (sizeof(T) == 8) {
       return (0x1LLU << (64 - __builtin_clzl(value + (value == 0))));
     }
   }
@@ -116,9 +116,9 @@ namespace Pathlib::Math {
   template <typename T>
   static inline T lsb_set(T value)
   {
-    if constexpr (SAME_TYPE(T, u32)) {
+    if constexpr (sizeof(T) == 4) {
       return _tzcnt_u32(value);
-    } else if constexpr (SAME_TYPE(T, u64)) {
+    } else if constexpr (sizeof(T) == 8) {
       return _tzcnt_u64(value);
     }
   }
@@ -127,9 +127,9 @@ namespace Pathlib::Math {
   template <typename T>
   static inline T msb_set(T value)
   {
-    if constexpr (SAME_TYPE(T, u32)) {
+    if constexpr (sizeof(T) == 4) {
       return _lzcnt_u32(value);
-    } else if constexpr (SAME_TYPE(T, u64)) {
+    } else if constexpr (sizeof(T) == 8) {
       return _lzcnt_u64(value);
     }
   }
