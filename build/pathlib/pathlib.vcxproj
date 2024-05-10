@@ -192,6 +192,7 @@
     <ClInclude Include="..\..\include\intrinsics\xmmintrin.h" />
     <ClInclude Include="..\..\include\log\log.h" />
     <ClInclude Include="..\..\include\math\math.h" />
+    <ClInclude Include="..\..\include\math\simd_math.h" />
     <ClInclude Include="..\..\include\memory\memcpy.h" />
     <ClInclude Include="..\..\include\memory\memset.h" />
     <ClInclude Include="..\..\include\memory\memory.h" />

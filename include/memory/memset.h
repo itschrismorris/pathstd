@@ -6,6 +6,7 @@
 #include "types.h"
 #include "memory/memory.h"
 #include "math/math.h"
+#include "math/simd_math.h"
 
 namespace Pathlib::Memory {
 

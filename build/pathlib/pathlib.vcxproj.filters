@@ -114,5 +114,8 @@
     <ClInclude Include="..\..\include\string\from_float.h">
       <Filter>src\string</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\include\math\simd_math.h">
+      <Filter>src\math</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
