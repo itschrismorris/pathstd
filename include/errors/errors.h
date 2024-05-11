@@ -16,28 +16,31 @@ namespace Pathlib::Errors {
 /**/
 enum Codes
 { 
-  NONE = 0,
-  UNKNOWN = -1,
-  FILE_OPEN = -2,
-  FILE_HANDLE_NULL = -3,
-  LOCAL_TIME = -4,
-  PRINT_TO_LOG = -5,
+  ERROR_NONE = 0,
+  ERROR_UNKNOWN = -1,
+  ERROR_INITIALIZING = -2,
+  ERROR_FILE_OPEN = -3,
+  ERROR_FILE_HANDLE_NULL = -4,
+  ERROR_LOCAL_TIME = -5,
+  ERROR_PRINT_TO_LOG = -6,
 };
 
 /**/
 static String::LocalString<32> extra;
 
 /**/
-static const wchar_t* eng_error_strings[] = 
+static const utf8* error_strings_eng[] = 
 { 
-  L"Success",
-  L"Unknown error",
-  L"Error opening file",
-  L"File handle was null",
-  L"Failed to get localtime",
-  L"Failed to print to log file"
+  u8"Success.",
+  u8"Unknown error.",
+  u8"Error initializing.",
+  u8"Error opening file.",
+  u8"File handle was null.",
+  u8"Failed to get localtime.",
+  u8"Failed to print to log file."
 };
 
 /**/
-bool error(Error error);
+bool log_on_error(Error error);
+bool popup_on_error(Error error);
 }

@@ -46,6 +46,9 @@
     <ClCompile Include="..\..\src\memory\memory.cpp">
       <Filter>src\memory</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\pathlib.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\include\types.h">
@@ -116,6 +119,9 @@
     </ClInclude>
     <ClInclude Include="..\..\include\math\simd_math.h">
       <Filter>src\math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\pathlib.h">
+      <Filter>src</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -1,7 +1,5 @@
-/* 'std/timer/timer.h'
-
-
-    Path: https://www.path.blog
+/*
+  Documentation: https://www.path.blog/docs/timer.html
 */
 
 #pragma once

@@ -1,8 +1,5 @@
-/* 'std/types.h'
-
-  + Mostly shorthand of long-winded types.
-
-    Path: https://www.path.blog
+/*
+  Documentation: https://www.path.blog/docs/types.html
 */
 
 #pragma once
@@ -24,7 +21,6 @@ typedef unsigned __int32 u32;
 typedef   signed __int32 i32;
 typedef unsigned __int64 u64;
 typedef   signed __int64 i64;
-typedef __int16 f16;
 typedef float  f32;
 typedef double f64;
 typedef char8_t utf8;

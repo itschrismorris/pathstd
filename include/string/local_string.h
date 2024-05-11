@@ -3,12 +3,12 @@
 */
 
 #pragma once
-#include "../memory/memcpy.h"
-#include "../memory/memset.h"
-#include "../string/strlen.h"
-#include "../string/from_float.h"
-#include "../string/from_int.h"
-#include "../types.h"
+#include "memory/memcpy.h"
+#include "memory/memset.h"
+#include "string/strlen.h"
+#include "string/from_float.h"
+#include "string/from_int.h"
+#include "types.h"
 
 namespace Pathlib::String {
 

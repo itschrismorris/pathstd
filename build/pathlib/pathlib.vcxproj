@@ -178,6 +178,7 @@
     <ClCompile Include="..\..\src\errors\errors.cpp" />
     <ClCompile Include="..\..\src\log\log.cpp" />
     <ClCompile Include="..\..\src\memory\memory.cpp" />
+    <ClCompile Include="..\..\src\pathlib.cpp" />
     <ClCompile Include="..\..\src\timer\timer.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -196,6 +197,7 @@
     <ClInclude Include="..\..\include\memory\memcpy.h" />
     <ClInclude Include="..\..\include\memory\memset.h" />
     <ClInclude Include="..\..\include\memory\memory.h" />
+    <ClInclude Include="..\..\include\pathlib.h" />
     <ClInclude Include="..\..\include\string\from_float.h" />
     <ClInclude Include="..\..\include\string\from_int.h" />
     <ClInclude Include="..\..\include\string\strlen.h" />

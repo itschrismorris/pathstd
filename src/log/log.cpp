@@ -1,28 +1,28 @@
 #include "log/log.h"
 #include "errors/errors.h"
+using namespace Pathlib::Errors;
 
 namespace Pathlib {
 
 /**/
 Error Log::initiate(const utf8* log_path)
 {
-  /*
-  errno_t _errno = _wfopen_s(&file, log_path, L"w");
-  if ((_errno > 0) || (!file)) {
-    // TODO: Get string from errno, and add it to our extra error information string.
-    return Errors::FILE_OPEN;
-  }*/
-  return Errors::NONE;
+  if (log_path) {
+    file = CreateFileA(log_path, GENERIC_WRITE, 0, nullptr, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, nullptr);
+    if (file == INVALID_HANDLE_VALUE) {
+      return ERROR_FILE_OPEN;
+    }
+  }
+  return ERROR_NONE;
 }
 
 /**/
 void Log::shutdown()
 {
-  /*
   if (file) {
-    fclose(file);
+    CloseHandle(file);
     file = nullptr;
-  }*/
+  }
 }
 
 /**/
@@ -51,7 +51,7 @@ Error Log::log(const utf8* message, ...)
     return Errors::FILE_HANDLE_NULL;
   }*/
 
-  return Errors::NONE;
+  return ERROR_NONE;
 }
 
 /**/
@@ -80,6 +80,6 @@ Error Log::error(const utf8* message, ...)
     return Errors::FILE_HANDLE_NULL;
   }*/
 
-  return Errors::NONE;
+  return ERROR_NONE;
 }
 }
