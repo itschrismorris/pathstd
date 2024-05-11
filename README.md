@@ -8,6 +8,7 @@
 ---------------------------
 
 - pathlib/include
+  - <b>['types.h'](https://path.blog/docs/types.html)</b>
   - memory
     - <b>['memcpy.h'](https://path.blog/docs/memcpy.html)</b>
     - <b>['memset.h'](https://path.blog/docs/memset.html)</b>
