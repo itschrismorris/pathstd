@@ -133,8 +133,8 @@ struct LocalString
     static_assert(!SAME_TYPE(T, char*), "Replace string usages of char with utf8, for utf-8 encoding.");
     if constexpr (SAME_TYPE(T, const utf8*) || SAME_TYPE(T, utf8*)) {
       return arg;
-    } else if constexpr (SAME_TYPE(T, i32) || SAME_TYPE(T, i64) || 
-                         SAME_TYPE(T, u32) || SAME_TYPE(T, u64)) {
+    } else if constexpr (SAME_TYPE(T, i8) || SAME_TYPE(T, i16) || SAME_TYPE(T, i32) || SAME_TYPE(T, i64) || 
+                         SAME_TYPE(T, u8) || SAME_TYPE(T, u16) || SAME_TYPE(T, u32) || SAME_TYPE(T, u64)) {
       utf8 buffer[32];
       return String::from_int(arg, buffer);
     } else if constexpr (SAME_TYPE(T, f32) || SAME_TYPE(T, f64)) {

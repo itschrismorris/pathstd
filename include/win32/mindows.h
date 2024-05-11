@@ -59,7 +59,7 @@ __declspec(dllimport) int __stdcall SetConsoleOutputCP(UINT wCodePageID);
 __declspec(dllimport) HANDLE __stdcall GetStdHandle(DWORD nStdHandle);
 __declspec(dllimport) int __stdcall CloseHandle(HANDLE hObject);
 __declspec(dllimport) int __stdcall WriteConsoleA(HANDLE  hConsoleOutput,
-                                                  const HANDLE lpBuffer,
+                                                  const void* lpBuffer,
                                                   DWORD nNumberOfCharsToWrite,
                                                   DWORD* lpNumberOfCharsWritten,
                                                   HANDLE lpReserved);

@@ -28,20 +28,18 @@ typedef char8_t utf8;
 /**/
 struct i32_2 { i32 x, y; };
 struct i32_3 { i32 x, y, z; };
-struct i32_4 { i32 x, y, z, w; };
+struct alignas(16) i32_4 { i32 x, y, z, w; };
+struct alignas(32) i32_8 { i32_4 lo, hi; };
 struct u32_2 { u32 x, y; };
 struct u32_3 { u32 x, y, z; };
-struct u32_4 { u32 x, y, z, w; };
+struct alignas(16) u32_4 { u32 x, y, z, w; };
+struct alignas(32) u32_8 { u32_4 lo, hi; };
 struct f32_2 { f32 x, y; };
 struct f32_3 { f32 x, y, z; };
-struct f32_4 { f32 x, y, z, w; };
+struct alignas(16) f32_4 { f32 x, y, z, w; };
+struct alignas(32) f32_8 { f32_4 lo, hi; };
 
-
-#define F4 __m128
-#define F8 __m256
 #define I4 __m128i
 #define I8 __m256i
-#define F4_SCALAR alignas(16) f32
-#define I4_SCALAR alignas(16) i32
-#define F8_SCALAR alignas(32) f32
-#define I8_SCALAR alignas(32) i32
+#define F4 __m128
+#define F8 __m256
