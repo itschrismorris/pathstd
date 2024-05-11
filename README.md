@@ -22,8 +22,3 @@
   - win32
     - <b>['mindows.h'](https://path.blog/docs/mindows.html)</b>
     - <b>['console.h'](https://path.blog/docs/console.html)</b>
-    
-
----------------------------
-
-\* Optimized hash-prospector results: https://github.com/skeeto/hash-prospector/issues/19#issuecomment-1120105785
