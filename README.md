@@ -1,31 +1,24 @@
-# pathlib
+# Pathlib
 
-* Pathlib is a small and highly optimized library of common functions and containers, used in the Path game engine.
-* No dependency on any standard library (libc, libc++, etc.).
-* Written in C++20, with full unicode support.
+* Pathlib is a highly optimized library of common functions and containers for scripting in [Path](https://path.blog).
+* Written in C++20, with full unicode support, and zero use of any standard library (libc, libc++, etc.).
 * Only dependency is mimalloc, for memory management: https://github.com/microsoft/mimalloc.
 * Requires Windows, C++20, and the AVX2 instruction set.
-* Documentation at www.path.blog.
 
 ---------------------------
 
-- pathlib
+- pathlib/include
   - memory
     - <b>['memcpy.h'](https://path.blog/docs/memcpy.html)</b>
-    - <b>'avx_memcmp'</b>
     - <b>['memset.h'](https://path.blog/docs/memset.html)</b>
   - string
+    - <b>['local_string.h'](https://path.blog/docs/local_string.html)</b>
     - <b>['strlen.h'](https://path.blog/docs/strlen.html)</b>
-    - <b>'stack_string.h'</b>
-  - containers
-    - <b>'stack_vector.h'</b>
-    - <b>'hashmap.h'</b>
-    - <b>'pool.h'</b>
-    - <b>'pools.h'</b>
-    - <b>'heap.h'</b>
-    - <b>'virtual_heap.h'</b>
-    - <b>'spsc_queue.h'</b>
-
----------------------------
-
-\* Optimized hash-prospector results: https://github.com/skeeto/hash-prospector/issues/19#issuecomment-1120105785
+    - <b>['from_int.h'](https://path.blog/docs/from_int.html)</b>
+    - <b>['from_float.h'](https://path.blog/docs/from_float.html)</b>
+  - math
+    - <b>['math.h'](https://path.blog/docs/math.html)</b>
+    - <b>['simd_math.h'](https://path.blog/docs/simd_math.html)</b>
+  - win32
+    - <b>['mindows.h'](https://path.blog/docs/mindows.html)</b>
+    - <b>['console.h'](https://path.blog/docs/console.html)</b>
