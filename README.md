@@ -22,5 +22,4 @@
     - <b>['math.h'](https://path.blog/docs/math.html)</b>
     - <b>['simd_math.h'](https://path.blog/docs/simd_math.html)</b>
   - win32
-    - <b>['mindows.h'](https://path.blog/docs/mindows.html)</b>
     - <b>['console.h'](https://path.blog/docs/console.html)</b>
