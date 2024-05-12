@@ -7,6 +7,10 @@
 #include "errors/errors.h"
 #include "win32/console.h"
 
+using namespace Pathlib::String;
+using namespace Pathlib::Win32;
+using namespace Pathlib::Errors;
+
 namespace Pathlib {
   
 /**/

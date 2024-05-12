@@ -1,5 +1,4 @@
 #include "pathlib.h"
-using namespace Pathlib::Errors;
 
 namespace Pathlib {
 

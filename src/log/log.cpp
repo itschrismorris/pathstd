@@ -1,6 +1,5 @@
 #include "log/log.h"
 #include "errors/errors.h"
-using namespace Pathlib::Errors;
 
 namespace Pathlib {
 
@@ -10,10 +9,10 @@ Error Log::initiate(const utf8* log_path)
   if (log_path) {
     file = CreateFileA(log_path, GENERIC_WRITE, 0, nullptr, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, nullptr);
     if (file == INVALID_HANDLE_VALUE) {
-      return ERROR_FILE_OPEN;
+      return Pathlib::Errors::ERROR_FILE_OPEN;
     }
   }
-  return ERROR_NONE;
+  return Pathlib::Errors::ERROR_NONE;
 }
 
 /**/
@@ -51,7 +50,7 @@ Error Log::log(const utf8* message, ...)
     return Errors::FILE_HANDLE_NULL;
   }*/
 
-  return ERROR_NONE;
+  return Pathlib::Errors::ERROR_NONE;
 }
 
 /**/
@@ -80,6 +79,6 @@ Error Log::error(const utf8* message, ...)
     return Errors::FILE_HANDLE_NULL;
   }*/
 
-  return ERROR_NONE;
+  return Pathlib::Errors::ERROR_NONE;
 }
 }

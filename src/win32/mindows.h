@@ -1,5 +1,6 @@
 /*
-  Documentation: https://www.path.blog/docs/mindows.html
+  !!! DO NOT DISTRIBUTE. This is not safe for scripters to use directly.
+  !!! If a function is needed in a header file, wrap it into 'safe_win32.cpp'.
 */
 
 #pragma once

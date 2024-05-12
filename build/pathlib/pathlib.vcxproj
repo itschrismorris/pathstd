@@ -180,6 +180,7 @@
     <ClCompile Include="..\..\src\memory\memory.cpp" />
     <ClCompile Include="..\..\src\pathlib.cpp" />
     <ClCompile Include="..\..\src\timer\timer.cpp" />
+    <ClCompile Include="..\..\src\win32\safe_win32.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\include\containers\hashmap.h" />
@@ -204,8 +205,9 @@
     <ClInclude Include="..\..\include\string\local_string.h" />
     <ClInclude Include="..\..\include\timer\timer.h" />
     <ClInclude Include="..\..\include\types.h" />
-    <ClInclude Include="..\..\include\win32\mindows.h" />
     <ClInclude Include="..\..\include\win32\console.h" />
+    <ClInclude Include="..\..\include\win32\safe_win32.h" />
+    <ClInclude Include="..\..\src\win32\mindows.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

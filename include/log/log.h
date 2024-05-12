@@ -3,7 +3,7 @@
 */
 
 #pragma once
-#include "win32/mindows.h"
+#include "../src/win32/mindows.h"
 #include "types.h"
 #include "errors/errors.h"
 

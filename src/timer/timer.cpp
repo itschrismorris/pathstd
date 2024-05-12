@@ -1,9 +1,8 @@
 #include "log/log.h"
 #include "errors/errors.h"
 #include "types.h"
-#include "win32/mindows.h"
+#include "../src/win32/mindows.h"
 #include "timer/timer.h"
-using namespace Pathlib::Errors;
 
 namespace Pathlib {
 
@@ -17,7 +16,7 @@ Error Timer::initiate(void)
   LARGE_INTEGER now_ticks;
   QueryPerformanceCounter(&now_ticks);
   start_time = (now_ticks.QuadPart * 1000) / ticks_per_second;
-  return ERROR_NONE;
+  return Pathlib::Errors::ERROR_NONE;
 }
 
 /**/

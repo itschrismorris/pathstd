@@ -22,6 +22,7 @@ enum Codes
   ERROR_FILE_OPEN = -3,
   ERROR_FILE_HANDLE_NULL = -4,
   ERROR_LOCAL_TIME = -5,
+  ERROR_PRINT_TO_CONSOLE = -6,
   ERROR_PRINT_TO_LOG = -6,
 };
 
@@ -37,6 +38,7 @@ static const utf8* error_strings_eng[] =
   u8"Error opening file.",
   u8"File handle was null.",
   u8"Failed to get localtime.",
+  u8"Failed to print to the console.",
   u8"Failed to print to log file."
 };
 

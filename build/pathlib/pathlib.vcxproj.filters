@@ -49,6 +49,9 @@
     <ClCompile Include="..\..\src\pathlib.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\win32\safe_win32.cpp">
+      <Filter>src\win32</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\include\types.h">
@@ -105,9 +108,6 @@
     <ClInclude Include="..\..\include\intrinsics\xmmintrin.h">
       <Filter>src\intrinsics</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\include\win32\mindows.h">
-      <Filter>src\win32</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\include\win32\console.h">
       <Filter>src\win32</Filter>
     </ClInclude>
@@ -122,6 +122,12 @@
     </ClInclude>
     <ClInclude Include="..\..\include\pathlib.h">
       <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\win32\mindows.h">
+      <Filter>src\win32</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\win32\safe_win32.h">
+      <Filter>src\win32</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
