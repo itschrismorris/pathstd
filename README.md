@@ -2,8 +2,9 @@
 
 * Pathlib is a highly optimized library of common functions and containers for scripting in [Path](https://path.blog).
 * Written in C++20, with full unicode support, and zero use of any standard library (libc, libc++, etc.).
+* Safe. These are the only calls exposed to scripters. Scripts are sanitized from making any sys calls or calls to routines outside of this library.
 * Only dependency is mimalloc, for memory management: https://github.com/microsoft/mimalloc.
-* Requires Windows, C++20, and the AVX2 instruction set.
+* Requires Windows, C++20, and the AVX2 instruction set. 
 
 ---------------------------
 
