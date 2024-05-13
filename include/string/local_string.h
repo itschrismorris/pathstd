@@ -30,7 +30,7 @@ struct LocalString
   ~LocalString() {}
 
   /**/
-  LocalString(LocalString& string)
+  LocalString(const LocalString& string)
   {
     Memory::memcpy<true, true>(str, string.str, string.size);
     size = string.size;
@@ -42,6 +42,14 @@ struct LocalString
   {
     clear();
     (LocalString::append(this, args), ...);
+  }
+
+  /**/
+  inline LocalString& operator =(const LocalString& string)
+  {
+    Memory::memcpy<true, true>(str, string.str, string.size);
+    size = string.size;
+    return *this;
   }
 
   /**/
@@ -97,7 +105,7 @@ struct LocalString
   {
     static_assert(!SAME_TYPE(T, const char*), "String literals must be prepended with u8 for utf-8 encoding: u8\"Hello world!\"");
     static_assert(!SAME_TYPE(T, char*), "Replace string usages of char with utf8, for utf-8 encoding.");
-    LocalString<CAPACITY> new_string = *this;
+    LocalString new_string = *this;
     LocalString::append(&new_string, arg);
     return new_string;
   }
@@ -192,6 +200,8 @@ struct LocalString
       u64 copy_size = Math::min((CAPACITY - 1) - string_out->size, (u64)arg_size);
       Memory::memcpy(&string_out->str[string_out->size], buffer_str, copy_size);
       string_out->size += copy_size;
+    } else {
+      static_assert(false, "Unsupported type used for appending to LocalString.");
     }
   }
 

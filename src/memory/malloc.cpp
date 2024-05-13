@@ -1,4 +1,5 @@
-#include "memory/memory.h"
+#include "string/local_string.h"
+#include "memory/malloc.h"
 
 namespace Pathlib::Memory {
 
@@ -17,7 +18,7 @@ void shutdown()
 
 /**/
 void* malloc(u64 size,
-              const char* name)
+             const utf8* name)
 {
   void* ptr = mi_malloc_aligned(size, 128);
   return ptr;
@@ -25,8 +26,8 @@ void* malloc(u64 size,
 
 /**/
 void* realloc(void* ptr,
-                u64 size,
-                const char* name)
+              u64 size,
+              const utf8* name)
 {
   void* new_ptr = mi_realloc_aligned(ptr, size, 128);
   return new_ptr;

@@ -6,10 +6,12 @@
 #include "log/log.h"
 #include "errors/errors.h"
 #include "win32/console.h"
+#include "memory/malloc.h"
 
 using namespace Pathlib::String;
 using namespace Pathlib::Win32;
 using namespace Pathlib::Errors;
+using namespace Pathlib::Memory;
 
 namespace Pathlib {
   

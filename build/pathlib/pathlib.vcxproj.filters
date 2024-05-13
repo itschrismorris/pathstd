@@ -43,14 +43,14 @@
     <ClCompile Include="..\..\src\timer\timer.cpp">
       <Filter>src\timer</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\memory\memory.cpp">
-      <Filter>src\memory</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src\pathlib.cpp">
       <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\win32\safe_win32.cpp">
       <Filter>src\win32</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\memory\malloc.cpp">
+      <Filter>src\memory</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -69,7 +69,7 @@
     <ClInclude Include="..\..\include\memory\memset.h">
       <Filter>src\memory</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\include\memory\memory.h">
+    <ClInclude Include="..\..\include\memory\malloc.h">
       <Filter>src\memory</Filter>
     </ClInclude>
     <ClInclude Include="..\..\include\timer\timer.h">
