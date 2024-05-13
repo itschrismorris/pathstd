@@ -27,10 +27,10 @@ enum Codes
 };
 
 /**/
-static String::LocalString<32> extra;
+inline String::LocalString<32> extra;
 
 /**/
-static const utf8* error_strings_eng[] = 
+inline const utf8* error_strings_eng[] =
 { 
   u8"Success.",
   u8"Unknown error.",

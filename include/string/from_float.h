@@ -14,7 +14,8 @@ namespace Pathlib::String {
 /**/
 template <typename T>
 static inline utf8* from_float(T value,
-                               utf8* buffer)
+                               utf8* buffer,
+                               u32* length_out = nullptr)
 {
   f64 v = value;
   if (Math::is_inf(v)) {
@@ -43,6 +44,9 @@ static inline utf8* from_float(T value,
   fraction_string = from_int((i32)fractional_number, fraction_string);
   u32 fraction_length = strlen(fraction_string);
   Memory::memcpy(fractional_start, fraction_string, sizeof(utf8) * fraction_length);
+  if (length_out) {
+    *length_out = whole_number_length + 1 + 6;
+  }
   output[whole_number_length + 1 + 6] = '\0';
   return output;
 }

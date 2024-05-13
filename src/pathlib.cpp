@@ -3,9 +3,6 @@
 namespace Pathlib {
 
 /**/
-Core core;
-
-/**/
 Error Core::initiate(const utf8* log_path)
 {
   SetConsoleOutputCP(CP_UTF8);

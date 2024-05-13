@@ -27,7 +27,8 @@ static inline u16 const two_digits[100] =
 /**/
 template <typename T>
 static inline utf8* from_int(T value, 
-                             utf8* buffer)
+                             utf8* buffer,
+                             u32* length_out = nullptr)
 {
   u64 v = Math::abs(value);
   utf8* output;
@@ -45,10 +46,19 @@ static inline utf8* from_int(T value,
   }
   output -= 2;
   Memory::memcpy(output, &two_digits[v], sizeof(u16));
+  bool is_single_digit = (v < 10);
+  output += is_single_digit;
   if (value < 0) {
-    output[(v < 10) - 1] = '-';
-    return &output[(v < 10) - 1];
+    output[-1] = '-';
+    output -= 1;
   }
-  return &output[v < 10];
+  if (length_out) {
+    if constexpr (sizeof(T) == 4) {
+      *length_out = &buffer[11] - output;
+    } else {
+      *length_out = &buffer[21] - output;
+    }
+  }
+  return output;
 }
 }

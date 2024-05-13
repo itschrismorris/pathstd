@@ -5,8 +5,8 @@
 namespace Pathlib::Win32 {
 
 /**/
-Error safe_write_console(utf8* string,
-                        u32 length)
+Error safe_write_console(const utf8* string,
+                         u32 length)
 {
   void* out = GetStdHandle(STD_OUTPUT_HANDLE);
   if (WriteConsoleA(out, string, length, nullptr, nullptr) == 0) {

@@ -8,6 +8,6 @@
 namespace Pathlib::Win32 {
 
 /**/
-i32 safe_write_console(utf8* string,
+i32 safe_write_console(const utf8* string,
                        u32 length);
 }

@@ -23,5 +23,7 @@ struct Core
   Error initiate(const utf8* log_path = nullptr);
   void shutdown();
 };
-extern Core core;
+
+/**/
+inline Core core;
 }
