@@ -9,10 +9,10 @@ Error Log::initiate(const utf8* log_path)
   if (log_path) {
     file = CreateFileA(log_path, GENERIC_WRITE, 0, nullptr, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, nullptr);
     if (file == INVALID_HANDLE_VALUE) {
-      return Pathlib::Errors::ERROR_FILE_OPEN;
+      return Errors::ERROR_FILE_OPEN;
     }
   }
-  return Pathlib::Errors::ERROR_NONE;
+  return Errors::ERROR_NONE;
 }
 
 /**/
