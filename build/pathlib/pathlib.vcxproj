@@ -199,6 +199,7 @@
     <ClInclude Include="..\..\include\memory\memset.h" />
     <ClInclude Include="..\..\include\memory\malloc.h" />
     <ClInclude Include="..\..\include\pathlib.h" />
+    <ClInclude Include="..\..\include\string\format_type.h" />
     <ClInclude Include="..\..\include\string\from_float.h" />
     <ClInclude Include="..\..\include\string\from_int.h" />
     <ClInclude Include="..\..\include\string\strlen.h" />

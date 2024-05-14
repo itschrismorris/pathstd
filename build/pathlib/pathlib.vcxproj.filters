@@ -129,5 +129,8 @@
     <ClInclude Include="..\..\include\win32\safe_win32.h">
       <Filter>src\win32</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\include\string\format_type.h">
+      <Filter>src\string</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

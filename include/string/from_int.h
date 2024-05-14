@@ -28,7 +28,7 @@ static inline u16 const two_digits[100] =
 template <typename T>
 static inline utf8* from_int(T value, 
                              utf8* buffer,
-                             u32* length_out = nullptr)
+                             u64* length_out = nullptr)
 {
   u64 v = Math::abs(value);
   utf8* output;

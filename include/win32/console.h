@@ -5,9 +5,7 @@
 #pragma once
 #include "win32/safe_win32.h"
 #include "types.h"
-#include "string/strlen.h"
-#include "string/from_int.h"
-#include "string/from_float.h"
+#include "string/local_string.h"
 
 namespace Pathlib::Win32 {
 
@@ -38,6 +36,25 @@ inline void print_arg(const T arg)
     u32 length;
     utf8* string = String::from_float(arg, buffer, &length);
     safe_write_console(string, length);
+  } else if constexpr (SAME_TYPE(T, i32_2) || SAME_TYPE(T, i32_3) || 
+                       SAME_TYPE(T, u32_2) || SAME_TYPE(T, u32_3) ||
+                       SAME_TYPE(T, f32_2) || SAME_TYPE(T, f32_3))  {
+    utf8 formatted[64];
+    u32 size;
+    String::format_type<64>(formatted, &size, arg);
+    safe_write_console(formatted, size);
+  } else if constexpr (SAME_TYPE(T, i32_4) || SAME_TYPE(T, u32_4) ||
+                       SAME_TYPE(T, f32_4))  {
+    utf8 formatted[96];
+    u32 size;
+    String::format_type<96>(formatted, &size, arg);
+    safe_write_console(formatted, size);
+  } else if constexpr (SAME_TYPE(T, i32_8) || SAME_TYPE(T, u32_8) ||
+                       SAME_TYPE(T, f32_8))  {
+    utf8 formatted[192];
+    u32 size;
+    String::format_type<192>(formatted, &size, arg);
+    safe_write_console(formatted, size);
   } else {
     static_assert(false, "Unsupported type used for printing to console.");
   }
