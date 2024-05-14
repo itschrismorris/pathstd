@@ -29,32 +29,33 @@ namespace Pathlib::String {
 
 template <typename T>
 static inline u64 format_type(utf8* string_out,
-                              u64 max_size,
-                              const T arg)
+                              u64 string_capacity,
+                              const T in)
 {
   static_assert(!SAME_TYPE(T, const char*), "String literals must be prepended with 'u8' for utf-8 encoding: 'u8\"Hello world!\"'");
   static_assert(!SAME_TYPE(T, char*), "Replace string usages of char with utf8, for utf-8 encoding.");
   if constexpr (SAME_TYPE(T, const utf8*) || SAME_TYPE(T, utf8*)) {
-    u64 copy_size = Math::min(max_size - 1, strlen(arg));
-    Memory::memcpy<true, false>(string_out, arg, copy_size);
+    u64 copy_size = Math::min(string_capacity - 1, strlen(in));
+    Memory::memcpy(string_out, in, copy_size);
     return copy_size;
   } else if constexpr (SAME_TYPE(T, i8) || SAME_TYPE(T, i16) || SAME_TYPE(T, i32) || SAME_TYPE(T, i64) ||
                        SAME_TYPE(T, u8) || SAME_TYPE(T, u16) || SAME_TYPE(T, u32) || SAME_TYPE(T, u64)) {
     utf8 buffer[32];
-    u64 arg_size;
-    utf8* buffer_str = String::from_int(arg, buffer, &arg_size);
-    u64 copy_size = Math::min(max_size - 1, arg_size);
-    Memory::memcpy<true, false>(string_out, buffer_str, copy_size);
+    u64 in_size;
+    utf8* buffer_str = String::from_int(in, buffer, &in_size);
+    u64 copy_size = Math::min(string_capacity - 1, in_size);
+    Memory::memcpy(string_out, buffer_str, copy_size);
     return copy_size;
   } else if constexpr (SAME_TYPE(T, f32) || SAME_TYPE(T, f64)) {
     utf8 buffer[32];
-    u64 arg_size;
-    utf8* buffer_str = String::from_float(arg, buffer, &arg_size);
-    u64 copy_size = Math::min(max_size - 1, arg_size);
+    u64 in_size;
+    utf8* buffer_str = String::from_float(in, buffer, &in_size);
+    u64 copy_size = Math::min(string_capacity - 1, in_size);
     Memory::memcpy(string_out, buffer_str, copy_size);
     return copy_size;
   } else if constexpr (SAME_TYPE(T, i32_2) || SAME_TYPE(T, u32_2))  {
-
+    
+    
   } else if constexpr (SAME_TYPE(T, i32_3) || SAME_TYPE(T, u32_3))  {
 
   } else if constexpr (SAME_TYPE(T, i32_4) || SAME_TYPE(T, u32_4))  {
