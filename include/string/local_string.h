@@ -40,8 +40,9 @@ struct LocalString
   template <typename... Args>
   LocalString(Args&&... args)
   {
-    clear();
-    (LocalString::append(this, args), ...);
+    size = 0;
+    (LocalString::_append(this, args), ...);
+    Memory::memset(&str[size], 0x00, CAPACITY - size);
   }
 
   /**/
@@ -106,7 +107,7 @@ struct LocalString
     static_assert(!SAME_TYPE(T, const char*), "String literals must be prepended with u8 for utf-8 encoding: u8\"Hello world!\"");
     static_assert(!SAME_TYPE(T, char*), "Replace string usages of char with utf8, for utf-8 encoding.");
     LocalString new_string = *this;
-    LocalString::append(&new_string, arg);
+    LocalString::_append(&new_string, arg);
     return new_string;
   }
 
@@ -154,8 +155,9 @@ struct LocalString
   template <typename... Args>
   inline void format(Args&&... args)
   {
-    clear();
-    (LocalString::append(this, args), ...);
+    size = 0;
+    (LocalString::_append(this, args), ...);
+    Memory::memset(&str[size], 0x00, CAPACITY - size);
   }
 
   /**/
@@ -166,8 +168,15 @@ struct LocalString
   }
 
   /**/
-  static inline void append(LocalString* string_out, 
-                            const LocalString& arg)
+  template <typename... Args>
+  inline void append(Args&&... args)
+  {
+    (_append(this, args), ...);
+  }
+
+  /**/
+  static inline void _append(LocalString* string_out, 
+                             const LocalString& arg)
   {
     u64 copy_size = Math::min((CAPACITY - 1) - string_out->size, arg.size);
     Memory::memcpy<false, true>(&string_out->str[string_out->size], arg.str, copy_size);
@@ -176,8 +185,8 @@ struct LocalString
 
   /**/
   template <typename T>
-  static inline void append(LocalString* string_out, 
-                            const T arg)
+  static inline void _append(LocalString* string_out, 
+                             const T arg)
   {
     static_assert(!SAME_TYPE(T, const char*), "String literals must be prepended with u8 for utf-8 encoding: u8\"Hello world!\"");
     static_assert(!SAME_TYPE(T, char*), "Replace string usages of char with utf8, for utf-8 encoding.");
@@ -207,10 +216,26 @@ struct LocalString
 
   /**/
   template <typename... Args>
+  static inline void append(LocalString* string_out,
+                            Args&&... args)
+  {
+    (_append(string_out, args), ...);
+  }
+
+  /**/
+  template <typename... Args>
+  static inline LocalString format(LocalString* string_out,
+                                   Args&&... args)
+  {
+    (_append(string_out, args), ...);
+  }
+
+  /**/
+  template <typename... Args>
   static inline LocalString format_copy(Args&&... args)
   {
     LocalString string_out;
-    (append(&string_out, args), ...);
+    (_append(&string_out, args), ...);
     return string_out;
   }
 };
