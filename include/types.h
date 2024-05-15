@@ -10,6 +10,16 @@
 #define I64_MAX 0x7FFFFFFFFFFFFFFFLL
 #define I32_MAX 0x7FFFFFFF
 #define SAME_TYPE(A, B) __is_same(A, B)
+#define IS_VEC2(A) _is_vec2<A>::value
+#define IS_VEC3(A) _is_vec3<A>::value
+#define IS_VEC4(A) _is_vec4<A>::value
+#define IS_VEC8(A) _is_vec8<A>::value
+#define IS_INTEGRAL(A) _is_integral<A>::value
+#define IS_FLOAT(A) _is_float<A>::value
+
+/**/
+struct false_type { static constexpr bool value = false; constexpr operator bool() const { return value; } };
+struct true_type { static constexpr bool value = true; constexpr operator bool() const { return value; } };
 
 /**/
 typedef signed __int32 Error;
@@ -26,18 +36,32 @@ typedef double f64;
 typedef char8_t utf8;
 
 /**/
-struct i32_2 { i32 x, y; };
-struct i32_3 { i32 x, y, z; };
-struct alignas(16) i32_4 { i32 x, y, z, w; };
-struct alignas(32) i32_8 { i32_4 lo, hi; };
-struct u32_2 { u32 x, y; };
-struct u32_3 { u32 x, y, z; };
-struct alignas(16) u32_4 { u32 x, y, z, w; };
-struct alignas(32) u32_8 { u32_4 lo, hi; };
-struct f32_2 { f32 x, y; };
-struct f32_3 { f32 x, y, z; };
-struct alignas(16) f32_4 { f32 x, y, z, w; };
-struct alignas(32) f32_8 { f32_4 lo, hi; };
+template <typename T> struct vec2 { T x, y; };
+template <typename T> struct vec3 { T x, y, z; };
+template <typename T> struct alignas(16) vec4 { T x, y, z, w; };
+template <typename T> struct alignas(32) vec8 { vec4<T> lo; vec4<T> hi; };
+
+/**/
+template <typename T> struct _is_integral : false_type {};
+template <> struct _is_integral<i8> : true_type {};
+template <> struct _is_integral<i16> : true_type {};
+template <> struct _is_integral<i32> : true_type {};
+template <> struct _is_integral<i64> : true_type {};
+template <> struct _is_integral<u8> : true_type {};
+template <> struct _is_integral<u16> : true_type {};
+template <> struct _is_integral<u32> : true_type {};
+template <> struct _is_integral<u64> : true_type {};
+template <typename T> struct _is_float : false_type {};
+template <> struct _is_integral<f32> : true_type {};
+template <> struct _is_integral<f64> : true_type {};
+template <typename T> struct _is_vec2 : false_type {};
+template <typename T> struct _is_vec2<vec2<T>> : true_type {};
+template <typename T> struct _is_vec3 : false_type {};
+template <typename T> struct _is_vec3<vec3<T>> : true_type {};
+template <typename T> struct _is_vec4 : false_type {};
+template <typename T> struct _is_vec4<vec4<T>> : true_type {};
+template <typename T> struct _is_vec8 : false_type {};
+template <typename T> struct _is_vec8<vec8<T>> : true_type {};
 
 #define I4 __m128i
 #define I8 __m256i

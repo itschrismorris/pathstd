@@ -10,13 +10,14 @@ namespace Pathlib::String {
 
 /**/
 template <u32 ALIGNED_32 = false, 
-          u64 MAX_LENGTH = U64_MAX>
-static inline u64 strlen(const utf8* str)
+          u64 MAX_LENGTH = U64_MAX,
+          typename T>
+static inline u64 strlen(const T* str)
 {
   I8 zero = I8_SETZERO();
   if ((MAX_LENGTH <= 512) && (ALIGNED_32 || Math::is_aligned<32>(str))) {
     const I8* str_v = (I8*)str;
-    constexpr u32 register_count = (Math::next_multiple_of<32>(MAX_LENGTH) >> 5);
+    constexpr u32 register_count = (Math::next_multiple_of<u64, 32>(MAX_LENGTH) >> 5);
     #pragma unroll
     for (u32 r = 0; r < register_count; ++r) {
       u32 mask = I8_MOVEMASK(I8_CMP_EQ8(I8_LOAD(str_v), zero));

@@ -25,27 +25,21 @@ inline void print_arg(const T arg)
   if constexpr (SAME_TYPE(T, const utf8*) || SAME_TYPE(T, utf8*)) {
     u64 length = String::strlen(arg);
     safe_write_console(arg, length);
-  } else if constexpr (SAME_TYPE(T, i8) || SAME_TYPE(T, i16) || SAME_TYPE(T, i32) || SAME_TYPE(T, i64) || 
-                       SAME_TYPE(T, u8) || SAME_TYPE(T, u16) || SAME_TYPE(T, u32) || SAME_TYPE(T, u64) ||
-                       SAME_TYPE(T, f32) || SAME_TYPE(T, f64)) {
+  } else if constexpr (IS_INTEGRAL(T) || IS_FLOAT(T)) {
     utf8 formatted[32];
-    u64 size = String::format_type(formatted, 32, arg);
+    u64 size = String::from_type(arg, formatted, 32);
     safe_write_console(formatted, size);
-  } else if constexpr (SAME_TYPE(T, i32_2) || SAME_TYPE(T, i32_3) || 
-                       SAME_TYPE(T, u32_2) || SAME_TYPE(T, u32_3) ||
-                       SAME_TYPE(T, f32_2) || SAME_TYPE(T, f32_3))  {
+  } else if constexpr (IS_VEC2(T))  {
     utf8 formatted[64];
-    u64 size = String::format_type(formatted, 64, arg);
+    u64 size = String::from_type(arg, formatted, 64);
     safe_write_console(formatted, size);
-  } else if constexpr (SAME_TYPE(T, i32_4) || SAME_TYPE(T, u32_4) ||
-                       SAME_TYPE(T, f32_4))  {
+  } else if constexpr (IS_VEC3(T))  {
     utf8 formatted[96];
-    u64 size = String::format_type(formatted, 96, arg);
+    u64 size = String::from_type(arg, formatted, 96);
     safe_write_console(formatted, size);
-  } else if constexpr (SAME_TYPE(T, i32_8) || SAME_TYPE(T, u32_8) ||
-                       SAME_TYPE(T, f32_8))  {
+  } else if constexpr (IS_VEC4(T))  {
     utf8 formatted[192];
-    u64 size = String::format_type(formatted, 192, arg);
+    u64 size = String::from_type(arg, formatted, 192);
     safe_write_console(formatted, size);
   } else {
     static_assert(false, "Unsupported type used for printing to console.");

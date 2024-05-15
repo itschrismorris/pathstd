@@ -10,21 +10,21 @@ namespace Pathlib::Math {
 
   /**/
   template <typename T>
-  constexpr inline T min(T a, T b) 
+  static inline constexpr T min(T a, T b)
   { 
     return (a < b) ? a : b; 
   }
 
   /**/
   template <typename T>
-  constexpr inline T max(T a, T b) 
+  static inline constexpr T max(T a, T b)
   { 
     return (a > b) ? a : b;
   }
 
   /**/
   template <typename T>
-  constexpr inline T abs(T value)
+  static inline constexpr T abs(T value)
   {
     if constexpr (SAME_TYPE(T, i32) || SAME_TYPE(T, i16) || SAME_TYPE(T, i8)) {
       return __builtin_abs(value);
@@ -41,7 +41,7 @@ namespace Pathlib::Math {
 
   /**/
   template <typename T>
-  constexpr inline bool is_inf(T value)
+  static inline constexpr bool is_inf(T value)
   {
     if constexpr (SAME_TYPE(T, f32)) {
       return (((*(u32*)&value) & 0x7FFFFFFF) == 0x7F800000);
@@ -52,7 +52,7 @@ namespace Pathlib::Math {
 
   /**/
   template <typename T>
-  constexpr inline bool is_nan(T value)
+  static inline constexpr bool is_nan(T value)
   {
     if constexpr (SAME_TYPE(T, f32)) {
       return (value != value);
@@ -63,14 +63,14 @@ namespace Pathlib::Math {
    
   /**/
   template <typename T>
-  constexpr inline bool is_pot(T value)
+  static inline constexpr bool is_pot(T value)
   { 
     return ((value & (value + (value == 0) - 1)) == 0);
   }
 
   /**/
-  template <u32 MULTIPLE, typename T>
-  constexpr inline bool is_multiple_of(T value)
+  template <typename T, T MULTIPLE>
+  static inline constexpr bool is_multiple_of(T value)
   {
     if constexpr (Math::is_pot(MULTIPLE)) {
       return ((value & (MULTIPLE - 1)) == 0);
@@ -80,8 +80,8 @@ namespace Pathlib::Math {
   }
 
   /**/
-  template <u32 MULTIPLE, typename T>
-  constexpr inline T previous_multiple_of(T value)
+  template <typename T, T MULTIPLE>
+  static inline constexpr T previous_multiple_of(T value)
   { 
     if constexpr (Math::is_pot(MULTIPLE)) {
       return (value & ~(MULTIPLE - 1));
@@ -91,8 +91,8 @@ namespace Pathlib::Math {
   }
 
   /**/
-  template <u32 MULTIPLE, typename T>
-  constexpr inline T next_multiple_of(T value)
+  template <typename T, T MULTIPLE>
+  static inline constexpr T next_multiple_of(T value)
   {
     if constexpr (Math::is_pot(MULTIPLE)) {
       return (value + (value == 0) + (MULTIPLE - 1)) & -MULTIPLE;
@@ -103,7 +103,7 @@ namespace Pathlib::Math {
   
   /**/
   template <typename T>
-  constexpr inline T next_pot(T value) 
+  static inline constexpr T next_pot(T value)
   {
     if constexpr (sizeof(T) == 4) {
       return (0x1 << (32 - __builtin_clz(value + (value == 0))));
@@ -116,10 +116,12 @@ namespace Pathlib::Math {
   template <typename T>
   static inline T lsb_set(T value)
   {
-    if constexpr (sizeof(T) == 4) {
-      return _tzcnt_u32(value);
+    if constexpr (sizeof(T) == 2) {
+      return __builtin_ia32_tzcnt_u16(value);
+    } else if constexpr (sizeof(T) == 4) {
+      return __builtin_ia32_tzcnt_u32(value);
     } else if constexpr (sizeof(T) == 8) {
-      return _tzcnt_u64(value);
+      return __builtin_ia32_tzcnt_u64(value);
     }
   }
 
@@ -127,10 +129,12 @@ namespace Pathlib::Math {
   template <typename T>
   static inline T msb_set(T value)
   {
-    if constexpr (sizeof(T) == 4) {
-      return _lzcnt_u32(value);
+    if constexpr (sizeof(T) == 2) {
+      return __builtin_ia32_lzcnt_u16(value);
+    } else if constexpr (sizeof(T) == 4) {
+      return __builtin_ia32_lzcnt_u32(value);
     } else if constexpr (sizeof(T) == 8) {
-      return _lzcnt_u64(value);
+      return __builtin_ia32_lzcnt_u64(value);
     }
   }
 }

@@ -111,12 +111,6 @@
     <ClInclude Include="..\..\include\win32\console.h">
       <Filter>src\win32</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\include\string\from_int.h">
-      <Filter>src\string</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\string\from_float.h">
-      <Filter>src\string</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\include\math\simd_math.h">
       <Filter>src\math</Filter>
     </ClInclude>
@@ -129,7 +123,7 @@
     <ClInclude Include="..\..\include\win32\safe_win32.h">
       <Filter>src\win32</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\include\string\format_type.h">
+    <ClInclude Include="..\..\include\string\from_type.h">
       <Filter>src\string</Filter>
     </ClInclude>
   </ItemGroup>

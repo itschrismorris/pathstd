@@ -3,7 +3,7 @@
 */
 
 #pragma once
-#include "string/format_type.h"
+#include "string/from_type.h"
 
 namespace Pathlib::String {
 
@@ -11,7 +11,7 @@ namespace Pathlib::String {
 template <u64 CAPACITY>
 struct LocalString
 {
-  static_assert(Math::is_multiple_of<32>(CAPACITY), "LocalString CAPACITY must be a multiple of 32 (AVX purposes).");
+  static_assert(Math::is_multiple_of<u64, 32>(CAPACITY), "LocalString CAPACITY must be a multiple of 32 (AVX purposes).");
 
   /**/
   alignas(32) utf8 str[CAPACITY];
@@ -52,7 +52,7 @@ struct LocalString
   template <typename T>
   inline LocalString& operator =(const T arg)
   {
-    size += String::format_type(str, CAPACITY, arg);
+    size += String::from_type(arg, str, CAPACITY);
     return *this;
   }
 
@@ -93,7 +93,7 @@ struct LocalString
   template <typename T>
   inline LocalString& operator +=(const T arg)
   {
-    size += String::format_type(&str[size], CAPACITY - size, arg);
+    size += String::from_type(arg, &str[size], CAPACITY - size);
     return *this;
   }
 
@@ -134,7 +134,7 @@ struct LocalString
   static inline void _append(LocalString* string_out, 
                              const T arg)
   {
-    string_out->size += String::format_type(&string_out->str[string_out->size], CAPACITY - string_out->size, arg);
+    string_out->size += String::from_type(arg, &string_out->str[string_out->size], CAPACITY - string_out->size);
   }
 
   /**/
