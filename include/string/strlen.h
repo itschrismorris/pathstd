@@ -9,12 +9,12 @@
 namespace Pathlib::String {
 
 /**/
-template <u32 AVX_ALIGNED = false, 
+template <u32 ALIGNED_32 = false, 
           u64 MAX_LENGTH = U64_MAX>
 static inline u64 strlen(const utf8* str)
 {
   I8 zero = I8_SETZERO();
-  if ((MAX_LENGTH <= 512) && (AVX_ALIGNED || Math::is_aligned<32>(str))) {
+  if ((MAX_LENGTH <= 512) && (ALIGNED_32 || Math::is_aligned<32>(str))) {
     const I8* str_v = (I8*)str;
     constexpr u32 register_count = (Math::next_multiple_of<32>(MAX_LENGTH) >> 5);
     #pragma unroll

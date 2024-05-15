@@ -319,7 +319,7 @@ static inline void memset_256(void* dst,
 }
 
 /**/
-template <bool DST_AVX_ALIGNED = false>
+template <bool DST_ALIGNED_32 = false>
 static inline void memset(void* dst,
                           const u8 value,
                           u64 size)
@@ -330,7 +330,7 @@ static inline void memset(void* dst,
   }
   I8* dst_v = (I8*)dst;
   I8 v = I8_SET1_8(value);
-  if (!(DST_AVX_ALIGNED || Math::is_aligned<32>(dst))) {
+  if (!(DST_ALIGNED_32 || Math::is_aligned<32>(dst))) {
     u64 padding = (32 - (((u64)dst) & 31)) & 31;
     I8_STOREU(dst_v, v);
     dst_v = (I8*)((u8*)dst + padding);

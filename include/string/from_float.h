@@ -15,7 +15,7 @@ namespace Pathlib::String {
 template <typename T>
 static inline utf8* from_float(T value,
                                utf8* buffer,
-                               u32* length_out = nullptr)
+                               u64* length_out = nullptr)
 {
   f64 v = value;
   if (Math::is_inf(v)) {

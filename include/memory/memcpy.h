@@ -303,8 +303,8 @@ static inline void memcpy_256(void* dst,
 }
 
 /**/
-template <bool DST_AVX_ALIGNED = false,
-          bool SRC_AVX_ALIGNED = false>
+template <bool DST_ALIGNED_32 = false,
+          bool SRC_ALIGNED_32 = false>
 static inline void memcpy(void* dst,
                           const void* src,
                           u64 size)
@@ -315,7 +315,7 @@ static inline void memcpy(void* dst,
   }
   const I8* src_v = (const I8*)src;
   I8* dst_v = (I8*)dst;
-  if (!(DST_AVX_ALIGNED || Math::is_aligned<32>(dst))) {
+  if (!(DST_ALIGNED_32 || Math::is_aligned<32>(dst))) {
     u64 padding = (32 - (((u64)dst) & 31)) & 31;
     I8_STOREU(dst_v, I8_LOADU(src_v));
     dst_v = (I8*)((u8*)dst + padding);
@@ -324,7 +324,7 @@ static inline void memcpy(void* dst,
   }
   u32 loop_count = (size >> 6);
   if (size <= MEGABYTE) {
-    if (SRC_AVX_ALIGNED || Math::is_aligned<32>(src_v)) {
+    if (SRC_ALIGNED_32 || Math::is_aligned<32>(src_v)) {
       for (u32 r = 0; r < loop_count; ++r) {
         I8 m[2] = { I8_LOAD(src_v), I8_LOAD(src_v + 1) };
         I8_STORE(dst_v, m[0]);
@@ -344,7 +344,7 @@ static inline void memcpy(void* dst,
       }
     }
   } else {
-    if (SRC_AVX_ALIGNED || Math::is_aligned<32>(src_v)) {
+    if (SRC_ALIGNED_32 || Math::is_aligned<32>(src_v)) {
       for (u32 r = 0; r < loop_count; ++r) {
         I8 m[2] = { I8_LOAD(src_v), I8_LOAD(src_v + 1) };
         I8_STORE_NOCACHE(dst_v, m[0]);
