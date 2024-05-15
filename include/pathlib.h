@@ -7,6 +7,7 @@
 #include "errors/errors.h"
 #include "win32/console.h"
 #include "timer/timer.h"
+#include "string/local_string.h"
 #include "memory/malloc.h"
 
 namespace Pathlib {
