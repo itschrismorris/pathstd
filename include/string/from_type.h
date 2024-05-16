@@ -5,7 +5,7 @@
 #pragma once
 #include "memory/memcpy.h"
 #include "memory/memset.h"
-#include "string/strlen.h"
+#include "string/size_of.h"
 #include "types.h"
 
 #define __DECORATE(DECORATE, DECORATE_SIZE) \
@@ -47,10 +47,9 @@ static inline u16 const two_digits[100] =
 template <typename T>
 static inline utf8* _from_number(T value,
                                  utf8* buffer,
-                                 u64* length_out = nullptr)
+                                 u64* size_out = nullptr)
 {
-  if constexpr (SAME_TYPE(T, i8) || SAME_TYPE(T, i16) || SAME_TYPE(T, i32) || SAME_TYPE(T, i64) ||
-                SAME_TYPE(T, u8) || SAME_TYPE(T, u16) || SAME_TYPE(T, u32) || SAME_TYPE(T, u64)) {
+  if constexpr (IS_INTEGRAL(T)) {
     u64 v = Math::abs(value);
     utf8* output;
     if constexpr (sizeof(T) == 4) {
@@ -73,15 +72,15 @@ static inline utf8* _from_number(T value,
       output[-1] = '-';
       output -= 1;
     }
-    if (length_out) {
+    if (size_out) {
       if constexpr (sizeof(T) == 4) {
-        *length_out = &buffer[11] - output;
+        *size_out = &buffer[11] - output;
       } else {
-        *length_out = &buffer[21] - output;
+        *size_out = &buffer[21] - output;
       }
     }
     return output;
-  } else if constexpr (SAME_TYPE(T, f32) || SAME_TYPE(T, f64)) {
+  } else if constexpr (IS_FLOAT(T)) {
     f64 v = value;
     if (Math::is_inf(v)) {
       buffer[0] = 'i'; buffer[1] = 'n'; buffer[2] = 'f';
@@ -92,27 +91,27 @@ static inline utf8* _from_number(T value,
     }
     utf8* output = buffer;
     i32 whole_number = (i32)v;
-    output = _from_number(whole_number, output);
-    u64 whole_number_length = strlen(output);
-    output[whole_number_length] = '.';
+    u64 whole_number_size;
+    output = _from_number(whole_number, output, &whole_number_size);
+    output[whole_number_size] = '.';
     u32 fractional_number = (u32)(Math::abs(v - (u32)whole_number) * 1000000.0);
-    utf8* fractional_start = &output[whole_number_length + 1];
+    utf8* fractional_start = &output[whole_number_size + 1];
     i32 divisor = 100000;
     for (u32 f = 0; f < 5; ++f) {
       if (fractional_number < divisor) {
-        output[whole_number_length + f + 1] = '0';
+        output[whole_number_size + f + 1] = '0';
         fractional_start += 1;
       }
       divisor /= 10;
     }
     utf8* fraction_string = fractional_start;
-    fraction_string = _from_number((i32)fractional_number, fraction_string);
-    u64 fraction_length = strlen(fraction_string);
-    Memory::memcpy(fractional_start, fraction_string, sizeof(utf8) * fraction_length);
-    if (length_out) {
-      *length_out = whole_number_length + 1 + 6;
+    u64 fraction_size;
+    fraction_string = _from_number((i32)fractional_number, fraction_string, &fraction_string);
+    Memory::memcpy(fractional_start, fraction_string, sizeof(utf8) * fraction_size);
+    if (size_out) {
+      *size_out = whole_number_size + 1 + 6;
     }
-    output[whole_number_length + 1 + 6] = '\0';
+    output[whole_number_size + 1 + 6] = '\0';
     return output;
   }
 }
@@ -126,12 +125,10 @@ static inline u64 from_type(const T arg,
   static_assert(!SAME_TYPE(T, const char*), "String literals must be prepended with 'u8' for utf-8 encoding: 'u8\"Hello world!\"'");
   static_assert(!SAME_TYPE(T, char*), "Replace string usages of char with utf8, for utf-8 encoding.");
   if constexpr (SAME_TYPE(T, const utf8*) || SAME_TYPE(T, utf8*)) {
-    u64 copy_size = Math::min(string_capacity - 1, strlen(arg));
+    u64 copy_size = Math::min(string_capacity - 1, String::size_of(arg));
     Memory::memcpy(string_out, arg, copy_size);
     return copy_size;
-  } else if constexpr (SAME_TYPE(T, i8) || SAME_TYPE(T, i16) || SAME_TYPE(T, i32) || SAME_TYPE(T, i64) ||
-                       SAME_TYPE(T, u8) || SAME_TYPE(T, u16) || SAME_TYPE(T, u32) || SAME_TYPE(T, u64) ||
-                       SAME_TYPE(T, f32) || SAME_TYPE(T, f64)) {
+  } else if constexpr (IS_INTEGRAL(T) || IS_FLOAT(T)) {
     utf8 buffer[32];
     u64 size;
     utf8* buffer_str = _from_number(arg, buffer, &size);

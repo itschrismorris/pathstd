@@ -15,7 +15,7 @@ struct Timer
   u64 ticks_per_second;
 
   /**/
-  Error initiate();
+  bool initiate();
   void shutdown();
   u64 now_ms();
   u64 now_us();

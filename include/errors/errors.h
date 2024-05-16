@@ -17,32 +17,31 @@ namespace Pathlib::Errors {
 enum Codes
 { 
   ERROR_NONE = 0,
-  ERROR_UNKNOWN = -1,
-  ERROR_INITIALIZING = -2,
-  ERROR_FILE_OPEN = -3,
-  ERROR_FILE_HANDLE_NULL = -4,
-  ERROR_LOCAL_TIME = -5,
-  ERROR_PRINT_TO_CONSOLE = -6,
-  ERROR_PRINT_TO_LOG = -6,
+  ERROR_UNKNOWN,
+  ERROR_LOG_CREATE_FILE,
+  ERROR_LOG_CONVERTING_PATH,
+  ERROR_CONSOLE_WRITE,
 };
-
-/**/
-inline String::LocalString<32> extra;
 
 /**/
 inline const utf8* error_strings_eng[] =
 { 
-  u8"Success.",
-  u8"Unknown error.",
-  u8"Error initializing.",
-  u8"Error opening file.",
-  u8"File handle was null.",
-  u8"Failed to get localtime.",
-  u8"Failed to print to the console.",
-  u8"Failed to print to log file."
+  u8"There was no error.",
+  u8"The error is unknown.",
+  u8"There was an error creating the log file.",
+  u8"There was an error converting the log path from utf-16 to utf-8.",
+  u8"There was an error writing to the console."
 };
 
 /**/
-bool log_on_error(Error error);
-bool popup_on_error(Error error);
+inline u32 last_error_code;
+inline String::LocalString<256> extra_error_info;
+
+/**/
+i32 get_last_error_code();
+const utf8* get_error_string(i32 error_code);
+void write_console_last_error();
+void log_last_error();
+void popup_last_error();
+void extra_info_from_last_win32_error();
 }

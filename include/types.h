@@ -16,13 +16,13 @@
 #define IS_VEC8(A) _is_vec8<A>::value
 #define IS_INTEGRAL(A) _is_integral<A>::value
 #define IS_FLOAT(A) _is_float<A>::value
+#define IS_LOCAL_STRING(A) _is_local_string<A>::value
 
 /**/
 struct false_type { static constexpr bool value = false; constexpr operator bool() const { return value; } };
 struct true_type { static constexpr bool value = true; constexpr operator bool() const { return value; } };
 
 /**/
-typedef signed __int32 Error;
 typedef unsigned __int8   u8;
 typedef   signed __int8   i8;
 typedef unsigned __int16 u16;

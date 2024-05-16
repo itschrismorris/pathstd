@@ -1,5 +1,5 @@
 /* 
-  Documentation: https://www.path.blog/docs/strlen.html
+  Documentation: https://www.path.blog/docs/size.html
 */
 
 #pragma once
@@ -12,7 +12,7 @@ namespace Pathlib::String {
 template <u32 ALIGNED_32 = false, 
           u64 MAX_LENGTH = U64_MAX,
           typename T>
-static inline u64 strlen(const T* str)
+static inline u64 size_of(const T* str)
 {
   I8 zero = I8_SETZERO();
   if ((MAX_LENGTH <= 512) && (ALIGNED_32 || Math::is_aligned<32>(str))) {

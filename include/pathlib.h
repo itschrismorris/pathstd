@@ -20,7 +20,7 @@ struct Core
   Pathlib::Timer timer;
 
   /**/
-  Error initiate(const utf8* log_path = nullptr);
+  bool initiate(const utf8* log_path = nullptr);
   void shutdown();
 };
 

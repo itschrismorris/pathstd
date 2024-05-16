@@ -18,9 +18,7 @@ struct Log
   /**/
   Log() : file(nullptr) {}
   ~Log() {}
-  Error initiate(const utf8* log_path);
+  bool initiate(const utf8* log_path);
   void shutdown();
-  Error log(const utf8* message, ...);
-  Error error(const utf8* message, ...);
 };
 }

@@ -30,6 +30,12 @@ struct LocalString
     Memory::memcpy<true, true>(str, string.str, string.size);
     size = string.size;
   }
+
+  /**/
+  constexpr u64 capacity()
+  {
+    return CAPACITY;
+  }
   
   /**/
   template <typename... Args>
@@ -43,7 +49,7 @@ struct LocalString
   /**/
   inline LocalString& operator =(const LocalString& string)
   {
-    Memory::memcpy<true, true>(str, string.str, string.size);
+    Memory::memcpy<true, true>(str, string.str, CAPACITY);
     size = string.size;
     return *this;
   }
@@ -53,6 +59,7 @@ struct LocalString
   inline LocalString& operator =(const T arg)
   {
     size += String::from_type(arg, str, CAPACITY);
+    Memory::memset(&str[size], 0x00, CAPACITY - size);
     return *this;
   }
 
@@ -163,3 +170,7 @@ struct LocalString
   }
 };
 }
+
+/**/
+template <typename T> struct _is_local_string : false_type {};
+template <u64 CAPACITY> struct _is_local_string<Pathlib::String::LocalString<CAPACITY>> : true_type {};

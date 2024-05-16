@@ -200,7 +200,7 @@
     <ClInclude Include="..\..\include\memory\malloc.h" />
     <ClInclude Include="..\..\include\pathlib.h" />
     <ClInclude Include="..\..\include\string\from_type.h" />
-    <ClInclude Include="..\..\include\string\strlen.h" />
+    <ClInclude Include="..\..\include\string\size_of.h" />
     <ClInclude Include="..\..\include\string\local_string.h" />
     <ClInclude Include="..\..\include\timer\timer.h" />
     <ClInclude Include="..\..\include\types.h" />

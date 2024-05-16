@@ -7,7 +7,7 @@
 namespace Pathlib {
 
 /**/
-Error Timer::initiate(void)
+bool Timer::initiate(void)
 {
   //LOG.log(L"Initiating timer.");
   LARGE_INTEGER ticks;
@@ -16,7 +16,7 @@ Error Timer::initiate(void)
   LARGE_INTEGER now_ticks;
   QueryPerformanceCounter(&now_ticks);
   start_time = (now_ticks.QuadPart * 1000) / ticks_per_second;
-  return Pathlib::Errors::ERROR_NONE;
+  return true;
 }
 
 /**/

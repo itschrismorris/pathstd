@@ -3,12 +3,14 @@
 namespace Pathlib {
 
 /**/
-Error Core::initiate(const utf8* log_path)
+bool Core::initiate(const utf8* log_path)
 {
   SetConsoleOutputCP(CP_UTF8);
-  log.initiate(log_path);
-  timer.initiate();
-  return Errors::ERROR_NONE;
+  if (!log.initiate(log_path) ||
+      !timer.initiate()) {
+    return false;
+  }
+  return true;
 }
 
 /**/
