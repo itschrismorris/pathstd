@@ -129,5 +129,8 @@
     <ClInclude Include="..\..\include\string\long_string.h">
       <Filter>src\string</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\include\string\compare.h">
+      <Filter>src\string</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

@@ -9,6 +9,8 @@
 #define MEGABYTE (1024 * 1024)
 #define GIGABYTE (1024 * 1024 * 1024)
 
+#define MALLOC 
+
 namespace Pathlib::Memory {
 
   /**/

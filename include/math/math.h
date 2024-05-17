@@ -108,7 +108,7 @@ namespace Pathlib::Math {
     if constexpr (sizeof(T) == 4) {
       return (0x1 << (32 - __builtin_clz(value + (value == 0))));
     } else if constexpr (sizeof(T) == 8) {
-      return (0x1LLU << (64 - __builtin_clzl(value + (value == 0))));
+      return (0x1LLU << (64 - __builtin_clzll(value + (value == 0))));
     }
   }
 

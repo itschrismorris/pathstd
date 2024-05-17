@@ -4,6 +4,7 @@
 
 #pragma once
 #include "string/from_type.h"
+#include "string/compare.h"
 
 namespace Pathlib::String {
 
@@ -58,22 +59,24 @@ struct ShortString
   template <typename T>
   inline ShortString& operator =(const T arg)
   {
-    size = String::from_type(arg, str, CAPACITY);
+    size = String::from_type_clip(arg, str, size, CAPACITY);
     Memory::memset(&str[size], 0x00, CAPACITY - size);
     return *this;
   }
 
   /**/
+  inline bool operator ==(const utf8* string) const
+  {
+    return String::compare<true, false>(str, string, size);
+  }
+
+  /**/
   inline bool operator ==(const ShortString& string) const
   {
-    u32 bitmask = U32_MAX;
-    #pragma unroll
-    for (u32 c = 0; c < (CAPACITY >> 5); ++c) {
-      I8 ours = I8_LOAD(&str[c * 32]);
-      I8 theirs = I8_LOAD(&string.str[c * 32]);
-      bitmask &= I8_MOVEMASK(I8_CMP_EQ(ours, theirs));
+    if (size != string.size) {
+      return false;
     }
-    return (bitmask == U32_MAX);
+    return String::compare_avx<CAPACITY >> 5>(str, string.str);
   }
 
   /**/
@@ -100,7 +103,7 @@ struct ShortString
   template <typename T>
   inline ShortString& operator +=(const T arg)
   {
-    size += String::from_type(arg, &str[size], CAPACITY - size);
+    size = String::from_type_clip(arg, str, size, CAPACITY);
     return *this;
   }
 
@@ -141,7 +144,7 @@ struct ShortString
   static inline void _append(ShortString* string_out, 
                              const T arg)
   {
-    string_out->size += String::from_type(arg, &string_out->str[string_out->size], CAPACITY - string_out->size);
+    string_out->size = String::from_type_clip(arg, string_out->str, string_out->size, string_out->capacity());
   }
 
   /**/

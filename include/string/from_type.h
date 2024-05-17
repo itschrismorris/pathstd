@@ -8,22 +8,49 @@
 #include "string/size_of.h"
 #include "types.h"
 
-#define __DECORATE(DECORATE, DECORATE_SIZE) \
+#define __DECORATE_CLIP(DECORATE, DECORATE_SIZE) \
   { \
-    u64 copy_size = Math::min(string_capacity - 1 - total_size, DECORATE_SIZE); \
-    Memory::memcpy(&string_out[total_size], &decorate[DECORATE], copy_size); \
-    total_size += copy_size; \
+    u64 copy_size = Math::min(string_capacity - 1 - size_added, DECORATE_SIZE); \
+    Memory::memcpy(&string[string_size + size_added], &decorate[DECORATE], copy_size); \
+    size_added += copy_size; \
   }
 
-#define __DECORATE_NUMBER(ARG, DECORATE, DECORATE_SIZE) \
+#define __DECORATE_NUMBER_CLIP(ARG, DECORATE, DECORATE_SIZE) \
   { \
-    u64 copy_size = Math::min(string_capacity - 1 - total_size, DECORATE_SIZE); \
-    Memory::memcpy(&string_out[total_size], &decorate[DECORATE], copy_size); \
-    total_size += copy_size; \
+    u64 copy_size = Math::min(string_capacity - 1 - size_added, DECORATE_SIZE); \
+    Memory::memcpy(&string[string_size + size_added], &decorate[DECORATE], copy_size); \
+    size_added += copy_size; \
     utf8* buffer_str = _from_number(ARG, buffer, &conversion_size); \
-    copy_size = Math::min(string_capacity - 1 - total_size, conversion_size); \
-    Memory::memcpy(&string_out[total_size], buffer_str, copy_size); \
-    total_size += copy_size; \
+    copy_size = Math::min(string_capacity - 1 - size_added, conversion_size); \
+    Memory::memcpy(&string[string_size + size_added], buffer_str, copy_size); \
+    size_added += copy_size; \
+  }
+
+#define __DECORATE_GROW(DECORATE, DECORATE_SIZE) \
+  { \
+    if ((string_size + DECORATE_SIZE) >= *string_capacity) { \
+      *string_capacity = Math::next_pot(string_size + DECORATE_SIZE + 1); \
+      *string = (utf8*)Memory::realloc(*string, *string_capacity); \
+    } \
+    Memory::memcpy(&(*string)[string_size + size_added], &decorate[DECORATE], DECORATE_SIZE); \
+    size_added += DECORATE_SIZE; \
+  }
+
+#define __DECORATE_NUMBER_GROW(ARG, DECORATE, DECORATE_SIZE) \
+  { \
+    if ((string_size + DECORATE_SIZE) >= *string_capacity) { \
+      *string_capacity = Math::next_pot(string_size + DECORATE_SIZE + 1); \
+      *string = (utf8*)Memory::realloc(*string, *string_capacity); \
+    } \
+    Memory::memcpy(&(*string)[string_size + size_added], &decorate[DECORATE], DECORATE_SIZE); \
+    size_added += DECORATE_SIZE; \
+    utf8* buffer_str = _from_number(ARG, buffer, &conversion_size); \
+    if ((string_size + conversion_size) >= *string_capacity) { \
+      *string_capacity = Math::next_pot(string_size + conversion_size + 1); \
+      *string = (utf8*)Memory::realloc(*string, *string_capacity); \
+    } \
+    Memory::memcpy(&(*string)[string_size + size_added], buffer_str, conversion_size); \
+    size_added += conversion_size; \
   }
 
 namespace Pathlib::String {
@@ -106,7 +133,7 @@ static inline utf8* _from_number(T value,
     }
     utf8* fraction_string = fractional_start;
     u64 fraction_size;
-    fraction_string = _from_number((i32)fractional_number, fraction_string, &fraction_string);
+    fraction_string = _from_number(fractional_number, fraction_string, &fraction_size);
     Memory::memcpy(fractional_start, fraction_string, sizeof(utf8) * fraction_size);
     if (size_out) {
       *size_out = whole_number_size + 1 + 6;
@@ -118,75 +145,160 @@ static inline utf8* _from_number(T value,
 
 /**/
 template <typename T>
-static inline u64 from_type(const T arg,
-                            utf8* string_out,
-                            u64 string_capacity)
+static inline u64 from_type_clip(const T arg,
+                                 utf8* string,
+                                 u64 string_size,
+                                 u64 string_capacity)
 {
   static_assert(!SAME_TYPE(T, const char*), "String literals must be prepended with 'u8' for utf-8 encoding: 'u8\"Hello world!\"'");
   static_assert(!SAME_TYPE(T, char*), "Replace string usages of char with utf8, for utf-8 encoding.");
   if constexpr (SAME_TYPE(T, const utf8*) || SAME_TYPE(T, utf8*)) {
-    u64 copy_size = Math::min(string_capacity - 1, String::size_of(arg));
-    Memory::memcpy(string_out, arg, copy_size);
-    string_out[copy_size] = u8'\0';
-    return copy_size;
+    u64 copy_size = Math::min(string_capacity - string_size - 1, String::size_of(arg));
+    Memory::memcpy(&string[string_size], arg, copy_size);
+    string[string_size + copy_size] = u8'\0';
+    return (string_size + copy_size);
   } else if constexpr (IS_INTEGRAL(T) || IS_FLOAT(T)) {
     utf8 buffer[32];
-    u64 size;
-    utf8* buffer_str = _from_number(arg, buffer, &size);
-    u64 copy_size = Math::min(string_capacity - 1, size);
-    Memory::memcpy(string_out, buffer_str, copy_size);
-    string_out[copy_size] = u8'\0';
-    return copy_size;
+    u64 conversion_size;
+    utf8* buffer_str = _from_number(arg, buffer, &conversion_size);
+    u64 copy_size = Math::min(string_capacity - 1, conversion_size);
+    Memory::memcpy(&string[string_size], buffer_str, copy_size);
+    string[string_size + copy_size] = u8'\0';
+    return (string_size + copy_size);
   } else if constexpr (IS_VEC2(T))  {
     const utf8* decorate = u8"{ x: , y: }";
     utf8 buffer[32];
+    u64 size_added = 0;
     u64 conversion_size;
-    u64 total_size = 0;
-    __DECORATE_NUMBER(arg.x, 0LLU, 5LLU);
-    __DECORATE_NUMBER(arg.y, 5LLU, 5LLU);
-    __DECORATE(9LLU, 2LLU);
-    string_out[total_size] = u8'\0';
-    return total_size;
+    __DECORATE_NUMBER_CLIP(arg.x, 0LLU, 5LLU);
+    __DECORATE_NUMBER_CLIP(arg.y, 5LLU, 5LLU);
+    __DECORATE_CLIP(9LLU, 2LLU);
+    string[string_size + size_added] = u8'\0';
+    return (string_size + size_added);
   } else if constexpr (IS_VEC3(T))  {
     const utf8* decorate = u8"{ x: , y: , z: }";
     utf8 buffer[32];
+    u64 size_added = 0;
     u64 conversion_size;
-    u64 total_size = 0;
-    __DECORATE_NUMBER(arg.x, 0LLU, 5LLU);
-    __DECORATE_NUMBER(arg.y, 5LLU, 5LLU);
-    __DECORATE_NUMBER(arg.z, 10LLU, 5LLU);
-    __DECORATE(14LLU, 2LLU);
-    string_out[total_size] = u8'\0';
-    return total_size;
+    __DECORATE_NUMBER_CLIP(arg.x, 0LLU, 5LLU);
+    __DECORATE_NUMBER_CLIP(arg.y, 5LLU, 5LLU);
+    __DECORATE_NUMBER_CLIP(arg.z, 10LLU, 5LLU);
+    __DECORATE_CLIP(14LLU, 2LLU);
+    string[string_size + size_added] = u8'\0';
+    return (string_size + size_added);
   } else if constexpr (IS_VEC4(T))  {
     const utf8* decorate = u8"{ x: , y: , z: , w: }";
     utf8 buffer[32];
+    u64 size_added = 0;
     u64 conversion_size;
-    u64 total_size = 0;
-    __DECORATE_NUMBER(arg.x, 0LLU, 5LLU);
-    __DECORATE_NUMBER(arg.y, 5LLU, 5LLU);
-    __DECORATE_NUMBER(arg.z, 10LLU, 5LLU);
-    __DECORATE_NUMBER(arg.w, 15LLU, 5LLU);
-    __DECORATE(19LLU, 2LLU);
-    string_out[total_size] = u8'\0';
-    return total_size;
+    __DECORATE_NUMBER_CLIP(arg.x, 0LLU, 5LLU);
+    __DECORATE_NUMBER_CLIP(arg.y, 5LLU, 5LLU);
+    __DECORATE_NUMBER_CLIP(arg.z, 10LLU, 5LLU);
+    __DECORATE_NUMBER_CLIP(arg.w, 15LLU, 5LLU);
+    __DECORATE_CLIP(19LLU, 2LLU);
+    string[string_size + size_added] = u8'\0';
+    return (string_size + size_added);
   } else if constexpr (IS_VEC8(T))  {
     const utf8* decorate = u8"{ lo: { x: , y: , z: , w: }, hi: ";
     utf8 buffer[32];
+    u64 size_added = 0;
     u64 conversion_size;
-    u64 total_size = 0;
-    __DECORATE_NUMBER(arg.lo.x, 0LLU, 11LLU);
-    __DECORATE_NUMBER(arg.lo.y, 11LLU, 5LLU);
-    __DECORATE_NUMBER(arg.lo.z, 16LLU, 5LLU);
-    __DECORATE_NUMBER(arg.lo.w, 21LLU, 5LLU);
-    __DECORATE(25LLU, 8LLU);
-    __DECORATE_NUMBER(arg.hi.x, 6LLU, 5LLU);
-    __DECORATE_NUMBER(arg.hi.y, 11LLU, 5LLU);
-    __DECORATE_NUMBER(arg.hi.z, 16LLU, 5LLU);
-    __DECORATE_NUMBER(arg.hi.w, 21LLU, 5LLU);
-    __DECORATE(25LLU, 2LLU);
-    string_out[total_size] = u8'\0';
-    return total_size;
+    __DECORATE_NUMBER_CLIP(arg.lo.x, 0LLU, 11LLU);
+    __DECORATE_NUMBER_CLIP(arg.lo.y, 11LLU, 5LLU);
+    __DECORATE_NUMBER_CLIP(arg.lo.z, 16LLU, 5LLU);
+    __DECORATE_NUMBER_CLIP(arg.lo.w, 21LLU, 5LLU);
+    __DECORATE_CLIP(25LLU, 8LLU);
+    __DECORATE_NUMBER_CLIP(arg.hi.x, 6LLU, 5LLU);
+    __DECORATE_NUMBER_CLIP(arg.hi.y, 11LLU, 5LLU);
+    __DECORATE_NUMBER_CLIP(arg.hi.z, 16LLU, 5LLU);
+    __DECORATE_NUMBER_CLIP(arg.hi.w, 21LLU, 5LLU);
+    __DECORATE_CLIP(25LLU, 2LLU);
+    string[string_size + size_added] = u8'\0';
+    return (string_size + size_added);
+  } else {
+    static_assert(false, "Unsupported type used for formatting a string.");
+  }
+}
+
+/**/
+template <typename T>
+static inline u64 from_type_grow(const T arg,
+                                 utf8** string,
+                                 u64 string_size,
+                                 u64* string_capacity)
+{
+  static_assert(!SAME_TYPE(T, const char*), "String literals must be prepended with 'u8' for utf-8 encoding: 'u8\"Hello world!\"'");
+  static_assert(!SAME_TYPE(T, char*), "Replace string usages of char with utf8, for utf-8 encoding.");
+  if constexpr (SAME_TYPE(T, const utf8*) || SAME_TYPE(T, utf8*)) {
+    u64 arg_size = String::size_of(arg);
+    if ((string_size + arg_size) >= *string_capacity) {
+      *string_capacity = Math::next_pot(string_size + arg_size + 1);
+      *string = (utf8*)Memory::realloc(*string, *string_capacity);
+    }
+    Memory::memcpy(&(*string)[string_size], arg, arg_size);
+    (*string)[string_size + arg_size] = u8'\0';
+    return (string_size + arg_size);
+  } else if constexpr (IS_INTEGRAL(T) || IS_FLOAT(T)) {
+    utf8 buffer[32];
+    u64 conversion_size;
+    utf8* buffer_str = _from_number(arg, buffer, &conversion_size);
+    if ((string_size + conversion_size) >= *string_capacity) {
+      *string_capacity = Math::next_pot(string_size + conversion_size + 1);
+      *string = (utf8*)Memory::realloc(*string, *string_capacity);
+    }
+    Memory::memcpy(&(*string)[string_size], buffer_str, conversion_size);
+    (*string)[string_size + conversion_size] = u8'\0';
+    return (string_size + conversion_size);
+  } else if constexpr (IS_VEC2(T))  {
+    const utf8* decorate = u8"{ x: , y: }";
+    utf8 buffer[32];
+    u64 size_added = 0;
+    u64 conversion_size;
+    __DECORATE_NUMBER_GROW(arg.x, 0LLU, 5LLU);
+    __DECORATE_NUMBER_GROW(arg.y, 5LLU, 5LLU);
+    __DECORATE_GROW(9LLU, 2LLU);
+    (*string)[string_size + size_added] = u8'\0';
+    return (string_size + size_added);
+  } else if constexpr (IS_VEC3(T))  {
+    const utf8* decorate = u8"{ x: , y: , z: }";
+    utf8 buffer[32];
+    u64 size_added = 0;
+    u64 conversion_size;
+    __DECORATE_NUMBER_GROW(arg.x, 0LLU, 5LLU);
+    __DECORATE_NUMBER_GROW(arg.y, 5LLU, 5LLU);
+    __DECORATE_NUMBER_GROW(arg.z, 10LLU, 5LLU);
+    __DECORATE_GROW(14LLU, 2LLU);
+    (*string)[string_size + size_added] = u8'\0';
+    return (string_size + size_added);
+  } else if constexpr (IS_VEC4(T))  {
+    const utf8* decorate = u8"{ x: , y: , z: , w: }";
+    utf8 buffer[32];
+    u64 size_added = 0;
+    u64 conversion_size;
+    __DECORATE_NUMBER_GROW(arg.x, 0LLU, 5LLU);
+    __DECORATE_NUMBER_GROW(arg.y, 5LLU, 5LLU);
+    __DECORATE_NUMBER_GROW(arg.z, 10LLU, 5LLU);
+    __DECORATE_NUMBER_GROW(arg.w, 15LLU, 5LLU);
+    __DECORATE_GROW(19LLU, 2LLU);
+    (*string)[string_size + size_added] = u8'\0';
+    return (string_size + size_added);
+  } else if constexpr (IS_VEC8(T))  {
+    const utf8* decorate = u8"{ lo: { x: , y: , z: , w: }, hi: ";
+    utf8 buffer[32];
+    u64 size_added = 0;
+    u64 conversion_size;
+    __DECORATE_NUMBER_GROW(arg.lo.x, 0LLU, 11LLU);
+    __DECORATE_NUMBER_GROW(arg.lo.y, 11LLU, 5LLU);
+    __DECORATE_NUMBER_GROW(arg.lo.z, 16LLU, 5LLU);
+    __DECORATE_NUMBER_GROW(arg.lo.w, 21LLU, 5LLU);
+    __DECORATE_GROW(25LLU, 8LLU);
+    __DECORATE_NUMBER_GROW(arg.hi.x, 6LLU, 5LLU);
+    __DECORATE_NUMBER_GROW(arg.hi.y, 11LLU, 5LLU);
+    __DECORATE_NUMBER_GROW(arg.hi.z, 16LLU, 5LLU);
+    __DECORATE_NUMBER_GROW(arg.hi.w, 21LLU, 5LLU);
+    __DECORATE_GROW(25LLU, 2LLU);
+    (*string)[string_size + size_added] = u8'\0';
+    return (string_size + size_added);
   } else {
     static_assert(false, "Unsupported type used for formatting a string.");
   }

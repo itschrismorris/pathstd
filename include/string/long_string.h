@@ -48,6 +48,7 @@ struct LongString
     str = (utf8*)Memory::malloc(RESERVE_CAPACITY);
     capacity = RESERVE_CAPACITY;
     size = 0;
+    str[0] = u8'\0';
     (LongString::_append(this, args), ...);
   }
 
@@ -58,7 +59,7 @@ struct LongString
       if (str) {
         Memory::realloc(str, string.capacity);
       } else {
-        str = Memory::malloc(string.capacity);
+        str = (utf8*)Memory::malloc(string.capacity);
       }
     }
     capacity = string.capacity;
@@ -72,25 +73,24 @@ struct LongString
   inline LongString& operator =(const T arg)
   {
     u64 arg_size = String::size_of(arg);
-    if (arg_size > capacity - 1) {
+    if (arg_size >= capacity) {
       capacity = Math::next_pot(arg_size + 1);
       Memory::realloc(str, capacity);
     }
-    size = String::from_type(arg, str, capacity);
+    size = String::from_type_grow(arg, &str, size, &capacity);
     return *this;
+  }
+
+  /**/
+  inline bool operator ==(const utf8* string) const
+  {
+    return String::compare<true, false>(str, string, size);
   }
 
   /**/
   inline bool operator ==(const LongString& string) const
   {
-    u32 bitmask = U32_MAX;
-    #pragma unroll
-    for (u32 c = 0; c < (capacity >> 5); ++c) {
-      I8 ours = I8_LOAD(&str[c * 32]);
-      I8 theirs = I8_LOAD(&string.str[c * 32]);
-      bitmask &= I8_MOVEMASK(I8_CMP_EQ(ours, theirs));
-    }
-    return (bitmask == U32_MAX);
+    return String::compare<true, true>(str, string, size, string.size);
   }
 
   /**/
@@ -117,7 +117,7 @@ struct LongString
   template <typename T>
   inline LongString& operator +=(const T arg)
   {
-    size += String::from_type(arg, &str[size], capacity - size);
+    size = String::from_type_grow(arg, &str, size, &capacity);
     return *this;
   }
 
@@ -148,7 +148,7 @@ struct LongString
   static inline void _append(LongString* string_out, 
                              const LongString& arg)
   {
-    if ((string_out->size + arg.size) > (string_out->capacity - 1)) {
+    if ((string_out->size + arg.size) >= string_out->capacity) {
       string_out->capacity = Math::next_pot(string_out->size + arg.size + 1);
       Memory::realloc(string_out->str, string_out->capacity);
     }
@@ -161,12 +161,7 @@ struct LongString
   static inline void _append(LongString* string_out, 
                              const T arg)
   {
-    u64 arg_size = String::size_of(arg);
-    if ((string_out->size + arg_size) > (string_out->capacity - 1)) {
-      string_out->capacity = Math::next_pot(string_out->size + arg_size + 1);
-      Memory::realloc(string_out->str, string_out->capacity);
-    }
-    string_out->size += String::from_type(arg, &string_out->str[string_out->size], string_out->capacity - string_out->size);
+    string_out->size = String::from_type_grow(arg, &string_out->str, string_out->size, &string_out->capacity);
   }
 
   /**/
