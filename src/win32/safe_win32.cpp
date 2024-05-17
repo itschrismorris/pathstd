@@ -28,16 +28,18 @@ u64 get_last_error_string(utf8* string_out,
 
 /**/
 bool write_console(const utf8* string,
-                   u32 size)
+                   u64 size)
 {
-  if (size == 0) {
+  if (size == U64_MAX) {
     size = String::size_of(string);
   }
-  void* out = GetStdHandle(STD_OUTPUT_HANDLE);
-  if (WriteConsoleA(out, string, size, nullptr, nullptr) == 0) {
-    Errors::last_error_code = Errors::ERROR_CONSOLE_WRITE;
-    Errors::extra_info_from_last_win32_error();
-    return false;
+  if (size > 0) {
+    void* out = GetStdHandle(STD_OUTPUT_HANDLE);
+    if (WriteConsoleA(out, string, size, nullptr, nullptr) == 0) {
+      Errors::last_error_code = Errors::ERROR_CONSOLE_WRITE;
+      Errors::extra_info_from_last_win32_error();
+      return false;
+    }
   }
   return true;
 }
@@ -53,7 +55,7 @@ bool write_file(const utf8* string,
 u64 utf16_to_utf8(utf8* utf8_string_out,
                   u64 utf8_capacity,
                   const wchar_t* utf16_string,
-                  i32 utf16_size)
+                  i64 utf16_size)
 {
   u64 utf8_size = WideCharToMultiByte(CP_UTF8, 0, utf16_string, utf16_size, NULL, 0, NULL, NULL);
   utf8_size = Math::min(utf8_size, utf8_capacity);
@@ -71,7 +73,7 @@ u64 utf16_to_utf8(utf8* utf8_string_out,
 u64 utf8_to_utf16(wchar_t* utf16_string_out,
                   u64 utf16_capacity,
                   const utf8* utf8_string,
-                  i32 utf8_size)
+                  i64 utf8_size)
 {
   u64 utf16_size = MultiByteToWideChar(CP_UTF8, 0, (LPCSTR)utf8_string, utf8_size, NULL, 0);
   utf16_size = Math::min(utf16_size, utf16_capacity);

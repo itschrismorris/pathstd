@@ -56,7 +56,7 @@
 namespace Pathlib::String {
 
 /**/
-static inline u16 const two_digits[100] = 
+static inline u16 const two_digits[100] =
 {
   0x3030, 0x3130, 0x3230, 0x3330, 0x3430, 0x3530, 0x3630, 0x3730, 0x3830, 0x3930,
   0x3031, 0x3131, 0x3231, 0x3331, 0x3431, 0x3531, 0x3631, 0x3731, 0x3831, 0x3931,
@@ -67,7 +67,7 @@ static inline u16 const two_digits[100] =
   0x3036, 0x3136, 0x3236, 0x3336, 0x3436, 0x3536, 0x3636, 0x3736, 0x3836, 0x3936,
   0x3037, 0x3137, 0x3237, 0x3337, 0x3437, 0x3537, 0x3637, 0x3737, 0x3837, 0x3937,
   0x3038, 0x3138, 0x3238, 0x3338, 0x3438, 0x3538, 0x3638, 0x3738, 0x3838, 0x3938,
-  0x3039, 0x3139, 0x3239, 0x3339, 0x3439, 0x3539, 0x3639, 0x3739, 0x3839, 0x3939 
+  0x3039, 0x3139, 0x3239, 0x3339, 0x3439, 0x3539, 0x3639, 0x3739, 0x3839, 0x3939
 };
 
 /**/
@@ -81,7 +81,8 @@ static inline utf8* _from_number(T value,
     utf8* output;
     if constexpr (sizeof(T) == 4) {
       output = &buffer[11];
-    } else {
+    }
+    else {
       output = &buffer[21];
     }
     *output = '\0';
@@ -102,17 +103,20 @@ static inline utf8* _from_number(T value,
     if (size_out) {
       if constexpr (sizeof(T) == 4) {
         *size_out = &buffer[11] - output;
-      } else {
+      }
+      else {
         *size_out = &buffer[21] - output;
       }
     }
     return output;
-  } else if constexpr (IS_FLOAT(T)) {
+  }
+  else if constexpr (IS_FLOAT(T)) {
     f64 v = value;
     if (Math::is_inf(v)) {
       buffer[0] = 'i'; buffer[1] = 'n'; buffer[2] = 'f';
       return buffer;
-    } else if (Math::is_nan(v)) {
+    }
+    else if (Math::is_nan(v)) {
       buffer[0] = 'n'; buffer[1] = 'a'; buffer[2] = 'n';
       return buffer;
     }
@@ -146,13 +150,20 @@ static inline utf8* _from_number(T value,
 /**/
 template <typename T>
 static inline u64 from_type_clip(const T arg,
-                                 utf8* string,
-                                 u64 string_size,
-                                 u64 string_capacity)
+                                  utf8* string,
+                                  u64 string_size,
+                                  u64 string_capacity)
 {
   static_assert(!SAME_TYPE(T, const char*), "String literals must be prepended with 'u8' for utf-8 encoding: 'u8\"Hello world!\"'");
   static_assert(!SAME_TYPE(T, char*), "Replace string usages of char with utf8, for utf-8 encoding.");
-  if constexpr (SAME_TYPE(T, const utf8*) || SAME_TYPE(T, utf8*)) {
+  if constexpr (SAME_TYPE(T, utf8)) {
+    if ((string_size + 1) < string_capacity) {
+      string[string_size] = arg;
+      string[string_size + 1] = u8'\0';
+      return (string_size + 1);
+    }
+    return string_size;
+  } else if constexpr (SAME_TYPE(T, const utf8*) || SAME_TYPE(T, utf8*)) {
     u64 copy_size = Math::min(string_capacity - string_size - 1, String::size_of(arg));
     Memory::memcpy(&string[string_size], arg, copy_size);
     string[string_size + copy_size] = u8'\0';
@@ -229,7 +240,15 @@ static inline u64 from_type_grow(const T arg,
 {
   static_assert(!SAME_TYPE(T, const char*), "String literals must be prepended with 'u8' for utf-8 encoding: 'u8\"Hello world!\"'");
   static_assert(!SAME_TYPE(T, char*), "Replace string usages of char with utf8, for utf-8 encoding.");
-  if constexpr (SAME_TYPE(T, const utf8*) || SAME_TYPE(T, utf8*)) {
+  if constexpr (SAME_TYPE(T, utf8)) {
+    if ((string_size + 1) >= *string_capacity) {
+      *string_capacity = Math::next_pot(string_size + 1 + 1);
+      *string = (utf8*)Memory::realloc(*string, *string_capacity);
+    }
+    (*string)[string_size] = arg;
+    (*string)[string_size + 1] = u8'\0';
+    return (string_size + 1);
+  } else if constexpr (SAME_TYPE(T, const utf8*) || SAME_TYPE(T, utf8*)) {
     u64 arg_size = String::size_of(arg);
     if ((string_size + arg_size) >= *string_capacity) {
       *string_capacity = Math::next_pot(string_size + arg_size + 1);

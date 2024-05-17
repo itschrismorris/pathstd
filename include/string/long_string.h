@@ -90,7 +90,7 @@ struct LongString
   /**/
   inline bool operator ==(const LongString& string) const
   {
-    return String::compare<true, true>(str, string, size, string.size);
+    return String::compare<true, true>(str, string.str, size, string.size);
   }
 
   /**/
