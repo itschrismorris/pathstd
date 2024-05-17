@@ -9,7 +9,7 @@
 #pragma once
 #include "../types.h"
 #include "../log/log.h"
-#include "../string/local_string.h"
+#include "../string/short_string.h"
 
 namespace Pathlib::Errors {
 
@@ -35,7 +35,7 @@ inline const utf8* error_strings_eng[] =
 
 /**/
 inline u32 last_error_code;
-inline String::LocalString<256> extra_error_info;
+inline String::ShortString<256> extra_error_info;
 
 /**/
 i32 get_last_error_code();

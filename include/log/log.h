@@ -3,9 +3,8 @@
 */
 
 #pragma once
-#include "../src/win32/mindows.h"
 #include "types.h"
-#include "errors/errors.h"
+#include "win32/safe_win32.h"
 
 namespace Pathlib {
 
@@ -20,5 +19,14 @@ struct Log
   ~Log() {}
   bool initiate(const utf8* log_path);
   void shutdown();
+
+  /**/
+  template <typename... Args>
+  static inline void log(Args&&... args)
+  {
+    String::ShortString<256> string_out;
+    (string_out._append(&string_out, args), ...);
+    WriteFile(log, string_out.str, string_out.size, nullptr, nullptr);
+  }
 };
 }

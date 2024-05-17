@@ -43,6 +43,13 @@ bool write_console(const utf8* string,
 }
 
 /**/
+bool write_file(const utf8* string,
+                   u32 size = 0)
+{
+  return true;
+}
+
+/**/
 u64 utf16_to_utf8(utf8* utf8_string_out,
                   u64 utf8_capacity,
                   const wchar_t* utf16_string,

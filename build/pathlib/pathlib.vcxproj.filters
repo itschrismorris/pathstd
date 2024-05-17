@@ -81,7 +81,7 @@
     <ClInclude Include="..\..\include\string\size_of.h">
       <Filter>src\string</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\include\string\local_string.h">
+    <ClInclude Include="..\..\include\string\short_string.h">
       <Filter>src\string</Filter>
     </ClInclude>
     <ClInclude Include="..\..\include\math\math.h">
@@ -124,6 +124,9 @@
       <Filter>src\win32</Filter>
     </ClInclude>
     <ClInclude Include="..\..\include\string\from_type.h">
+      <Filter>src\string</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\string\long_string.h">
       <Filter>src\string</Filter>
     </ClInclude>
   </ItemGroup>

@@ -1,5 +1,5 @@
 /*
-  Documentation: https://www.path.blog/docs/local_string.html
+  Documentation: https://www.path.blog/docs/short_string.html
 */
 
 #pragma once
@@ -9,23 +9,23 @@ namespace Pathlib::String {
 
 /**/
 template <u64 CAPACITY>
-struct LocalString
+struct ShortString
 {
-  static_assert(Math::is_multiple_of<u64, 32>(CAPACITY), "LocalString CAPACITY must be a multiple of 32 (AVX purposes).");
+  static_assert(Math::is_multiple_of<u64, 32>(CAPACITY), "ShortString CAPACITY must be a multiple of 32 (AVX purposes).");
 
   /**/
   alignas(32) utf8 str[CAPACITY];
   u64 size;
   
   /**/
-  LocalString()
+  ShortString()
   {
     clear();
   }
-  ~LocalString() {}
+  ~ShortString() {}
 
   /**/
-  LocalString(const LocalString& string)
+  ShortString(const ShortString& string)
   {
     Memory::memcpy<true, true>(str, string.str, string.size);
     size = string.size;
@@ -39,15 +39,15 @@ struct LocalString
   
   /**/
   template <typename... Args>
-  LocalString(Args&&... args)
+  ShortString(Args&&... args)
   {
     size = 0;
-    (LocalString::_append(this, args), ...);
+    (ShortString::_append(this, args), ...);
     Memory::memset(&str[size], 0x00, CAPACITY - size);
   }
 
   /**/
-  inline LocalString& operator =(const LocalString& string)
+  inline ShortString& operator =(const ShortString& string)
   {
     Memory::memcpy<true, true>(str, string.str, CAPACITY);
     size = string.size;
@@ -56,15 +56,15 @@ struct LocalString
 
   /**/
   template <typename T>
-  inline LocalString& operator =(const T arg)
+  inline ShortString& operator =(const T arg)
   {
-    size += String::from_type(arg, str, CAPACITY);
+    size = String::from_type(arg, str, CAPACITY);
     Memory::memset(&str[size], 0x00, CAPACITY - size);
     return *this;
   }
 
   /**/
-  inline bool operator ==(const LocalString& string) const
+  inline bool operator ==(const ShortString& string) const
   {
     u32 bitmask = U32_MAX;
     #pragma unroll
@@ -78,17 +78,17 @@ struct LocalString
 
   /**/
   template <typename T>
-  inline const LocalString operator +(const T arg)
+  inline const ShortString operator +(const T arg)
   {
     static_assert(!SAME_TYPE(T, const char*), "String literals must be prepended with u8 for utf-8 encoding: u8\"Hello world!\"");
     static_assert(!SAME_TYPE(T, char*), "Replace string usages of char with utf8, for utf-8 encoding.");
-    LocalString new_string = *this;
-    LocalString::_append(&new_string, arg);
+    ShortString new_string = *this;
+    ShortString::_append(&new_string, arg);
     return new_string;
   }
 
   /**/
-  inline LocalString& operator +=(const LocalString& arg)
+  inline ShortString& operator +=(const ShortString& arg)
   {
     u64 copy_size = Math::min((CAPACITY - 1) - size, arg.size);
     Memory::memcpy<false, true>(&str[size], arg.str, copy_size);
@@ -98,7 +98,7 @@ struct LocalString
 
   /**/
   template <typename T>
-  inline LocalString& operator +=(const T arg)
+  inline ShortString& operator +=(const T arg)
   {
     size += String::from_type(arg, &str[size], CAPACITY - size);
     return *this;
@@ -109,7 +109,7 @@ struct LocalString
   inline void format(Args&&... args)
   {
     size = 0;
-    (LocalString::_append(this, args), ...);
+    (ShortString::_append(this, args), ...);
     Memory::memset(&str[size], 0x00, CAPACITY - size);
   }
 
@@ -128,8 +128,8 @@ struct LocalString
   }
 
   /**/
-  static inline void _append(LocalString* string_out, 
-                             const LocalString& arg)
+  static inline void _append(ShortString* string_out, 
+                             const ShortString& arg)
   {
     u64 copy_size = Math::min((CAPACITY - 1) - string_out->size, arg.size);
     Memory::memcpy<false, true>(&string_out->str[string_out->size], arg.str, copy_size);
@@ -138,7 +138,7 @@ struct LocalString
 
   /**/
   template <typename T>
-  static inline void _append(LocalString* string_out, 
+  static inline void _append(ShortString* string_out, 
                              const T arg)
   {
     string_out->size += String::from_type(arg, &string_out->str[string_out->size], CAPACITY - string_out->size);
@@ -146,7 +146,7 @@ struct LocalString
 
   /**/
   template <typename... Args>
-  static inline void append(LocalString* string_out,
+  static inline void append(ShortString* string_out,
                             Args&&... args)
   {
     (_append(string_out, args), ...);
@@ -154,7 +154,7 @@ struct LocalString
 
   /**/
   template <typename... Args>
-  static inline LocalString format(LocalString* string_out,
+  static inline ShortString format(ShortString* string_out,
                                    Args&&... args)
   {
     (_append(string_out, args), ...);
@@ -162,9 +162,9 @@ struct LocalString
 
   /**/
   template <typename... Args>
-  static inline LocalString format_copy(Args&&... args)
+  static inline ShortString format_copy(Args&&... args)
   {
-    LocalString string_out;
+    ShortString string_out;
     (_append(&string_out, args), ...);
     return string_out;
   }
@@ -172,5 +172,5 @@ struct LocalString
 }
 
 /**/
-template <typename T> struct _is_local_string : false_type {};
-template <u64 CAPACITY> struct _is_local_string<Pathlib::String::LocalString<CAPACITY>> : true_type {};
+template <typename T> struct _is_short_string : false_type {};
+template <u64 CAPACITY> struct _is_short_string<Pathlib::String::ShortString<CAPACITY>> : true_type {};

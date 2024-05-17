@@ -1,6 +1,7 @@
 #include "log/log.h"
 #include "errors/errors.h"
 #include "win32/safe_win32.h"
+#include "../src/win32/mindows.h"
 
 namespace Pathlib {
 

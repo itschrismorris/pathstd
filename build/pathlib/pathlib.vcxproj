@@ -201,7 +201,8 @@
     <ClInclude Include="..\..\include\pathlib.h" />
     <ClInclude Include="..\..\include\string\from_type.h" />
     <ClInclude Include="..\..\include\string\size_of.h" />
-    <ClInclude Include="..\..\include\string\local_string.h" />
+    <ClInclude Include="..\..\include\string\short_string.h" />
+    <ClInclude Include="..\..\include\string\long_string.h" />
     <ClInclude Include="..\..\include\timer\timer.h" />
     <ClInclude Include="..\..\include\types.h" />
     <ClInclude Include="..\..\include\win32\console.h" />

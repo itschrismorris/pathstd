@@ -2,7 +2,6 @@
   Documentation: https://www.path.blog/docs/malloc.html
 */
 #pragma once
-#include "third_party/mimalloc/mimalloc.h"
 #include "types.h"
 
 #define PAGE_SIZE 0x1000

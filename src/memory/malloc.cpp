@@ -1,4 +1,5 @@
-#include "string/local_string.h"
+#include "string/short_string.h"
+#include "third_party/mimalloc/mimalloc.h"
 #include "memory/malloc.h"
 
 namespace Pathlib::Memory {
@@ -36,6 +37,6 @@ void* realloc(void* ptr,
 /**/
 void free(void** ptr)
 {
-  mi_free_aligned(ptr, 128);
+  mi_free_aligned(*ptr, 128);
 }
 }

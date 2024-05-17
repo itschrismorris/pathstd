@@ -127,6 +127,7 @@ static inline u64 from_type(const T arg,
   if constexpr (SAME_TYPE(T, const utf8*) || SAME_TYPE(T, utf8*)) {
     u64 copy_size = Math::min(string_capacity - 1, String::size_of(arg));
     Memory::memcpy(string_out, arg, copy_size);
+    string_out[copy_size] = u8'\0';
     return copy_size;
   } else if constexpr (IS_INTEGRAL(T) || IS_FLOAT(T)) {
     utf8 buffer[32];
@@ -134,6 +135,7 @@ static inline u64 from_type(const T arg,
     utf8* buffer_str = _from_number(arg, buffer, &size);
     u64 copy_size = Math::min(string_capacity - 1, size);
     Memory::memcpy(string_out, buffer_str, copy_size);
+    string_out[copy_size] = u8'\0';
     return copy_size;
   } else if constexpr (IS_VEC2(T))  {
     const utf8* decorate = u8"{ x: , y: }";
@@ -143,6 +145,7 @@ static inline u64 from_type(const T arg,
     __DECORATE_NUMBER(arg.x, 0LLU, 5LLU);
     __DECORATE_NUMBER(arg.y, 5LLU, 5LLU);
     __DECORATE(9LLU, 2LLU);
+    string_out[total_size] = u8'\0';
     return total_size;
   } else if constexpr (IS_VEC3(T))  {
     const utf8* decorate = u8"{ x: , y: , z: }";
@@ -153,6 +156,7 @@ static inline u64 from_type(const T arg,
     __DECORATE_NUMBER(arg.y, 5LLU, 5LLU);
     __DECORATE_NUMBER(arg.z, 10LLU, 5LLU);
     __DECORATE(14LLU, 2LLU);
+    string_out[total_size] = u8'\0';
     return total_size;
   } else if constexpr (IS_VEC4(T))  {
     const utf8* decorate = u8"{ x: , y: , z: , w: }";
@@ -164,6 +168,7 @@ static inline u64 from_type(const T arg,
     __DECORATE_NUMBER(arg.z, 10LLU, 5LLU);
     __DECORATE_NUMBER(arg.w, 15LLU, 5LLU);
     __DECORATE(19LLU, 2LLU);
+    string_out[total_size] = u8'\0';
     return total_size;
   } else if constexpr (IS_VEC8(T))  {
     const utf8* decorate = u8"{ lo: { x: , y: , z: , w: }, hi: ";
@@ -180,6 +185,7 @@ static inline u64 from_type(const T arg,
     __DECORATE_NUMBER(arg.hi.z, 16LLU, 5LLU);
     __DECORATE_NUMBER(arg.hi.w, 21LLU, 5LLU);
     __DECORATE(25LLU, 2LLU);
+    string_out[total_size] = u8'\0';
     return total_size;
   } else {
     static_assert(false, "Unsupported type used for formatting a string.");

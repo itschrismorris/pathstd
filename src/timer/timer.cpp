@@ -9,7 +9,6 @@ namespace Pathlib {
 /**/
 bool Timer::initiate(void)
 {
-  //LOG.log(L"Initiating timer.");
   LARGE_INTEGER ticks;
   QueryPerformanceFrequency(&ticks);
   ticks_per_second = ticks.QuadPart;
@@ -22,7 +21,6 @@ bool Timer::initiate(void)
 /**/
 void Timer::shutdown(void)
 {
-  //LOG.log(L"Shutting down timer.");
 }
 
 /**/
