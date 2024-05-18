@@ -184,9 +184,9 @@ struct LongString
   template <typename... Args>
   static inline LongString format_copy(Args&&... args)
   {
-    LongString string_out;
-    (_append(&string_out, args), ...);
-    return string_out;
+    LongString string;
+    (_append(&string, args), ...);
+    return string;
   }
 };
 }

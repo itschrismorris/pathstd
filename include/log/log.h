@@ -22,11 +22,11 @@ struct Log
 
   /**/
   template <typename... Args>
-  static inline void log(Args&&... args)
+  inline void log(Args&&... args)
   {
-    String::ShortString<256> string_out;
-    (string_out._append(&string_out, args), ...);
-    WriteFile(log, string_out.str, string_out.size, nullptr, nullptr);
+    String::LongString string;
+    (string._append(&string, args), ...);
+    Win32::write_file(file, string.str, string.size);
   }
 };
 }

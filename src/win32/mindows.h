@@ -20,6 +20,9 @@
 #define MAKELANGID(p, s) ((((WORD)(s)) << 10) | (WORD)(p))
 
 /**/
+#define ERROR_IO_PENDING 0x3E5
+
+/**/
 typedef __int64 LONG_PTR;
 typedef void* LPVOID;
 typedef void* PVOID;

@@ -27,17 +27,12 @@ u64 get_last_error_string(utf8* string_out,
 }
 
 /**/
-bool write_console(const utf8* string,
-                   u64 size)
+bool write_file(HANDLE file,
+                const utf8* string,
+                u64 size)
 {
-  if (size == U64_MAX) {
-    size = String::size_of(string);
-  }
-  if (size > 0) {
-    void* out = GetStdHandle(STD_OUTPUT_HANDLE);
-    if (WriteConsoleA(out, string, size, nullptr, nullptr) == 0) {
-      Errors::last_error_code = Errors::ERROR_CONSOLE_WRITE;
-      Errors::extra_info_from_last_win32_error();
+  if (WriteFile(file, (HANDLE)string, size, nullptr, nullptr) == 0) {
+    if (get_last_error() != ERROR_IO_PENDING) {
       return false;
     }
   }
@@ -45,9 +40,18 @@ bool write_console(const utf8* string,
 }
 
 /**/
-bool write_file(const utf8* string,
-                   u32 size = 0)
+bool write_console(const utf8* string,
+                   u64 size)
 {
+  if (size == U64_MAX) {
+    size = String::size_of(string);
+  }
+  void* out = GetStdHandle(STD_OUTPUT_HANDLE);
+  if (WriteConsoleA(out, string, size, nullptr, nullptr) == 0) {
+    Errors::last_error_code = Errors::ERROR_CONSOLE_WRITE;
+    Errors::extra_info_from_last_win32_error();
+    return false;
+  }
   return true;
 }
 

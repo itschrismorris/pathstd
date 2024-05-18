@@ -167,9 +167,9 @@ struct ShortString
   template <typename... Args>
   static inline ShortString format_copy(Args&&... args)
   {
-    ShortString string_out;
-    (_append(&string_out, args), ...);
-    return string_out;
+    ShortString string;
+    (_append(&string, args), ...);
+    return string;
   }
 };
 }
