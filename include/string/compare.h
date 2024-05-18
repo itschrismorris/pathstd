@@ -14,13 +14,13 @@ template <u32 REGISTER_COUNT>
 static inline bool compare_sse(const utf8* first,
                                const utf8* second)
 {
-  u32 bitmask = U32_MAX;
+  u32 bitmask = U16_MAX;
   #pragma unroll
   for (u32 r = 0; r < REGISTER_COUNT; ++r) {
-    I4 first_v = I4_LOADU(&first[r * 32]);
-    I4 second_v = I4_LOADU(&second[r * 32]);
+    I4 first_v = I4_LOADU(&first[r * 16]);
+    I4 second_v = I4_LOADU(&second[r * 16]);
     bitmask &= I4_MOVEMASK(I4_CMP_EQ(first_v, second_v));
-    if (bitmask != U32_MAX) {
+    if (bitmask != U16_MAX) {
       return false;
     }
   }

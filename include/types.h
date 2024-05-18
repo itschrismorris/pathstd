@@ -5,10 +5,12 @@
 #pragma once
 
 #define EXPORT __declspec(dllexport)
-#define U64_MAX 0xFFFFFFFFFFFFFFFFLLU
+#define U16_MAX 0xFFFFU
 #define U32_MAX 0xFFFFFFFFU
-#define I64_MAX 0x7FFFFFFFFFFFFFFFLL
+#define U64_MAX 0xFFFFFFFFFFFFFFFFLLU
+#define I16_MAX 0x7FFF
 #define I32_MAX 0x7FFFFFFF
+#define I64_MAX 0x7FFFFFFFFFFFFFFFLL
 #define SAME_TYPE(A, B) __is_same(A, B)
 #define IS_VEC2(A) _is_vec2<A>::value
 #define IS_VEC3(A) _is_vec3<A>::value
