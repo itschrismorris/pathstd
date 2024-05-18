@@ -7,9 +7,9 @@
 */
 
 #pragma once
-#include "../types.h"
-#include "../log/log.h"
-#include "../string/short_string.h"
+#include "types/types.h"
+#include "log/log.h"
+#include "types/string/short_string.h"
 
 namespace Pathlib::Errors {
 
@@ -40,8 +40,8 @@ inline String::ShortString<256> extra_error_info;
 /**/
 i32 get_last_error_code();
 const utf8* get_error_string(i32 error_code);
-void write_console_last_error();
-void log_last_error();
-void popup_last_error();
 void extra_info_from_last_win32_error();
+void write_last_to_console();
+void write_last_to_log();
+void write_last_to_popup();
 }

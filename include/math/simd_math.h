@@ -3,8 +3,8 @@
 */
 
 #pragma once
-#include "types.h"
-#include "intrinsics/intrinsics.h"
+#include "types/types.h"
+#include "math/intrinsics/intrinsics.h"
 
 namespace Pathlib::Math {
 

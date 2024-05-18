@@ -1,14 +1,12 @@
-#include "log/log.h"
-#include "errors/errors.h"
-#include "types.h"
+#include "pathlib.h"
 #include "../src/win32/mindows.h"
-#include "timer/timer.h"
 
 namespace Pathlib {
 
 /**/
 bool Timer::initiate(void)
 {
+  LOGT(u8"Initiating timer.");
   LARGE_INTEGER ticks;
   QueryPerformanceFrequency(&ticks);
   ticks_per_second = ticks.QuadPart;
@@ -21,6 +19,7 @@ bool Timer::initiate(void)
 /**/
 void Timer::shutdown(void)
 {
+  LOGT(u8"Shutting down timer.");
 }
 
 /**/

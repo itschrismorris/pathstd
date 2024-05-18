@@ -5,8 +5,8 @@
 #pragma once
 #include "memory/memcpy.h"
 #include "memory/memset.h"
-#include "string/size_of.h"
-#include "types.h"
+#include "types/string/size_of.h"
+#include "types/types.h"
 
 #define __DECORATE_CLIP(DECORATE, DECORATE_SIZE) \
   { \

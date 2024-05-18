@@ -3,8 +3,8 @@
 */
 
 #pragma once
-#include "types.h"
-#include "string/short_string.h"
+#include "types/types.h"
+#include "types/string/short_string.h"
 #include "math/math.h"
 
 namespace Pathlib::String {

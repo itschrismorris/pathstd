@@ -3,9 +3,14 @@
 */
 
 #pragma once
-#include "types.h"
+#include "types/types.h"
+#include "win32/console.h"
 #include "win32/safe_win32.h"
-#include "string/long_string.h"
+#include "types/string/long_string.h"
+
+/**/
+#define LOG(A) if (::Pathlib::pathlib.log.file) { ::Pathlib::pathlib.log.log(A); }
+#define LOGT(A) if (::Pathlib::pathlib.log.file) { ::Pathlib::pathlib.log.logt(A); }
 
 namespace Pathlib {
 
@@ -13,7 +18,7 @@ namespace Pathlib {
 struct Log
 {
   /**/
-  HANDLE file;
+  void* file;
 
   /**/
   Log() : file(nullptr) {}
@@ -23,11 +28,25 @@ struct Log
 
   /**/
   template <typename... Args>
-  inline void log(Args&&... args)
+  inline bool log(Args&&... args)
   {
     String::LongString string;
     (string._append(&string, args), ...);
-    Win32::write_file(file, string.str, string.size);
+    string.append(u8'\n');
+    return (Console::write(string) && Win32::write_file(file, string.str, string.size));
+  }
+
+  /**/
+  template <typename... Args>
+  inline bool logt(Args&&... args)
+  {
+    SystemTime time;
+    Win32::get_local_time(&time);
+    String::LongString string;
+    string.append(time.wHour, u8":", time.wMinute, u8":", time.wSecond, u8":", time.wMilliseconds, u8": ");
+    (string._append(&string, args), ...);
+    string.append(u8'\n');
+    return (Console::write(string) && Win32::write_file(file, string.str, string.size));
   }
 };
 }

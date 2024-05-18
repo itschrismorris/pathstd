@@ -1,5 +1,5 @@
-#include "win32/safe_win32.h"
 #include "errors/errors.h"
+#include "core/core.h"
 
 namespace Pathlib::Errors {
 
@@ -16,30 +16,36 @@ const utf8* get_error_string(i32 error_code)
 }
 
 /**/
-void write_console_last_error()
-{
-  Win32::write_console(u8"** ERROR **\n", 12);
-  Win32::write_console(get_error_string(Errors::last_error_code));
-  Win32::write_console(u8"\n", 1);
-  Win32::write_console(Errors::extra_error_info.str, Errors::extra_error_info.size);
-}
-
-/**/
-void log_last_error()
-{
-  return;
-}
-
-/**/
-void popup_last_error()
-{
-  return;
-}
-
-/**/
 void extra_info_from_last_win32_error()
 {
   Errors::extra_error_info.size = Win32::get_last_error_string(Errors::extra_error_info.str,
                                                                Errors::extra_error_info.capacity());
+}
+
+/**/
+void write_last_to_console()
+{
+  String::LongString string(u8"** ERROR **\n", get_error_string(Errors::last_error_code), u8"\n",
+                            Errors::extra_error_info);
+  Console::set_text_attributes(CONSOLE_FOREGROUND_RED);
+  Win32::write_console(string.str, string.size);
+  Console::set_text_attributes(CONSOLE_FOREGROUND_RED | CONSOLE_FOREGROUND_GREEN | CONSOLE_FOREGROUND_BLUE);
+}
+
+/**/
+void write_last_to_log()
+{
+  String::LongString string(u8"** ERROR **\n", get_error_string(Errors::last_error_code), u8"\n",
+                            Errors::extra_error_info);
+  Console::set_text_attributes(CONSOLE_FOREGROUND_RED);
+  LOGT(string.str);
+  Console::set_text_attributes(CONSOLE_FOREGROUND_RED | CONSOLE_FOREGROUND_GREEN | CONSOLE_FOREGROUND_BLUE);
+  return;
+}
+
+/**/
+void write_last_to_popup()
+{
+  return;
 }
 } 

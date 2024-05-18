@@ -19,7 +19,7 @@
 #define IS_INTEGRAL(A) _is_integral<A>::value
 #define IS_FLOAT(A) _is_float<A>::value
 #define IS_LOCAL_STRING(A) _is_short_string<A>::value
-#define IS_STRING(A) _is_long_string<A>::value
+#define IS_LONG_STRING(A) _is_long_string<A>::value
 
 /**/
 struct false_type { static constexpr bool value = false; constexpr operator bool() const { return value; } };

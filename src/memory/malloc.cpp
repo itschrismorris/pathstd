@@ -1,22 +1,7 @@
-#include "string/short_string.h"
-#include "third_party/mimalloc/mimalloc.h"
 #include "memory/malloc.h"
+#include "../src/third_party/mimalloc/mimalloc.h"
 
 namespace Pathlib::Memory {
-
-/**/
-bool initiate()
-{
-  #ifdef _DEBUG
-    mi_option_enable(mi_option_verbose);
-  #endif
-  return true;
-}
-
-/**/
-void shutdown()
-{
-}
 
 /**/
 void* malloc(u64 size,

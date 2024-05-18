@@ -3,12 +3,13 @@
 */
 
 #pragma once
-#include "string/from_type.h"
+#include "memory/malloc.h"
+#include "types/string/from_type.h"
 
 namespace Pathlib::String {
 
 /**/
-template <u64 RESERVE_CAPACITY = 256>
+template <u64 RESERVE_CAPACITY = 256LLU>
 struct LongString
 {
   /**/
@@ -142,6 +143,19 @@ struct LongString
   inline void append(Args&&... args)
   {
     (_append(this, args), ...);
+  }
+
+  /**/
+  template <u64 CAPACITY>
+  static inline void _append(LongString* string_out, 
+                             const ShortString<CAPACITY>& arg)
+  {
+    if ((string_out->size + arg.size) >= string_out->capacity) {
+      string_out->capacity = Math::next_pot(string_out->size + arg.size + 1);
+      Memory::realloc(string_out->str, string_out->capacity);
+    }
+    Memory::memcpy<false, true>(&string_out->str[string_out->size], arg.str, arg.size + 1);
+    string_out->size += arg.size;
   }
 
   /**/

@@ -62,11 +62,24 @@ typedef union _LARGE_INTEGER {
   LONGLONG QuadPart;
 } LARGE_INTEGER;
 
+/**/
 typedef struct _SECURITY_ATTRIBUTES {
   DWORD  nLength;
   void* lpSecurityDescriptor;
   int   bInheritHandle;
 } SECURITY_ATTRIBUTES, *PSECURITY_ATTRIBUTES, *LPSECURITY_ATTRIBUTES;
+
+/**/
+typedef struct _SYSTEMTIME {
+  WORD wYear;
+  WORD wMonth;
+  WORD wDayOfWeek;
+  WORD wDay;
+  WORD wHour;
+  WORD wMinute;
+  WORD wSecond;
+  WORD wMilliseconds;
+} SYSTEMTIME, *PSYSTEMTIME, *LPSYSTEMTIME;
 
 /**/
 __declspec(dllimport) int __stdcall SetConsoleOutputCP(UINT wCodePageID);
@@ -111,4 +124,7 @@ __declspec(dllimport) int __stdcall MultiByteToWideChar(UINT CodePage,
                                                         LPWSTR lpWideCharStr,
                                                         int cchWideChar);
 __declspec(dllimport) void __stdcall LocalFree(HLOCAL hMem);
+__declspec(dllimport) void __stdcall GetLocalTime(LPSYSTEMTIME lpSystemTime);
+__declspec(dllimport) BOOL __stdcall SetConsoleTextAttribute(HANDLE hConsoleOutput,
+                                                             WORD wAttributes);
 }

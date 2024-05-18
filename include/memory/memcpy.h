@@ -3,7 +3,7 @@
 */
 
 #pragma once
-#include "types.h"
+#include "types/types.h"
 #include "memory/malloc.h"
 #include "math/math.h"
 #include "math/simd_math.h"

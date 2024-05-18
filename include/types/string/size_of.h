@@ -3,7 +3,7 @@
 */
 
 #pragma once
-#include "types.h"
+#include "types/types.h"
 #include "math/math.h"
 
 namespace Pathlib::String {

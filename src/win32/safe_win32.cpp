@@ -31,12 +31,22 @@ bool write_file(HANDLE file,
                 const utf8* string,
                 u64 size)
 {
-  if (WriteFile(file, (HANDLE)string, size, nullptr, nullptr) == 0) {
-    if (get_last_error() != ERROR_IO_PENDING) {
-      return false;
+  if (file) {
+    if (WriteFile(file, (HANDLE)string, size, nullptr, nullptr) == 0) {
+      if (get_last_error() != ERROR_IO_PENDING) {
+        return false;
+      }
     }
+    return true;
   }
-  return true;
+  return false;
+}
+
+/**/
+bool set_console_text_attributes(u16 attributes)
+{
+  void* out = GetStdHandle(STD_OUTPUT_HANDLE);
+  return SetConsoleTextAttribute(out, attributes);
 }
 
 /**/
@@ -89,5 +99,11 @@ u64 utf8_to_utf16(wchar_t* utf16_string_out,
   }
   utf16_string_out[utf16_size] = L'\0';
   return utf16_size;
+}
+
+/**/
+void get_local_time(SystemTime* system_time)
+{
+  GetLocalTime((LPSYSTEMTIME)system_time);
 }
 }

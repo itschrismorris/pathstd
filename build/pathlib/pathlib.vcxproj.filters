@@ -17,20 +17,29 @@
     <Filter Include="src\memory">
       <UniqueIdentifier>{76f6eae3-6af2-42d2-9767-a3203251b3b3}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\containers">
-      <UniqueIdentifier>{2dd9c127-58df-4517-851f-7a1b8ce572fd}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\string">
-      <UniqueIdentifier>{d9ca9502-6b15-4c5d-a2b2-0d83b2e67223}</UniqueIdentifier>
-    </Filter>
     <Filter Include="src\math">
       <UniqueIdentifier>{cc017e24-fbd4-454f-806a-654d251a7b05}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\intrinsics">
-      <UniqueIdentifier>{371e1ce6-3735-4f21-bed2-41447b41c6b2}</UniqueIdentifier>
-    </Filter>
     <Filter Include="src\win32">
       <UniqueIdentifier>{16d2d0b7-e002-4fd8-9b3e-c83e9186dfe6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\profile">
+      <UniqueIdentifier>{25b3823b-ad20-4502-927d-29a802e934ef}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\math\intrinsics">
+      <UniqueIdentifier>{e94351a3-e755-4283-bb8d-12a9a0ded9a8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\types">
+      <UniqueIdentifier>{5e00edd4-c155-440d-96a5-9fd831fb3b48}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\types\containers">
+      <UniqueIdentifier>{ad885453-f5c8-402b-8230-05b1739913bd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\types\string">
+      <UniqueIdentifier>{be4cd9b0-3c34-4658-b0f1-2dbeba03b610}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\core">
+      <UniqueIdentifier>{89e73021-e2fa-4afc-a9a6-07df7881905b}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -43,20 +52,20 @@
     <ClCompile Include="..\..\src\timer\timer.cpp">
       <Filter>src\timer</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\pathlib.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src\win32\safe_win32.cpp">
       <Filter>src\win32</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\memory\malloc.cpp">
       <Filter>src\memory</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\profile\profile.cpp">
+      <Filter>src\profile</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\core\core.cpp">
+      <Filter>src\core</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\include\types.h">
-      <Filter>src</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\include\errors\errors.h">
       <Filter>src\errors</Filter>
     </ClInclude>
@@ -69,44 +78,11 @@
     <ClInclude Include="..\..\include\memory\memset.h">
       <Filter>src\memory</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\include\memory\malloc.h">
-      <Filter>src\memory</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\include\timer\timer.h">
       <Filter>src\timer</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\include\containers\hashmap.h">
-      <Filter>src\containers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\string\size_of.h">
-      <Filter>src\string</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\string\short_string.h">
-      <Filter>src\string</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\include\math\math.h">
       <Filter>src\math</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\intrinsics\avx2intrin.h">
-      <Filter>src\intrinsics</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\intrinsics\avxintrin.h">
-      <Filter>src\intrinsics</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\intrinsics\bmiintrin.h">
-      <Filter>src\intrinsics</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\intrinsics\emmintrin.h">
-      <Filter>src\intrinsics</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\intrinsics\intrinsics.h">
-      <Filter>src\intrinsics</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\intrinsics\mmintrin.h">
-      <Filter>src\intrinsics</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\intrinsics\xmmintrin.h">
-      <Filter>src\intrinsics</Filter>
     </ClInclude>
     <ClInclude Include="..\..\include\win32\console.h">
       <Filter>src\win32</Filter>
@@ -123,14 +99,56 @@
     <ClInclude Include="..\..\include\win32\safe_win32.h">
       <Filter>src\win32</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\include\string\from_type.h">
-      <Filter>src\string</Filter>
+    <ClInclude Include="..\..\include\memory\malloc.h">
+      <Filter>src\memory</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\include\string\long_string.h">
-      <Filter>src\string</Filter>
+    <ClInclude Include="..\..\include\profile\profile.h">
+      <Filter>src\profile</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\include\string\compare.h">
-      <Filter>src\string</Filter>
+    <ClInclude Include="..\..\include\math\intrinsics\avx2intrin.h">
+      <Filter>src\math\intrinsics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\math\intrinsics\avxintrin.h">
+      <Filter>src\math\intrinsics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\math\intrinsics\bmiintrin.h">
+      <Filter>src\math\intrinsics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\math\intrinsics\emmintrin.h">
+      <Filter>src\math\intrinsics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\math\intrinsics\intrinsics.h">
+      <Filter>src\math\intrinsics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\math\intrinsics\mmintrin.h">
+      <Filter>src\math\intrinsics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\math\intrinsics\xmmintrin.h">
+      <Filter>src\math\intrinsics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\types\containers\hashmap.h">
+      <Filter>src\types\containers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\types\types.h">
+      <Filter>src\types</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\types\string\compare.h">
+      <Filter>src\types\string</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\types\string\from_type.h">
+      <Filter>src\types\string</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\types\string\long_string.h">
+      <Filter>src\types\string</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\types\string\short_string.h">
+      <Filter>src\types\string</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\types\string\size_of.h">
+      <Filter>src\types\string</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\core\core.h">
+      <Filter>src\core</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

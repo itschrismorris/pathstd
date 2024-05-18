@@ -3,8 +3,8 @@
 */
 
 #pragma once
-#include "string/from_type.h"
-#include "string/compare.h"
+#include "types/string/from_type.h"
+#include "types/string/compare.h"
 
 namespace Pathlib::String {
 

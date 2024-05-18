@@ -175,37 +175,40 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\src\core\core.cpp" />
     <ClCompile Include="..\..\src\errors\errors.cpp" />
     <ClCompile Include="..\..\src\log\log.cpp" />
     <ClCompile Include="..\..\src\memory\malloc.cpp" />
-    <ClCompile Include="..\..\src\pathlib.cpp" />
+    <ClCompile Include="..\..\src\profile\profile.cpp" />
     <ClCompile Include="..\..\src\timer\timer.cpp" />
     <ClCompile Include="..\..\src\win32\safe_win32.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\include\containers\hashmap.h" />
+    <ClInclude Include="..\..\include\core\core.h" />
     <ClInclude Include="..\..\include\errors\errors.h" />
-    <ClInclude Include="..\..\include\intrinsics\avx2intrin.h" />
-    <ClInclude Include="..\..\include\intrinsics\avxintrin.h" />
-    <ClInclude Include="..\..\include\intrinsics\bmiintrin.h" />
-    <ClInclude Include="..\..\include\intrinsics\emmintrin.h" />
-    <ClInclude Include="..\..\include\intrinsics\intrinsics.h" />
-    <ClInclude Include="..\..\include\intrinsics\mmintrin.h" />
-    <ClInclude Include="..\..\include\intrinsics\xmmintrin.h" />
     <ClInclude Include="..\..\include\log\log.h" />
+    <ClInclude Include="..\..\include\math\intrinsics\avx2intrin.h" />
+    <ClInclude Include="..\..\include\math\intrinsics\avxintrin.h" />
+    <ClInclude Include="..\..\include\math\intrinsics\bmiintrin.h" />
+    <ClInclude Include="..\..\include\math\intrinsics\emmintrin.h" />
+    <ClInclude Include="..\..\include\math\intrinsics\intrinsics.h" />
+    <ClInclude Include="..\..\include\math\intrinsics\mmintrin.h" />
+    <ClInclude Include="..\..\include\math\intrinsics\xmmintrin.h" />
     <ClInclude Include="..\..\include\math\math.h" />
     <ClInclude Include="..\..\include\math\simd_math.h" />
+    <ClInclude Include="..\..\include\memory\malloc.h" />
     <ClInclude Include="..\..\include\memory\memcpy.h" />
     <ClInclude Include="..\..\include\memory\memset.h" />
-    <ClInclude Include="..\..\include\memory\malloc.h" />
     <ClInclude Include="..\..\include\pathlib.h" />
-    <ClInclude Include="..\..\include\string\compare.h" />
-    <ClInclude Include="..\..\include\string\from_type.h" />
-    <ClInclude Include="..\..\include\string\size_of.h" />
-    <ClInclude Include="..\..\include\string\short_string.h" />
-    <ClInclude Include="..\..\include\string\long_string.h" />
+    <ClInclude Include="..\..\include\profile\profile.h" />
     <ClInclude Include="..\..\include\timer\timer.h" />
-    <ClInclude Include="..\..\include\types.h" />
+    <ClInclude Include="..\..\include\types\containers\hashmap.h" />
+    <ClInclude Include="..\..\include\types\string\compare.h" />
+    <ClInclude Include="..\..\include\types\string\from_type.h" />
+    <ClInclude Include="..\..\include\types\string\long_string.h" />
+    <ClInclude Include="..\..\include\types\string\short_string.h" />
+    <ClInclude Include="..\..\include\types\string\size_of.h" />
+    <ClInclude Include="..\..\include\types\types.h" />
     <ClInclude Include="..\..\include\win32\console.h" />
     <ClInclude Include="..\..\include\win32\safe_win32.h" />
     <ClInclude Include="..\..\src\win32\mindows.h" />
