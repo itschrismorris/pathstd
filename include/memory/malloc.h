@@ -14,7 +14,7 @@
 namespace Pathlib::Memory {
 
   /**/
-  void initiate();
+  bool initiate();
   void shutdown();
   void* malloc(u64 size,
                const utf8* name = nullptr);

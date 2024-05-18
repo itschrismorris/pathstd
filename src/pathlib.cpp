@@ -10,8 +10,8 @@ bool Core::initiate(const utf8* log_path)
   if (!log.initiate(log_path)) {
     return false;
   }
-  log.log(u8"Hello world\n");
-  if (!timer.initiate()) {
+  if (!Memory::initiate() ||
+      !timer.initiate()) {
     return false;
   }
   return true;

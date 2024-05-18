@@ -9,45 +9,40 @@
 namespace Pathlib::String {
 
 /**/
-template <u32 ALIGNED_32 = false, 
-          u64 MAX_LENGTH = U64_MAX,
+template <u32 ALIGNED_32 = false,
           typename T>
 static inline u64 size_of(const T arg)
 {
   static_assert(!SAME_TYPE(T, const char*), "String literals must be prepended with 'u8' for utf-8 encoding: 'u8\"Hello world!\"'");
   static_assert(!SAME_TYPE(T, char*), "Replace string usages of char with utf8, for utf-8 encoding.");
-  if constexpr (SAME_TYPE(T, const utf8*) || SAME_TYPE(T, utf8*)) {
+  if constexpr (SAME_TYPE(T, const utf8*) || SAME_TYPE(T, utf8*) || SAME_TYPE(T, volatile utf8*)) {
     I8 zero = I8_SETZERO();
-    if ((MAX_LENGTH <= 512) && (ALIGNED_32 || Math::is_aligned<32>(arg))) {
-      const I8* str_v = (I8*)arg;
-      constexpr u32 register_count = (Math::next_multiple_of<u64, 32>(MAX_LENGTH) >> 5);
-      #pragma unroll
-      for (u32 r = 0; r < register_count; ++r) {
-        u32 mask = I8_MOVEMASK(I8_CMP_EQ8(I8_LOAD(str_v), zero));
-        if (mask) {
-          return (((r << 5) + Math::lsb_set(mask)));
-        }
-        str_v += 1;
+    I8* str_v = (I8*)arg;
+    if (!ALIGNED_32 && !Math::is_aligned<32>(arg)) {
+      str_v = (I8*)Math::align_previous<32>(arg);
+      i32 ignore_bytes = (u8*)arg - (u8*)str_v;
+      u32 mask = (I8_MOVEMASK(I8_CMP_EQ8(I8_LOAD(str_v), zero))) & (U32_MAX << ignore_bytes);
+      if (mask) {
+        return (Math::lsb_set(mask) - ignore_bytes);
       }
-    } else {
-      const I8* str_v = (I8*)Math::align_previous<64>(arg);
-      i64 ignore_bytes = (u8*)arg - (u8*)str_v;
+      str_v += 1;
+    }
+    #pragma unroll
+    for (u32 r = 0; r < 8; ++r) {
+      u32 mask = I8_MOVEMASK(I8_CMP_EQ8(I8_LOAD(str_v), zero));
+      if (mask) {
+        return (((u8*)str_v - (u8*)arg) + Math::lsb_set(mask));
+      }
+      str_v += 1;
+    }
+    while (true) {
       u64 mask32 = (u32)I8_MOVEMASK(I8_CMP_EQ8(I8_LOAD(str_v), zero));
       u64 mask64 = (u32)I8_MOVEMASK(I8_CMP_EQ8(I8_LOAD(str_v + 1), zero));
-      u64 zero_mask_64 = (mask32 | (mask64 << 32)) & (U64_MAX << ignore_bytes);
+      u64 zero_mask_64 = (mask32 | (mask64 << 32));
       if (zero_mask_64) {
-        return (Math::lsb_set(zero_mask_64) - ignore_bytes);
+        return (((u8*)str_v - (u8*)arg) + Math::lsb_set(zero_mask_64));
       }
       str_v += 2;
-      while (true) {
-        u64 mask32 = (u32)I8_MOVEMASK(I8_CMP_EQ8(I8_LOAD(str_v), zero));
-        u64 mask64 = (u32)I8_MOVEMASK(I8_CMP_EQ8(I8_LOAD(str_v + 1), zero));
-        u64 zero_mask_64 = (mask32 | (mask64 << 32));
-        if (zero_mask_64) {
-          return (((u8*)str_v - (u8*)arg) + Math::lsb_set(zero_mask_64));
-        }
-        str_v += 2;
-      }
     }
   } else if constexpr (IS_INTEGRAL(T) || IS_FLOAT(T)) {
     utf8 buffer[32];

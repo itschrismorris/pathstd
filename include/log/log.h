@@ -5,6 +5,7 @@
 #pragma once
 #include "types.h"
 #include "win32/safe_win32.h"
+#include "string/long_string.h"
 
 namespace Pathlib {
 

@@ -5,11 +5,12 @@
 namespace Pathlib::Memory {
 
 /**/
-void initiate()
+bool initiate()
 {
   #ifdef _DEBUG
     mi_option_enable(mi_option_verbose);
   #endif
+  return true;
 }
 
 /**/

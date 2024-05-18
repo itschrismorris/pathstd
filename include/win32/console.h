@@ -28,8 +28,8 @@ static inline void write(String::LongString<RESERVE_CAPACITY>& string)
 template <typename... Args>
 static inline void write(Args&&... args)
 {
-  String::ShortString<256> string_out;
-  (string_out._append(&string_out, args), ...);
-  Win32::write_console(string_out.str, string_out.size);
+  String::LongString string;
+  (string._append(&string, args), ...);
+  Win32::write_console(string.str, string.size);
 }
 }
