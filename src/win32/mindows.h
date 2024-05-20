@@ -18,6 +18,7 @@
 #define LANG_NEUTRAL 0x00
 #define SUBLANG_DEFAULT 0x01
 #define MAKELANGID(p, s) ((((WORD)(s)) << 10) | (WORD)(p))
+#define MAX_SYM_NAME 2000
 
 /**/
 #define ERROR_IO_PENDING 0x3E5
@@ -27,6 +28,10 @@ typedef __int64 LONG_PTR;
 typedef void* LPVOID;
 typedef void* PVOID;
 typedef long LONG;
+typedef unsigned short USHORT;
+typedef unsigned long ULONG;
+typedef unsigned long long ULONG64;
+typedef unsigned long* PULONG;
 typedef long long LONGLONG;
 typedef const void* LPCVOID;
 typedef unsigned short WORD;
@@ -46,6 +51,9 @@ typedef HANDLE HWND;
 typedef LONG HRESULT;
 typedef unsigned int UINT;
 typedef HANDLE HLOCAL;
+typedef wchar_t TCHAR;
+typedef unsigned __int64 DWORD64;
+typedef DWORD64* PDWORD64;
 
 extern "C" {
 
@@ -82,6 +90,38 @@ typedef struct _SYSTEMTIME {
 } SYSTEMTIME, *PSYSTEMTIME, *LPSYSTEMTIME;
 
 /**/
+typedef struct _SYMBOL_INFO {
+  ULONG       SizeOfStruct;
+  ULONG       TypeIndex;
+  ULONG64     Reserved[2];
+  ULONG       Index;
+  ULONG       Size;
+  ULONG64     ModBase;
+  ULONG       Flags;
+  ULONG64     Value;
+  ULONG64     Address;
+  ULONG       Register;
+  ULONG       Scope;
+  ULONG       Tag;
+  ULONG       NameLen;
+  ULONG       MaxNameLen;
+  CHAR        Name[1];
+} SYMBOL_INFO, *PSYMBOL_INFO;
+
+/**/
+__declspec(dllimport) HANDLE __stdcall GetCurrentProcess();
+__declspec(dllimport) BOOL __stdcall SymInitialize(HANDLE hProcess,
+                                                   PCSTR UserSearchPath,
+                                                   BOOL fInvadeProcess);
+__declspec(dllimport) BOOL __stdcall SymCleanup(HANDLE hProcess);
+__declspec(dllimport) USHORT __stdcall RtlCaptureStackBackTrace(ULONG FramesToSkip,
+                                                             ULONG FramesToCapture,
+                                                             PVOID* BackTrace,
+                                                             PULONG BackTraceHash);
+__declspec(dllimport) BOOL __stdcall SymFromAddr(HANDLE hProcess,
+                                                 DWORD64 Address,
+                                                 PDWORD64 Displacement,
+                                                 PSYMBOL_INFO Symbol);
 __declspec(dllimport) int __stdcall SetConsoleOutputCP(UINT wCodePageID);
 __declspec(dllimport) HANDLE __stdcall GetStdHandle(DWORD nStdHandle);
 __declspec(dllimport) int __stdcall CloseHandle(HANDLE hObject);

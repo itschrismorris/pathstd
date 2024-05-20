@@ -5,9 +5,6 @@
       <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
       <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
     </Filter>
-    <Filter Include="src\errors">
-      <UniqueIdentifier>{833e8a44-fe04-4ed6-b93a-15faf682f0c5}</UniqueIdentifier>
-    </Filter>
     <Filter Include="src\log">
       <UniqueIdentifier>{497846fd-64f3-4164-b392-2c52df3fa143}</UniqueIdentifier>
     </Filter>
@@ -38,14 +35,11 @@
     <Filter Include="src\types\string">
       <UniqueIdentifier>{be4cd9b0-3c34-4658-b0f1-2dbeba03b610}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\core">
-      <UniqueIdentifier>{89e73021-e2fa-4afc-a9a6-07df7881905b}</UniqueIdentifier>
+    <Filter Include="src\error">
+      <UniqueIdentifier>{d07ce96f-4d19-4267-a7b7-1e219ab65262}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\src\errors\errors.cpp">
-      <Filter>src\errors</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src\log\log.cpp">
       <Filter>src\log</Filter>
     </ClCompile>
@@ -61,14 +55,14 @@
     <ClCompile Include="..\..\src\profile\profile.cpp">
       <Filter>src\profile</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\core\core.cpp">
-      <Filter>src\core</Filter>
+    <ClCompile Include="..\..\src\pathlib.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\error\error.cpp">
+      <Filter>src\error</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\include\errors\errors.h">
-      <Filter>src\errors</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\include\log\log.h">
       <Filter>src\log</Filter>
     </ClInclude>
@@ -147,8 +141,8 @@
     <ClInclude Include="..\..\include\types\string\size_of.h">
       <Filter>src\types\string</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\include\core\core.h">
-      <Filter>src\core</Filter>
+    <ClInclude Include="..\..\include\error\error.h">
+      <Filter>src\error</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -1,9 +1,12 @@
-#include "errors/errors.h"
+#include "error/error.h"
 #include "win32/console.h"
-#include "../src/win32/mindows.h"
+#include "../win32/mindows.h"
 #include "pathlib.h"
 
 namespace Pathlib {
+
+/**/
+Log log;
 
 /**/
 bool Log::initiate(const utf8* log_path)
@@ -14,16 +17,15 @@ bool Log::initiate(const utf8* log_path)
       file = CreateFileW(utf16_path, GENERIC_WRITE, 0, nullptr, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, nullptr);
       if ((file == INVALID_HANDLE_VALUE) || (file == nullptr)) {
         file = nullptr;
-        Errors::last_error_code = Errors::ERROR_LOG_CREATE_FILE;
-        Errors::extra_info_from_last_win32_error();
-        Errors::write_last_to_console();
+        error.last_error_from_win32();
+        Console::set_text_attributes(CONSOLE_FOREGROUND_RED);
+        Console::write(u8"** Failed to create log file.");
+        Console::write(error.last_error);
+        Console::set_text_attributes(CONSOLE_FOREGROUND_WHITE);
         return false;
       }
     } else {
       file = nullptr;
-      Errors::last_error_code = Errors::ERROR_LOG_CONVERTING_PATH;
-      Errors::extra_info_from_last_win32_error();
-      Errors::write_last_to_console();
       return false;
     }
   }

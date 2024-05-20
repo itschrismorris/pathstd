@@ -4,6 +4,9 @@
 namespace Pathlib {
 
 /**/
+Profile profile;
+
+/**/
 bool Profile::initiate()
 {
   LOGT(u8"Initiating profiling.");

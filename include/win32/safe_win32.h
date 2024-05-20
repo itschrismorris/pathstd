@@ -5,6 +5,7 @@
 #pragma once
 #include "types/types.h"
 #include "types/string/short_string.h"
+#include "types/string/long_string.h"
 
 /**/
 #define MAX_PATH_LENGTH 260
@@ -12,10 +13,12 @@
 #define CONSOLE_FOREGROUND_GREEN 0x0002
 #define CONSOLE_FOREGROUND_RED 0x0004
 #define CONSOLE_FOREGROUND_INTENSITY 0x0008
+#define CONSOLE_FOREGROUND_WHITE (CONSOLE_FOREGROUND_RED | CONSOLE_FOREGROUND_GREEN | CONSOLE_FOREGROUND_BLUE)
 #define CONSOLE_BACKGROUND_BLUE 0x0010
 #define CONSOLE_BACKGROUND_GREEN 0x0020
 #define CONSOLE_BACKGROUND_RED 0x0040
 #define CONSOLE_BACKGROUND_INTENSITY 0x0080
+#define CONSOLE_BACKGROUND_WHITE (CONSOLE_BACKGROUND_RED | CONSOLE_BACKGROUND_GREEN | CONSOLE_BACKGROUND_BLUE)
 
 /**/
 struct SystemTime 
@@ -33,6 +36,7 @@ struct SystemTime
 namespace Pathlib::Win32 {
 
 /**/
+bool get_callstack(String::LongString<>* string_out);
 u64 get_last_error_string(utf8* string_out,
                           u64 string_capacity);
 bool write_console(const utf8* string,

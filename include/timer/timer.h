@@ -20,4 +20,7 @@ struct Timer
   u64 now_ms();
   u64 now_us();
 };
+
+/**/
+extern Timer timer;
 }

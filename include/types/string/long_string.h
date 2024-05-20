@@ -5,11 +5,12 @@
 #pragma once
 #include "memory/malloc.h"
 #include "types/string/from_type.h"
+#include "types/string/short_string.h"
 
 namespace Pathlib::String {
 
 /**/
-template <u64 RESERVE_CAPACITY = 256LLU>
+template <u64 RESERVE_CAPACITY = 64LLU>
 struct LongString
 {
   /**/
@@ -152,7 +153,7 @@ struct LongString
   {
     if ((string_out->size + arg.size) >= string_out->capacity) {
       string_out->capacity = Math::next_pot(string_out->size + arg.size + 1);
-      Memory::realloc(string_out->str, string_out->capacity);
+      string_out->str = (utf8*)Memory::realloc(string_out->str, string_out->capacity);
     }
     Memory::memcpy<false, true>(&string_out->str[string_out->size], arg.str, arg.size + 1);
     string_out->size += arg.size;
@@ -164,7 +165,7 @@ struct LongString
   {
     if ((string_out->size + arg.size) >= string_out->capacity) {
       string_out->capacity = Math::next_pot(string_out->size + arg.size + 1);
-      Memory::realloc(string_out->str, string_out->capacity);
+      string_out->str = (utf8*)Memory::realloc(string_out->str, string_out->capacity);
     }
     Memory::memcpy<false, true>(&string_out->str[string_out->size], arg.str, arg.size + 1);
     string_out->size += arg.size;

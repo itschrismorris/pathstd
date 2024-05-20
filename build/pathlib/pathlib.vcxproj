@@ -175,17 +175,16 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\src\core\core.cpp" />
-    <ClCompile Include="..\..\src\errors\errors.cpp" />
+    <ClCompile Include="..\..\src\error\error.cpp" />
     <ClCompile Include="..\..\src\log\log.cpp" />
     <ClCompile Include="..\..\src\memory\malloc.cpp" />
+    <ClCompile Include="..\..\src\pathlib.cpp" />
     <ClCompile Include="..\..\src\profile\profile.cpp" />
     <ClCompile Include="..\..\src\timer\timer.cpp" />
     <ClCompile Include="..\..\src\win32\safe_win32.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\include\core\core.h" />
-    <ClInclude Include="..\..\include\errors\errors.h" />
+    <ClInclude Include="..\..\include\error\error.h" />
     <ClInclude Include="..\..\include\log\log.h" />
     <ClInclude Include="..\..\include\math\intrinsics\avx2intrin.h" />
     <ClInclude Include="..\..\include\math\intrinsics\avxintrin.h" />

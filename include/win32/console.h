@@ -5,6 +5,7 @@
 #pragma once
 #include "win32/safe_win32.h"
 #include "types/types.h"
+#include "error/error.h"
 #include "types/string/short_string.h"
 #include "types/string/long_string.h"
 

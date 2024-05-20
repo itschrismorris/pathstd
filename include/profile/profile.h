@@ -13,4 +13,7 @@ struct Profile
   bool initiate();
   void shutdown();
 };
+
+/**/
+extern Profile profile;
 }

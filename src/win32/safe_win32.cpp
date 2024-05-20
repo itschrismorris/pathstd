@@ -1,8 +1,53 @@
-﻿#include "../src/win32/mindows.h"
+﻿#include "../win32/mindows.h"
 #include "win32/safe_win32.h"
-#include "errors/errors.h"
+#include "error/error.h"
+
+#pragma comment(lib, "Dbghelp.lib")
 
 namespace Pathlib::Win32 { 
+
+/**/
+bool get_callstack(String::LongString<>* string_out)
+{
+  HANDLE callstack[10];
+  HANDLE process = GetCurrentProcess();
+  if (!process) {
+    error.last_error_from_win32();
+    error.to_log();
+    return false;
+  }
+  if (!SymInitialize(process, NULL, true)) {
+    error.last_error_from_win32();
+    error.to_log();
+    return false;
+  }
+  WORD frames = RtlCaptureStackBackTrace(0, 10, callstack, NULL);
+  if (frames == 0) {
+    error.last_error_from_win32();
+    error.to_log();
+    return false;
+  }
+  u8 buffer[sizeof(SYMBOL_INFO) + MAX_SYM_NAME * sizeof(TCHAR)];
+  SYMBOL_INFO* symbol = (SYMBOL_INFO*)buffer;
+  symbol->MaxNameLen = MAX_SYM_NAME;
+  symbol->SizeOfStruct = sizeof(SYMBOL_INFO);
+  for (WORD i = 0; i < frames; ++i) {
+    DWORD64 address = (DWORD64)(callstack[i]);
+    if (!SymFromAddr(process, address, NULL, symbol)) {
+      error.last_error_from_win32();
+      error.to_log();
+      return false;
+    }
+    *string_out += (utf8*)symbol->Name;
+    *string_out += u8'\n';
+  }
+  if (!SymCleanup(process)) {
+    error.last_error_from_win32();
+    error.to_log();
+    return false;
+  }
+  return true;
+}
 
 /**/
 i32 get_last_error()
@@ -20,24 +65,33 @@ u64 get_last_error_string(utf8* string_out,
   if (utf16_string && (utf16_size > 0)) {
     u64 utf8_size = utf16_to_utf8(string_out, string_capacity, utf16_string, utf16_size);
     LocalFree(utf16_string);
+    string_out[utf8_size] = u8'\0';
     return utf8_size;
   } else {
+    error.last_error_from_win32();
+    error.to_log();
+    string_out[0] = u8'\0';
     return 0;
   }
 }
 
 /**/
-bool write_file(HANDLE file,
+bool write_file(void* file,
                 const utf8* string,
                 u64 size)
 {
   if (file) {
-    if (WriteFile(file, (HANDLE)string, size, nullptr, nullptr) == 0) {
+    if (WriteFile((HANDLE)file, (HANDLE)string, size, nullptr, nullptr) == 0) {
       if (get_last_error() != ERROR_IO_PENDING) {
+        error.last_error_from_win32();
+        error.to_log();
         return false;
       }
     }
     return true;
+  } else {
+    error.last_error = u8"File handle for write_file() was null.";
+    error.to_log();
   }
   return false;
 }
@@ -46,7 +100,18 @@ bool write_file(HANDLE file,
 bool set_console_text_attributes(u16 attributes)
 {
   void* out = GetStdHandle(STD_OUTPUT_HANDLE);
-  return SetConsoleTextAttribute(out, attributes);
+  if (out) {
+    if (!SetConsoleTextAttribute(out, attributes)) {
+      error.last_error_from_win32();
+      error.to_log();
+      return false;
+    }
+  } else {
+    error.last_error_from_win32();
+    error.to_log();
+    return false;
+  }
+  return true;
 }
 
 /**/
@@ -57,9 +122,15 @@ bool write_console(const utf8* string,
     size = String::size_of(string);
   }
   void* out = GetStdHandle(STD_OUTPUT_HANDLE);
-  if (WriteConsoleA(out, string, size, nullptr, nullptr) == 0) {
-    Errors::last_error_code = Errors::ERROR_CONSOLE_WRITE;
-    Errors::extra_info_from_last_win32_error();
+  if (out) {
+    if (WriteConsoleA(out, string, size, nullptr, nullptr) == 0) {
+      error.last_error_from_win32();
+      error.to_log();
+      return false;
+    }
+  } else {
+    error.last_error_from_win32();
+    error.to_log();
     return false;
   }
   return true;
@@ -75,12 +146,14 @@ u64 utf16_to_utf8(utf8* utf8_string_out,
   utf8_size = Math::min(utf8_size, utf8_capacity);
   if (utf8_size > 0) {
     utf8_size = WideCharToMultiByte(CP_UTF8, 0, utf16_string, utf16_size, (LPSTR)utf8_string_out, utf8_size, NULL, NULL);
-    if ((utf8_size > 0) && (utf16_size == -1)) {
-      return (utf8_size - 1);
+    if (utf8_size > 0) {
+      return (utf8_size - (utf16_size == -1));
     }
   }
-  utf8_string_out[utf8_size] = u8'\0';
-  return utf8_size;
+  error.last_error_from_win32();
+  error.to_log();
+  utf8_string_out[0] = u8'\0';
+  return 0;
 }
 
 /**/
@@ -93,12 +166,14 @@ u64 utf8_to_utf16(wchar_t* utf16_string_out,
   utf16_size = Math::min(utf16_size, utf16_capacity);
   if (utf16_size > 0) {
     utf16_size = MultiByteToWideChar(CP_UTF8, 0, (LPCSTR)utf8_string, utf8_size, utf16_string_out, utf16_size);
-    if ((utf16_size > 0) && (utf8_size == -1)) {
-      return (utf16_size - 1);
+    if (utf16_size > 0) {
+      return (utf16_size - (utf8_size == -1));
     }
   }
-  utf16_string_out[utf16_size] = L'\0';
-  return utf16_size;
+  error.last_error_from_win32();
+  error.to_log();
+  utf16_string_out[0] = u8'\0';
+  return 0;
 }
 
 /**/
