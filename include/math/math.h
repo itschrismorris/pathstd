@@ -24,6 +24,32 @@ static inline constexpr T max(T a, T b)
 
 /**/
 template <typename T>
+static inline i32 lsb_set(T value)
+{
+  if constexpr (sizeof(T) == 2) {
+    return (value == 0) ? -1 : __builtin_ia32_tzcnt_u16(value);
+  } else if constexpr (sizeof(T) == 4) {
+    return (value == 0) ? -1 : __builtin_ia32_tzcnt_u32(value);
+  } else if constexpr (sizeof(T) == 8) {
+    return (value == 0) ? -1 : __builtin_ia32_tzcnt_u64(value);
+  }
+}
+
+/**/
+template <typename T>
+static inline i32 msb_set(T value)
+{
+  if constexpr (sizeof(T) == 2) {
+    return (15 - __builtin_ia32_lzcnt_u16(value));
+  } else if constexpr (sizeof(T) == 4) {
+    return (31 - __builtin_ia32_lzcnt_u32(value));
+  } else if constexpr (sizeof(T) == 8) {
+    return (63 - __builtin_ia32_lzcnt_u64(value));
+  }
+}
+
+/**/
+template <typename T>
 static inline constexpr T abs(T value)
 {
   if constexpr (SAME_TYPE(T, i32) || SAME_TYPE(T, i16) || SAME_TYPE(T, i8)) {
@@ -37,6 +63,13 @@ static inline constexpr T abs(T value)
   } else {
     return value;
   }
+}
+
+/**/
+template <typename T>
+static inline constexpr T log2(T value)
+{
+  return msb_set(value);
 }
 
 /**/
@@ -64,8 +97,9 @@ static inline constexpr bool is_nan(T value)
 /**/
 template <typename T>
 static inline constexpr bool is_pot(T value)
-{ 
-  return ((value & (value + (value == 0) - 1)) == 0);
+{
+  if (value <= 1) return false;
+  return ((value & (value - 1)) == 0);
 }
 
 /**/
@@ -103,51 +137,31 @@ static inline constexpr T next_multiple_of(T value)
   
 /**/
 template <typename T>
+static inline constexpr T round_down_to_pot(T value)
+{
+  if (is_pot(value)) return value;
+  if (value <= 1) return 2;
+  if constexpr (sizeof(T) == 2) {
+    return (0x1 << (15 - __builtin_ia32_lzcnt_u16(value)));
+  } else if constexpr (sizeof(T) == 4) {
+    return (0x1 << (31 - __builtin_ia32_lzcnt_u32(value)));
+  } else if constexpr (sizeof(T) == 8) {
+    return (0x1LLU << (63 - __builtin_ia32_lzcnt_u64(value)));
+  }
+}
+  
+/**/
+template <typename T>
 static inline constexpr T round_up_to_pot(T value)
 {
   if (is_pot(value)) return value;
-  if constexpr (sizeof(T) == 4) {
-    return (0x1 << (32 - __builtin_clz(value + (value == 0))));
-  } else if constexpr (sizeof(T) == 8) {
-    return (0x1LLU << (64 - __builtin_clzll(value + (value == 0))));
-  }
-}
-
-/**/
-template <typename T>
-static inline constexpr T next_pot(T value)
-{
-  if constexpr (sizeof(T) == 4) {
-    return (0x1 << (32 - __builtin_clz(value + (value == 0))));
-  }
-  else if constexpr (sizeof(T) == 8) {
-    return (0x1LLU << (64 - __builtin_clzll(value + (value == 0))));
-  }
-}
-
-/**/
-template <typename T>
-static inline T lsb_set(T value)
-{
+  if (value <= 1) return 2;
   if constexpr (sizeof(T) == 2) {
-    return __builtin_ia32_tzcnt_u16(value);
+    return (0x1 << (16 - __builtin_ia32_lzcnt_u16(value)));
   } else if constexpr (sizeof(T) == 4) {
-    return __builtin_ia32_tzcnt_u32(value);
+    return (0x1 << (32 - __builtin_ia32_lzcnt_u32(value)));
   } else if constexpr (sizeof(T) == 8) {
-    return __builtin_ia32_tzcnt_u64(value);
-  }
-}
-
-/**/
-template <typename T>
-static inline T msb_set(T value)
-{
-  if constexpr (sizeof(T) == 2) {
-    return __builtin_ia32_lzcnt_u16(value);
-  } else if constexpr (sizeof(T) == 4) {
-    return __builtin_ia32_lzcnt_u32(value);
-  } else if constexpr (sizeof(T) == 8) {
-    return __builtin_ia32_lzcnt_u64(value);
+    return (0x1LLU << (64 - __builtin_ia32_lzcnt_u64(value)));
   }
 }
 

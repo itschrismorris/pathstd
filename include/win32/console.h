@@ -25,20 +25,6 @@ struct Console
 
   /**/
   template <u64 CAPACITY>
-  inline bool write(String::ShortString<CAPACITY>& string)
-  {
-    return Win32::write_console(string.str, string.size) && Win32::write_console(u8"\n", 1);
-  }
-
-  /**/
-  template <u64 RESERVE_CAPACITY>
-  inline bool write(String::LongString<RESERVE_CAPACITY>& string)
-  {
-    return Win32::write_console(string.str, string.size) && Win32::write_console(u8"\n", 1);
-  }
-
-  /**/
-  template <u64 CAPACITY>
   inline bool write(const String::ShortString<CAPACITY>& string)
   {
     return Win32::write_console(string.str, string.size) && Win32::write_console(u8"\n", 1);
