@@ -41,9 +41,8 @@ u64 get_last_error_string(utf8* string_out,
                           u64 string_capacity);
 bool write_console(const utf8* string,
                    u64 size = U64_MAX);
-bool write_file(void* file,
-                const utf8* string,
-                u64 size);
+bool write_log(const utf8* string,
+               u64 size);
 bool set_console_text_attributes(u16 attributes);
 u64 utf16_to_utf8(utf8* utf8_string_out,
                   u64 utf8_capacity,

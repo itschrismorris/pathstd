@@ -27,9 +27,9 @@ bool Error::to_log(bool use_color)
   }
   String::LongString string(u8"\n************\n", last_error, u8'\n', callstack, u8"\n************\n");
   if (use_color) {
-    if  (!Console::set_text_attributes(CONSOLE_FOREGROUND_RED) ||
+    if  (!console.set_text_attributes(CONSOLE_FOREGROUND_RED) ||
          !LOGT(string.str) ||
-         !Console::set_text_attributes(CONSOLE_FOREGROUND_RED | CONSOLE_FOREGROUND_GREEN | CONSOLE_FOREGROUND_BLUE)) {
+         !console.set_text_attributes(CONSOLE_FOREGROUND_RED | CONSOLE_FOREGROUND_GREEN | CONSOLE_FOREGROUND_BLUE)) {
       return false;
     }
     return true;

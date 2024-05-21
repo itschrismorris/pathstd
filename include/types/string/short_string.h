@@ -12,8 +12,6 @@ namespace Pathlib::String {
 template <u64 CAPACITY>
 struct ShortString
 {
-  static_assert(Math::is_multiple_of<u64, 32>(CAPACITY), "ShortString CAPACITY must be a multiple of 32 (AVX purposes).");
-
   /**/
   alignas(32) utf8 str[CAPACITY];
   u64 size;
@@ -28,7 +26,7 @@ struct ShortString
   /**/
   ShortString(const ShortString& string)
   {
-    Memory::memcpy<true, true>(str, string.str, string.size);
+    Memory::memcpy<true, true>(str, string.str, string.size + 1);
     size = string.size;
   }
 
@@ -44,13 +42,12 @@ struct ShortString
   {
     size = 0;
     (ShortString::_append(this, args), ...);
-    Memory::memset(&str[size], 0x00, CAPACITY - size);
   }
 
   /**/
   inline ShortString& operator =(const ShortString& string)
   {
-    Memory::memcpy<true, true>(str, string.str, CAPACITY);
+    Memory::memcpy<true, true>(str, string.str, string.size + 1);
     size = string.size;
     return *this;
   }
@@ -60,7 +57,6 @@ struct ShortString
   inline ShortString& operator =(const T arg)
   {
     size = String::from_type_clip(arg, str, size, CAPACITY);
-    Memory::memset(&str[size], 0x00, CAPACITY - size);
     return *this;
   }
 
@@ -76,7 +72,7 @@ struct ShortString
     if (size != string.size) {
       return false;
     }
-    return String::compare_avx<CAPACITY >> 5>(str, string.str);
+    return String::compare<true, true>(str, string.str);
   }
 
   /**/
@@ -113,13 +109,12 @@ struct ShortString
   {
     size = 0;
     (ShortString::_append(this, args), ...);
-    Memory::memset(&str[size], 0x00, CAPACITY - size);
   }
 
   /**/
   inline void clear()
   {
-    Memory::memset<true>(str, 0x00, CAPACITY);
+    str[0] = u8'\0';
     size = 0;
   }
 
@@ -135,7 +130,7 @@ struct ShortString
                              const ShortString& arg)
   {
     u64 copy_size = Math::min((CAPACITY - 1) - string_out->size, arg.size);
-    Memory::memcpy<false, true>(&string_out->str[string_out->size], arg.str, copy_size);
+    Memory::memcpy<false, true>(&string_out->str[string_out->size], arg.str, copy_size + 1);
     string_out->size += copy_size;
   }
 
@@ -144,7 +139,7 @@ struct ShortString
   static inline void _append(ShortString* string_out, 
                              const T arg)
   {
-    string_out->size = String::from_type_clip(arg, string_out->str, string_out->size, string_out->capacity());
+    String::from_type_clip(arg, string_out->str, &string_out->size, string_out->capacity());
   }
 
   /**/
@@ -170,6 +165,27 @@ struct ShortString
     ShortString string;
     (_append(&string, args), ...);
     return string;
+  }
+
+  /**/
+  static inline u32 hash(const utf8* value)
+  {
+    u64 size = String::size_of(value);
+    u32 hash = Math::hash(((u32*)value)[0]);
+    for (u32 b = 1; b < (size + 3) >> 2; ++b) {
+      hash ^= Math::hash(((u32*)value)[b]);
+    }
+    return hash;
+  }
+
+  /**/
+  inline u32 hash() const 
+  {
+    u32 hash = Math::hash(((u32*)str)[0]);
+    for (u32 b = 1; b < (size + 3) >> 2; ++b) {
+      hash ^= Math::hash(((u32*)str)[b]);
+    }
+    return hash;
   }
 };
 }

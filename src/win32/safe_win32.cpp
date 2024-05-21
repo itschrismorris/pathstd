@@ -1,6 +1,7 @@
 ﻿#include "../win32/mindows.h"
 #include "win32/safe_win32.h"
 #include "error/error.h"
+#include "log/log.h"
 
 #pragma comment(lib, "Dbghelp.lib")
 
@@ -76,12 +77,11 @@ u64 get_last_error_string(utf8* string_out,
 }
 
 /**/
-bool write_file(void* file,
-                const utf8* string,
-                u64 size)
+bool write_log(const utf8* string,
+               u64 size)
 {
-  if (file) {
-    if (WriteFile((HANDLE)file, (HANDLE)string, size, nullptr, nullptr) == 0) {
+  if (log.file) {
+    if (WriteFile((HANDLE)log.file, (HANDLE)string, size, nullptr, nullptr) == 0) {
       if (get_last_error() != ERROR_IO_PENDING) {
         error.last_error_from_win32();
         error.to_log();

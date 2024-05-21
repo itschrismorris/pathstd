@@ -103,11 +103,24 @@ static inline constexpr T next_multiple_of(T value)
   
 /**/
 template <typename T>
+static inline constexpr T round_up_to_pot(T value)
+{
+  if (is_pot(value)) return value;
+  if constexpr (sizeof(T) == 4) {
+    return (0x1 << (32 - __builtin_clz(value + (value == 0))));
+  } else if constexpr (sizeof(T) == 8) {
+    return (0x1LLU << (64 - __builtin_clzll(value + (value == 0))));
+  }
+}
+
+/**/
+template <typename T>
 static inline constexpr T next_pot(T value)
 {
   if constexpr (sizeof(T) == 4) {
     return (0x1 << (32 - __builtin_clz(value + (value == 0))));
-  } else if constexpr (sizeof(T) == 8) {
+  }
+  else if constexpr (sizeof(T) == 8) {
     return (0x1LLU << (64 - __builtin_clzll(value + (value == 0))));
   }
 }
@@ -136,5 +149,50 @@ static inline T msb_set(T value)
   } else if constexpr (sizeof(T) == 8) {
     return __builtin_ia32_lzcnt_u64(value);
   }
+}
+
+/**/
+static inline u32 hash(u32 value)
+{
+  value ^= value >> 16;
+  value *= 0x21F0AAADU;
+  value ^= value >> 15;
+  value *= 0xD35A2D97U;
+  value ^= value >> 15;
+  return value;
+}
+
+/**/
+static inline u32 hash(u64 value)
+{
+  return (hash((u32)(value & 0x00000000FFFFFFFFLLU)) ^
+          hash((u32)(value >> 32)));
+}
+
+/**/
+static inline u32 hash(f32 f)
+{
+  u32 value = *(u32*)&f;
+  return hash(value);
+}
+
+/**/
+static inline u32 hash(f64 d)
+{
+  u64 value = *(u64*)&d;
+  return hash(value);
+}
+
+/**/
+static inline u32 reverse_hash(u32 value)
+{
+  value ^= value >> 15;
+  value ^= value >> 30;
+  value = value * 0x37132227;
+  value ^= value >> 15;
+  value ^= value >> 30;
+  value = value * 0x333C4925;
+  value ^= value >> 16;
+  return value;
 }
 }

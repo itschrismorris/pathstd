@@ -22,8 +22,13 @@ struct Log
   String::LongString<> buffer;
 
   /**/
-  Log() : file(nullptr) {}
+  Log()
+  {
+    file = nullptr;
+  }
   ~Log() {}
+
+  /**/
   bool initiate(const utf8* log_path);
   void shutdown();
 
@@ -35,7 +40,7 @@ struct Log
       buffer.size = 0;
       (buffer._append(&buffer, args), ...);
       buffer.append(u8'\n');
-      return (Console::write(buffer) && Win32::write_file(file, buffer.str, buffer.size));
+      return (Win32::write_console(buffer.str, buffer.size) && Win32::write_log(buffer.str, buffer.size));
     }
     return false;
   }
@@ -51,7 +56,7 @@ struct Log
       buffer.append(time.wHour, u8":", time.wMinute, u8":", time.wSecond, u8":", time.wMilliseconds, u8": ");
       (buffer._append(&buffer, args), ...);
       buffer.append(u8'\n');
-      return (Console::write(buffer) && Win32::write_file(file, buffer.str, buffer.size));
+      return (Win32::write_console(buffer.str, buffer.size) && Win32::write_log(buffer.str, buffer.size));
     }
     return false;
   }

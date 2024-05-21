@@ -18,7 +18,7 @@
 #define IS_VEC8(A) _is_vec8<A>::value
 #define IS_INTEGRAL(A) _is_integral<A>::value
 #define IS_FLOAT(A) _is_float<A>::value
-#define IS_LOCAL_STRING(A) _is_short_string<A>::value
+#define IS_SHORT_STRING(A) _is_short_string<A>::value
 #define IS_LONG_STRING(A) _is_long_string<A>::value
 
 /**/

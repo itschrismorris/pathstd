@@ -10,7 +10,7 @@
 namespace Pathlib::String {
 
 /**/
-template <u64 RESERVE_CAPACITY = 64LLU>
+template <u64 RESERVE_CAPACITY = 128LLU>
 struct LongString
 {
   /**/
@@ -21,8 +21,8 @@ struct LongString
   /**/
   LongString()
   {
-    str = (utf8*)Memory::malloc(RESERVE_CAPACITY);
     capacity = RESERVE_CAPACITY;
+    str = (utf8*)MALLOC(RESERVE_CAPACITY + 1);
     clear();
   }
 
@@ -30,14 +30,14 @@ struct LongString
   ~LongString() 
   {
     if (str) {
-      Memory::free((void**)&str);
+      FREE(str);
     }
   }
 
   /**/
   LongString(const LongString& string)
   {
-    str = (utf8*)Memory::malloc(string.capacity);
+    str = (utf8*)MALLOC(string.capacity + 1);
     capacity = string.capacity;
     Memory::memcpy<true, true>(str, string.str, string.size + 1);
     size = string.size;
@@ -47,24 +47,20 @@ struct LongString
   template <typename... Args>
   LongString(Args&&... args)
   {
-    str = (utf8*)Memory::malloc(RESERVE_CAPACITY);
+    str = (utf8*)MALLOC(RESERVE_CAPACITY + 1);
     capacity = RESERVE_CAPACITY;
     size = 0;
-    str[0] = u8'\0';
     (LongString::_append(this, args), ...);
   }
 
   /**/
   inline LongString& operator =(const LongString& string)
   {
-    if (capacity < string.capacity) {
-      if (str) {
-        Memory::realloc(str, string.capacity);
-      } else {
-        str = (utf8*)Memory::malloc(string.capacity);
-      }
+    size = string.size;
+    if (size > string.capacity) {
+      capacity = size * 1.5;
+      str = (utf8*)REALLOC(str, capacity + 1);
     }
-    capacity = string.capacity;
     Memory::memcpy<true, true>(str, string.str, string.size + 1);
     size = string.size;
     return *this;
@@ -75,11 +71,11 @@ struct LongString
   inline LongString& operator =(const T arg)
   {
     u64 arg_size = String::size_of(arg);
-    if (arg_size >= capacity) {
-      capacity = Math::next_pot(arg_size + 1);
-      Memory::realloc(str, capacity);
+    if (arg_size > capacity) {
+      capacity = arg_size * 1.5;
+      str = (utf8*)REALLOC(str, capacity + 1);
     }
-    size = String::from_type_grow(arg, &str, size, &capacity);
+    String::from_type_grow(arg, &str, &size, &capacity);
     return *this;
   }
 
@@ -109,9 +105,12 @@ struct LongString
   /**/
   inline LongString& operator +=(const LongString& arg)
   {
-    u64 copy_size = Math::min((capacity - 1) - size, arg.size);
-    Memory::memcpy<false, true>(&str[size], arg.str, copy_size);
-    size += copy_size;
+    size += arg.size;
+    if (size > capacity) {
+      capacity = size * 1.5;
+      str = (utf8*)REALLOC(str, capacity + 1);
+    }
+    Memory::memcpy<false, true>(&str[size], arg.str, arg.size + 1);
     return *this;
   }
 
@@ -119,7 +118,7 @@ struct LongString
   template <typename T>
   inline LongString& operator +=(const T arg)
   {
-    size = String::from_type_grow(arg, &str, size, &capacity);
+    String::from_type_grow(arg, &str, &size, &capacity);
     return *this;
   }
 
@@ -129,7 +128,6 @@ struct LongString
   {
     size = 0;
     (LongString::_append(this, args), ...);
-    Memory::memset(&str[size], 0x00, capacity - size);
   }
 
   /**/
@@ -151,24 +149,26 @@ struct LongString
   static inline void _append(LongString* string_out, 
                              const ShortString<CAPACITY>& arg)
   {
-    if ((string_out->size + arg.size) >= string_out->capacity) {
-      string_out->capacity = Math::next_pot(string_out->size + arg.size + 1);
-      string_out->str = (utf8*)Memory::realloc(string_out->str, string_out->capacity);
+    u64 new_size = string_out->size + arg.size;
+    if (new_size > string_out->capacity) {
+      string_out->capacity = new_size * 1.5;
+      string_out->str = (utf8*)REALLOC(string_out->str, string_out->capacity + 1);
     }
     Memory::memcpy<false, true>(&string_out->str[string_out->size], arg.str, arg.size + 1);
-    string_out->size += arg.size;
+    string_out->size = new_size;
   }
 
   /**/
   static inline void _append(LongString* string_out, 
                              const LongString& arg)
   {
-    if ((string_out->size + arg.size) >= string_out->capacity) {
-      string_out->capacity = Math::next_pot(string_out->size + arg.size + 1);
-      string_out->str = (utf8*)Memory::realloc(string_out->str, string_out->capacity);
+    u64 new_size = string_out->size + arg.size;
+    if (new_size > string_out->capacity) {
+      string_out->capacity = new_size * 1.5;
+      string_out->str = (utf8*)REALLOC(string_out->str, string_out->capacity + 1);
     }
     Memory::memcpy<false, true>(&string_out->str[string_out->size], arg.str, arg.size + 1);
-    string_out->size += arg.size;
+    string_out->size = new_size;
   }
 
   /**/
@@ -176,7 +176,7 @@ struct LongString
   static inline void _append(LongString* string_out, 
                              const T arg)
   {
-    string_out->size = String::from_type_grow(arg, &string_out->str, string_out->size, &string_out->capacity);
+    String::from_type_grow(arg, &string_out->str, &string_out->size, &string_out->capacity);
   }
 
   /**/
@@ -202,6 +202,27 @@ struct LongString
     LongString string;
     (_append(&string, args), ...);
     return string;
+  }
+
+  /**/
+  static inline u32 hash(const utf8* value)
+  {
+    u64 size = String::size_of(value);
+    u32 hash = Math::hash(((u32*)value)[0]);
+    for (u32 b = 1; b < (size + 3) >> 2; ++b) {
+      hash ^= Math::hash(((u32*)value)[b]);
+    }
+    return hash;
+  }
+
+  /**/
+  inline u32 hash() const
+  {
+    u32 hash = Math::hash(((u32*)str)[0]);
+    for (u32 b = 1; b < (size + 3) >> 2; ++b) {
+      hash ^= Math::hash(((u32*)str)[b]);
+    }
+    return hash;
   }
 };
 }

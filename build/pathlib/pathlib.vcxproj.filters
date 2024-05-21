@@ -61,6 +61,9 @@
     <ClCompile Include="..\..\src\error\error.cpp">
       <Filter>src\error</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\win32\console.cpp">
+      <Filter>src\win32</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\include\log\log.h">
@@ -143,6 +146,12 @@
     </ClInclude>
     <ClInclude Include="..\..\include\error\error.h">
       <Filter>src\error</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\types\containers\short_vector.h">
+      <Filter>src\types\containers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\types\containers\long_vector.h">
+      <Filter>src\types\containers</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -8,6 +8,9 @@
 #define KILOBYTE (1024)
 #define MEGABYTE (1024 * 1024)
 #define GIGABYTE (1024 * 1024 * 1024)
+#define MALLOC(A) ::Pathlib::Memory::malloc(A)
+#define REALLOC(A, B) ::Pathlib::Memory::realloc(A, B)
+#define FREE(A) ::Pathlib::Memory::free((void**)&A)
 
 namespace Pathlib::Memory {
 

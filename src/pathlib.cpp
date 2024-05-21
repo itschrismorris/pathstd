@@ -7,9 +7,9 @@ namespace Pathlib {
 bool initiate(const utf8* log_path)
 {
   SetConsoleOutputCP(CP_UTF8);
-  Console::set_text_attributes(CONSOLE_FOREGROUND_GREEN);
-  Console::write(u8"========================\nInitiating Pathlib Core.\n========================");
-  Console::set_text_attributes(CONSOLE_FOREGROUND_RED | CONSOLE_FOREGROUND_GREEN | CONSOLE_FOREGROUND_BLUE);
+  console.set_text_attributes(CONSOLE_FOREGROUND_GREEN);
+  console.write(u8"========================\nInitiating Pathlib Core.\n========================");
+  console.set_text_attributes(CONSOLE_FOREGROUND_WHITE);
   if (!log.initiate(log_path)) {
     return false;
   }
@@ -22,6 +22,7 @@ bool initiate(const utf8* log_path)
     error.to_log();
     return false;
   }
+
   return true;
 }
 
@@ -31,8 +32,8 @@ void shutdown()
   timer.shutdown();
   profile.shutdown();
   log.shutdown();
-  Console::set_text_attributes(CONSOLE_FOREGROUND_GREEN);
-  Console::write(u8"========================\nPathlib Core shutdown.\n========================\n");
-  Console::set_text_attributes(CONSOLE_FOREGROUND_RED | CONSOLE_FOREGROUND_GREEN | CONSOLE_FOREGROUND_BLUE);
+  console.set_text_attributes(CONSOLE_FOREGROUND_GREEN);
+  console.write(u8"========================\nPathlib Core shutdown.\n========================\n");
+  console.set_text_attributes(CONSOLE_FOREGROUND_WHITE);
 }
 }

@@ -181,6 +181,7 @@
     <ClCompile Include="..\..\src\pathlib.cpp" />
     <ClCompile Include="..\..\src\profile\profile.cpp" />
     <ClCompile Include="..\..\src\timer\timer.cpp" />
+    <ClCompile Include="..\..\src\win32\console.cpp" />
     <ClCompile Include="..\..\src\win32\safe_win32.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -202,6 +203,8 @@
     <ClInclude Include="..\..\include\profile\profile.h" />
     <ClInclude Include="..\..\include\timer\timer.h" />
     <ClInclude Include="..\..\include\types\containers\hashmap.h" />
+    <ClInclude Include="..\..\include\types\containers\long_vector.h" />
+    <ClInclude Include="..\..\include\types\containers\short_vector.h" />
     <ClInclude Include="..\..\include\types\string\compare.h" />
     <ClInclude Include="..\..\include\types\string\from_type.h" />
     <ClInclude Include="..\..\include\types\string\long_string.h" />
