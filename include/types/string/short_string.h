@@ -56,7 +56,7 @@ struct ShortString
   template <typename T>
   inline ShortString& operator =(const T arg)
   {
-    size = String::from_type_clip(arg, str, size, CAPACITY);
+    String::from_type_clip(arg, str, &size, CAPACITY);
     return *this;
   }
 
@@ -99,7 +99,7 @@ struct ShortString
   template <typename T>
   inline ShortString& operator +=(const T arg)
   {
-    size = String::from_type_clip(arg, str, size, CAPACITY);
+    String::from_type_clip(arg, str, &size, CAPACITY);
     return *this;
   }
 

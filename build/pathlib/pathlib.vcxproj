@@ -158,7 +158,7 @@
       <FloatingPointExceptions>false</FloatingPointExceptions>
       <FloatingPointModel>Fast</FloatingPointModel>
       <UseProcessorExtensions>None</UseProcessorExtensions>
-      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <StringPooling>true</StringPooling>
       <GuardEHContMetadata>false</GuardEHContMetadata>
     </ClCompile>
