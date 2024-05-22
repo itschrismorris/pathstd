@@ -9,16 +9,16 @@
 #include "types/string/long_string.h"
 
 /**/
-#define MAX_REHASHES 0
-#define MAX_PROBE_DISTANCE_BITS 4
+#define MAX_REHASHES 3
+#define MAX_PROBE_DISTANCE_BITS 3
 #define DISTANCE_SHIFT (32 - MAX_PROBE_DISTANCE_BITS)
 #define MAX_PROBE_DISTANCE (0x1 << MAX_PROBE_DISTANCE_BITS)
 #define DIGEST_MASK (0xFFFFFFFF >> (MAX_PROBE_DISTANCE_BITS + 1))
 #define DIGEST_MASK_READ (0xFFFFFFFF >> MAX_PROBE_DISTANCE_BITS)
 #define EMPTY_BUCKET (0xFFFFFFFF >> MAX_PROBE_DISTANCE_BITS)
 #define NEW_INDEX U32_MAX
-#define GET_DISTANCE(A) ((A) >> 28)
-#define SET_DISTANCE(A) ((A) << 28)
+#define GET_DISTANCE(A) ((A) >> 29)
+#define SET_DISTANCE(A) ((A) << 29)
 #define GET_INDEX(A) ((A) & 0x1FFFFFFF)
 #define CLEAR_INDEX(A) ((A) & 0x70000000)
 
@@ -84,13 +84,9 @@ struct Hashmap
     u32 key_hash = (existing_hash == U32_MAX) ? hash(key) : existing_hash;
     u32 bucket_index = (key_hash & (capacity - 1));
     bucket_index = Math::min((u32)capacity - MAX_PROBE_DISTANCE, bucket_index);
-
     I8 key_digest = I8_SET1(hash(key_hash) & DIGEST_MASK);
-    I8 digests[2] = { I8_AND(I8_LOADU(&bucket_distance_digest[bucket_index]), I8_SET1(DIGEST_MASK_READ)),
-                      I8_AND(I8_LOADU(&bucket_distance_digest[bucket_index + 8]), I8_SET1(DIGEST_MASK_READ)) };
-    u64 digest_masks[2] = {(u32)I8_MOVEMASK(I8_CMP_EQ(digests[0], key_digest)),
-                           (u32)I8_MOVEMASK(I8_CMP_EQ(digests[1], key_digest)) };
-    u64 digest_mask = digest_masks[0] | (digest_masks[1] << 32);
+    I8 digests = I8_AND(I8_LOADU(&bucket_distance_digest[bucket_index]), I8_SET1(DIGEST_MASK_READ));
+    u32 digest_mask = I8_MOVEMASK(I8_CMP_EQ(key_digest, digests));
     while (digest_mask) {
       u32 distance = Math::lsb_set(digest_mask) >> 2;
       u32 value_index = bucket_value_index[bucket_index + distance];
@@ -122,19 +118,14 @@ struct Hashmap
     u32 key_hash = (existing_hash == U32_MAX) ? hash(key) : existing_hash;
     u32 bucket_index = (existing_bucket == U32_MAX) ? (key_hash & (capacity - 1)) : existing_bucket;
     bucket_index = Math::min((u32)capacity - MAX_PROBE_DISTANCE, bucket_index);
-    I8 probe[2] = { I8_LOADU(&bucket_distance_digest[bucket_index]),
-                    I8_LOADU(&bucket_distance_digest[bucket_index + 8]) };
+
+    // Now check 8 values for empty bucket, and 8 values for less distance than ours.
+    I8 probe = I8_LOADU(&bucket_distance_digest[bucket_index]);
     I8 empty_bucket = I8_SET1(EMPTY_BUCKET);
-    I8 distance_check[2] = { I8_SET(0, 1, 2, 3, 4, 5, 6, 7),
-                             I8_SET(8, 9, 10, 11, 12, 13, 14, 15) };
-    I8 probe_distances[2] = { I8_SHIFTR(probe[0], DISTANCE_SHIFT),
-                              I8_SHIFTR(probe[1], DISTANCE_SHIFT)};
-    u64 empty_masks[2] = { (u32)I8_MOVEMASK(I8_CMP_EQ(probe[0], empty_bucket)),
-                           (u32)I8_MOVEMASK(I8_CMP_EQ(probe[1], empty_bucket)) };
-    u64 distance_masks[2] = { (u32)I8_MOVEMASK(I8_CMP_GT(probe_distances[0], distance_check[0])),
-                              (u32)I8_MOVEMASK(I8_CMP_GT(probe_distances[1], distance_check[1]))};
-    u64 empty_mask = empty_masks[0] | (empty_masks[1] << 32);
-    u64 distance_mask = distance_masks[0] | (distance_masks[1] << 32);
+    I8 distance_check = I8_SET(0, 1, 2, 3, 4, 5, 6, 7);
+    I8 probe_distances = I8_SHIFTR(probe, DISTANCE_SHIFT);
+    u32 empty_mask = I8_MOVEMASK(I8_CMP_EQ(probe, empty_bucket));
+    u32 distance_mask = I8_MOVEMASK(I8_CMP_GT(probe_distances, distance_check));
     if (empty_mask || distance_mask) {
       u32 empty_distance = Math::lsb_set(empty_mask) >> 2;
       u32 distance_distance = Math::lsb_set(distance_mask) >> 2;
