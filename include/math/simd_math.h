@@ -137,6 +137,8 @@ namespace Pathlib::Math {
 #define I8_MUL(A, B) _mm256_mullo_epi32(A, B)
 #define I8_XOR(A, B) _mm256_xor_si256(A, B)
 #define I8_CMP_EQ(A, B) _mm256_cmpeq_epi32(A, B)
+#define I8_CMP_GT(A, B) _mm256_cmpgt_epi32(A, B)
+#define I8_CMP_LT(A, B) _mm256_cmpgt_epi32(B, A)
 #define I8_CMP_EQ8(A, B) _mm256_cmpeq_epi8(A, B)
 #define I8_CMP_EQ16(A, B) _mm256_cmpeq_epi16(A, B)
 

@@ -9,8 +9,12 @@
 #include "types/string/long_string.h"
 
 /**/
-#define MAX_REHASHES 3
-#define EMPTY_BUCKET U32_MAX
+#define MAX_REHASHES 0
+#define MAX_PROBE_DISTANCE_BITS 3
+#define DISTANCE_SHIFT (32 - MAX_PROBE_DISTANCE_BITS)
+#define MAX_PROBE_DISTANCE (0x1 << MAX_PROBE_DISTANCE_BITS)
+#define DIGEST_MASK (0xFFFFFFFF >> (MAX_PROBE_DISTANCE_BITS + 1))
+#define EMPTY_BUCKET (0xFFFFFFFF >> MAX_PROBE_DISTANCE_BITS)
 #define NEW_INDEX U32_MAX
 #define GET_DISTANCE(A) ((A) >> 29)
 #define SET_DISTANCE(A) ((A) << 29)
@@ -20,15 +24,9 @@
 namespace Pathlib::Containers {
 
 /**/
-template <typename K, typename V, u64 RESERVE_CAPACITY = 128LLU>
+template <typename K, typename V>
 struct Hashmap
 {
-  /**/
-  struct Bucket
-  {
-    u32 key_hash;
-    u32 distance_index;
-  };
 
   /**/
   struct KeyValue
@@ -48,24 +46,30 @@ struct Hashmap
 
   /**/
   u64 capacity;
-  u64 max_probe_distance;
-  Bucket* buckets;
-  Containers::LongVector<KeyValue> values;
+  u32* bucket_value_index;
+  u32* bucket_distance_digest;
+  Containers::LongVector<KeyValue, 128> values;
 
   /**/
   Hashmap()
   {
-    capacity = Math::round_up_to_pot(RESERVE_CAPACITY);
-    buckets = (Bucket*)MALLOC(sizeof(Bucket) * capacity);
-    Memory::memset(buckets, (u8)EMPTY_BUCKET, sizeof(Bucket) * capacity);
-    max_probe_distance = Math::log2(capacity);
+    capacity = 128;
+    bucket_value_index = (u32*)MALLOC(sizeof(u32) * capacity);
+    bucket_distance_digest = (u32*)MALLOC(sizeof(u32) * capacity);
+    I8 empty_bucket = I8_SET1(EMPTY_BUCKET);
+    for (u32 r = 0; r < (capacity >> 3); ++r) {
+      I8_STORE(&((I8*)bucket_distance_digest)[r], empty_bucket);
+    }
   }
 
   /**/
   ~Hashmap()
   {
-    if (buckets) {
-      FREE(buckets);
+    if (bucket_value_index) {
+      FREE(bucket_value_index);
+    }
+    if (bucket_distance_digest) {
+      FREE(bucket_distance_digest);
     }
   }
   
@@ -91,6 +95,7 @@ struct Hashmap
                  u32 existing_hash = U32_MAX,
                  u32 hash_count = 0)
   {
+    /*
     u32 key_hash = (existing_hash == U32_MAX) ? hash(key) : existing_hash;
     for (u32 p = 0; p < max_probe_distance; ++p) {
       u32 bucket_index = (key_hash + p) & (capacity - 1);
@@ -111,7 +116,7 @@ struct Hashmap
     }
     if (hash_count < MAX_REHASHES) {
       return find(key, hash(key_hash), hash_count + 1);
-    }
+    }*/
     return nullptr;
   }
 
@@ -124,53 +129,58 @@ struct Hashmap
   /**/
   inline bool insert(const K& key,
                      const V& value,
-                     u32 index = NEW_INDEX,
+                     u32 value_index = NEW_INDEX,
+                     u32 existing_bucket = U32_MAX,
                      u32 existing_hash = U32_MAX,
                      u32 hash_count = 0)
   {
     u32 key_hash = (existing_hash == U32_MAX) ? hash(key) : existing_hash;
-    u32 distance = 0;
-    u32 original_bucket_index = key_hash & (capacity - 1);
-    for (u32 p = 0; p < max_probe_distance; ++p) {
-      u32 bucket_index = (original_bucket_index + p) & (capacity - 1);
-      Bucket* bucket = &buckets[bucket_index];
-      if (bucket->distance_index == EMPTY_BUCKET) {
-        if (index == NEW_INDEX) {
+    u32 bucket_index = (existing_bucket == U32_MAX) ? (key_hash & (capacity - 1)) : existing_bucket;
+    bucket_index = Math::min((u32)capacity - MAX_PROBE_DISTANCE, bucket_index);
+    //bucket_index = Math::previous_multiple_of<u32, 8>(bucket_index);
+
+    // Now check 8 values for empty bucket, and 8 values for less distance than ours.
+    I8 probe = I8_LOADU(&bucket_distance_digest[bucket_index]);
+    I8 empty_bucket = I8_SET1(EMPTY_BUCKET);
+    I8 distance_check = I8_SET(0, 1, 2, 3, 4, 5, 6, 7);
+    I8 probe_distances = I8_SHIFTR(probe, DISTANCE_SHIFT);
+    u32 empty_mask = I8_MOVEMASK(I8_CMP_EQ(probe, empty_bucket));
+    u32 distance_mask = I8_MOVEMASK(I8_CMP_GT(probe_distances, distance_check));
+    if (empty_mask || distance_mask) {
+      u32 empty_distance = Math::lsb_set(empty_mask) >> 2;
+      u32 distance_distance = Math::lsb_set(distance_mask) >> 2;
+      if (empty_distance <= distance_distance) {
+        u32 insert_index = bucket_index + empty_distance;
+        if (value_index == NEW_INDEX) {
           *values.emplace_back(1) = KeyValue(key, value);
-          index = values.count - 1;
+          value_index = values.count - 1;
         }
-        bucket->key_hash = key_hash;
-        bucket->distance_index = SET_DISTANCE(distance) | index;
-        values[index].bucket_index = bucket_index;
+        bucket_value_index[insert_index] = value_index;
+        bucket_distance_digest[insert_index] = SET_DISTANCE(empty_distance) | (key_hash & DIGEST_MASK);
+        values[value_index].bucket_index = insert_index;
         return true;
-      } else if (bucket->key_hash == key_hash) {
-        if (values[GET_INDEX(bucket->distance_index)].key == key) {
-          return false;
-        }
-      }
-      if (distance > GET_DISTANCE(bucket->distance_index)) {
-        if (index == NEW_INDEX) {
+      } else {
+        u32 insert_index = bucket_index + distance_distance;
+        if (value_index == NEW_INDEX) {
           *values.emplace_back(1) = KeyValue(key, value);
-          index = values.count - 1;
+          value_index = values.count - 1;
         }
-        Bucket swap_bucket = *bucket;
-        bucket->key_hash = key_hash;
-        bucket->distance_index = SET_DISTANCE(distance) | index;
-        values[index].bucket_index = bucket_index;
-        index = GET_INDEX(swap_bucket.distance_index);
-        distance = GET_DISTANCE(swap_bucket.distance_index);
-        key_hash = swap_bucket.key_hash;
+        u32 swap_value_index = bucket_value_index[insert_index];
+        KeyValue* swap = &values[swap_value_index];
+        bucket_value_index[insert_index] = value_index;
+        bucket_distance_digest[insert_index] = SET_DISTANCE(distance_distance) | (key_hash & DIGEST_MASK);
+        values[value_index].bucket_index = insert_index;
+        return insert(swap->key, swap->value, swap_value_index, insert_index);
       }
-      ++distance;
     }
     if (hash_count < MAX_REHASHES) {
-      if (index == NEW_INDEX) {
-        return insert(key, value, index, hash(key_hash), hash_count + 1);
+      if (value_index == NEW_INDEX) {
+        return insert(key, value, value_index, U32_MAX, hash(key_hash), hash_count + 1);
       } else {
-        return insert(values[index].key, values[index].value, index, hash(key_hash), hash_count + 1);
+        return insert(values[value_index].key, values[value_index].value, value_index, U32_MAX, hash(key_hash), hash_count + 1);
       }
     }
-    if (index == NEW_INDEX) {
+    if (value_index == NEW_INDEX) {
       *values.emplace_back(1) = KeyValue(key, value);
     }
     return rebuild_larger();
@@ -181,6 +191,7 @@ struct Hashmap
                      u32 existing_hash = U32_MAX,
                      u32 hash_count = 0)
   {
+    /*
     u32 key_hash = (existing_hash == U32_MAX) ? hash(key) : existing_hash;
     for (u32 p = 0; p < max_probe_distance; ++p) {
       u32 bucket_index = (key_hash + p) & (capacity - 1);
@@ -216,20 +227,21 @@ struct Hashmap
       if (hash_count < MAX_REHASHES) {
         return remove(key, hash(key_hash), hash_count + 1);
       }
-    }
+    }*/
     return false;
   }
 
   /**/
   inline bool rebuild_larger()
   {
-    console.write(u8"Distance: ", max_probe_distance);
-    console.write(u8"Capacity (bytes): ", (capacity * sizeof(Bucket)) + (values.capacity * sizeof(KeyValue)));
     console.write(load_factor());
     capacity <<= 1;
-    max_probe_distance = Math::log2(capacity);
-    buckets = (Bucket*)REALLOC(buckets, sizeof(Bucket) * capacity);
-    Memory::memset(buckets, (u8)EMPTY_BUCKET, sizeof(Bucket) * capacity);
+    bucket_value_index = (u32*)REALLOC(bucket_value_index, sizeof(u32) * capacity);
+    bucket_distance_digest = (u32*)REALLOC(bucket_distance_digest, sizeof(u32) * capacity);
+    I8 empty_bucket = I8_SET1(EMPTY_BUCKET);
+    for (u32 r = 0; r < (capacity >> 3); ++r) {
+      I8_STORE(&((I8*)bucket_distance_digest)[r], empty_bucket);
+    }
     for (u32 v = 0; v < values.count; ++v) {
       insert(values[v].key, values[v].value, v);
     }
@@ -240,10 +252,8 @@ struct Hashmap
   inline f32 load_factor()
   {
     u32 used_buckets = 0;
-    for (u32 b = 0; b < capacity; ++b) { 
-      if (buckets[b].distance_index != EMPTY_BUCKET) {
-        ++used_buckets;
-      }
+    for (u32 b = 0; b < capacity; ++b) {
+      used_buckets += (bucket_distance_digest[b] != EMPTY_BUCKET);
     }
     return ((f32)used_buckets / (f32)capacity);
   }
