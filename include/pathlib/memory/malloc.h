@@ -15,7 +15,7 @@
 
 namespace Pathlib::Memory {
 
-// ---
+//---
 void* malloc(u64 size,
              const utf8* name = nullptr);
 void* realloc(void* ptr,

@@ -8,16 +8,16 @@
 
 namespace Pathlib::Containers {
 
-// ---
+//---
 template <typename T, u64 RESERVE_CAPACITY = 128LLU>
 struct LongVector
 {
-  // ---
+  //---
   T* data;
   u64 count;
   u64 capacity;
 
-  // ---
+  //---
   LongVector()
   {
     capacity = RESERVE_CAPACITY;
@@ -25,7 +25,7 @@ struct LongVector
     clear();
   }
 
-  // ---
+  //---
   ~LongVector()
   {
     if (data) {
@@ -33,19 +33,19 @@ struct LongVector
     }
   }
 
-  // ---
+  //---
   inline T& operator[](u64 index)
   {
     return data[index];
   }
 
-  // ---
+  //---
   inline const T& operator[](u64 index) const
   {
     return data[index];
   }
 
-  // ---
+  //---
   inline T* emplace_back(u64 _count)
   {
     u64 original_count = count;
@@ -57,13 +57,13 @@ struct LongVector
     return (data + original_count);
   }
 
-  // ---
+  //---
   inline T pop()
   {
     return *(data + (--count));
   }
 
-  // ---
+  //---
   inline void remove(u64 start_index,
                      u64 width)
   {
@@ -73,7 +73,7 @@ struct LongVector
     Memory::memcpy(start, end, width);
   }
 
-  // ---
+  //---
   inline void clear()
   {
     count = 0;

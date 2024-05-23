@@ -9,7 +9,7 @@
 
 namespace Pathlib::Memory {
 
-// ---
+//---
 template <typename T>
 static inline T broadcast_byte(const u8 byte)
 {
@@ -24,7 +24,7 @@ static inline T broadcast_byte(const u8 byte)
   }
 }
 
-// ---
+//---
 template <u32 REGISTER_COUNT>
 static inline void memset_sse(u8* dst, 
                               const u8 value) 
@@ -37,7 +37,7 @@ static inline void memset_sse(u8* dst,
   }
 }
 
-// ---
+//---
 template <u32 REGISTER_COUNT>
 static inline void memset_avx(u8* dst, 
                               const u8 value) 
@@ -50,7 +50,7 @@ static inline void memset_avx(u8* dst,
   }
 }
 
-// ---
+//---
 static inline void memset_256(void* dst, 
                               const u8 value, 
                               u64 size)
@@ -317,7 +317,7 @@ static inline void memset_256(void* dst,
   }
 }
 
-// ---
+//---
 template <bool DST_ALIGNED_32 = false>
 static inline void memset(void* dst,
                           const u8 value,

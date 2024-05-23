@@ -8,7 +8,7 @@
 
 namespace Pathlib::Math {
 
-  // ---
+  //---
   template <u64 ALIGNMENT, typename T>
   inline T* align_previous(T* ptr)
   {
@@ -16,7 +16,7 @@ namespace Pathlib::Math {
     return (T*)((u64)ptr & ~(ALIGNMENT - 1));
   };
 
-  // ---
+  //---
   template <u64 ALIGNMENT, typename T>
   inline T* align_next(T* ptr)
   {
@@ -24,7 +24,7 @@ namespace Pathlib::Math {
     return (T*)(((u64)ptr + (ALIGNMENT - 1)) & ~(ALIGNMENT - 1));
   };
 
-  // ---
+  //---
   template <u64 ALIGNMENT, typename T>
   inline bool is_aligned(T* ptr)
   {
@@ -33,7 +33,7 @@ namespace Pathlib::Math {
   }
 }
 
-// ---
+//---
 #define BLEND_AAAA 0x0
 #define BLEND_BAAA 0x1
 #define BLEND_ABAA 0x2
@@ -51,7 +51,7 @@ namespace Pathlib::Math {
 #define BLEND_ABBB 0xE
 #define BLEND_BBBB 0xF
 
-// ---
+//---
 #define SHUFF_XXXX _MM_SHUFFLE(0, 0, 0, 0)
 #define SHUFF_YYYY _MM_SHUFFLE(1, 1, 1, 1)
 #define SHUFF_ZZZZ _MM_SHUFFLE(2, 2, 2, 2)
@@ -84,14 +84,14 @@ namespace Pathlib::Math {
 #define SHUFF_ZXZX _MM_SHUFFLE(0, 2, 0, 2)
 #define SHUFF_XXWW _MM_SHUFFLE(3, 3, 0, 0)
 
-// ---
+//---
 #define PREFETCH_L1(A) _mm_prefetch((const char*)A, _MM_HINT_T0)
 #define PREFETCH_L2(A) _mm_prefetch((const char*)A, _MM_HINT_T1)
 #define PREFETCH_L3(A) _mm_prefetch((const char*)A, _MM_HINT_T2)
 #define PREFETCH_NOCACHE(A) _mm_prefetch((const char*)A, _MM_HINT_NTA)
 #define FENCE() _mm_sfence()
 
-// ---
+//---
 #define I4_LOAD(A) _mm_load_si128((I4*)(A))
 #define I4_LOADU(A) _mm_loadu_si128((I4*)(A))
 #define I4_STORE(A, B) _mm_store_si128((I4*)(A), B)
@@ -122,7 +122,7 @@ namespace Pathlib::Math {
 #define I4_SHIFTL(A, B) _mm_slli_epi32(A, B)
 #define I4_SHIFTR(A, B) _mm_srli_epi32(A, B)
 
-// ---
+//---
 #define I8_LOAD(A) _mm256_load_si256((I8*)(A))
 #define I8_LOADU(A) _mm256_loadu_si256((I8*)(A))
 #define I8_STORE(A, B) _mm256_store_si256((I8*)(A), B)
@@ -143,7 +143,7 @@ namespace Pathlib::Math {
 #define I8_CMP_EQ8(A, B) _mm256_cmpeq_epi8(A, B)
 #define I8_CMP_EQ16(A, B) _mm256_cmpeq_epi16(A, B)
 
-// ---
+//---
 #define F4_LOAD(A) _mm_load_ps((F4*)(A))
 #define F4_LOADU(A) _mm_loadu_ps((F4*)(A))
 #define F4_STORE(A, B) _mm_store_ps((F4*)(A), B)
@@ -190,7 +190,7 @@ namespace Pathlib::Math {
 #define F4_CMP_GE(A, B) _mm_cmpge_ps(A, B)
 #define F4_CMP_LT(A, B) _mm_cmplt_ps(A, B)
 
-// ---
+//---
 #define F8_LOAD(A) _mm256_load_ps((F8*)(A))
 #define F8_LOADU(A) _mm256_loadu_ps((F8*)(A))
 #define F8_STORE(A, B) _mm256_store_ps((F8*)(A), B)

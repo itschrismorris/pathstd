@@ -5,10 +5,10 @@
 
 namespace Pathlib {
 
-// ---
+//---
 Log log;
 
-// ---
+//---
 bool Log::initiate(const utf8* log_path)
 {
   if (log_path) {
@@ -32,7 +32,7 @@ bool Log::initiate(const utf8* log_path)
   return true;
 }
 
-// ---
+//---
 void Log::shutdown()
 {
   if (file) {

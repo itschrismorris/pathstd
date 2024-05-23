@@ -8,31 +8,31 @@
 #include "pathlib/win32/safe_win32.h"
 #include "pathlib/types/string/long_string.h"
 
-// ---
+//---
 #define LOG(A) ::Pathlib::log.log(A)
 #define LOGT(A) ::Pathlib::log.logt(A)
 
 namespace Pathlib {
 
-// ---
+//---
 struct Log
 {
-  // ---
+  //---
   void* file;
   String::LongString<> buffer;
 
-  // ---
+  //---
   Log()
   {
     file = nullptr;
   }
   ~Log() {}
 
-  // ---
+  //---
   bool initiate(const utf8* log_path);
   void shutdown();
 
-  // ---
+  //---
   template <u64 CAPACITY>
   inline bool log(const String::ShortString<CAPACITY>& string)
   {
@@ -40,7 +40,7 @@ struct Log
            (Win32::write_log(string.str, string.size) && Win32::write_log(u8"\n", 1));
   }
 
-  // ---
+  //---
   template <u64 RESERVE_CAPACITY>
   inline bool log(const String::LongString<RESERVE_CAPACITY>& string)
   {
@@ -48,7 +48,7 @@ struct Log
            (Win32::write_log(string.str, string.size) && Win32::write_log(u8"\n", 1));
   }
 
-  // ---
+  //---
   inline bool log(const utf8* string)
   {
     u64 size = String::size_of(string);
@@ -56,7 +56,7 @@ struct Log
            (Win32::write_log(string, size) && Win32::write_log(u8"\n", 1));
   }
 
-  // ---
+  //---
   template <typename... Args>
   inline bool log(Args&&... args)
   {
@@ -69,7 +69,7 @@ struct Log
     return false;
   }
 
-  // ---
+  //---
   template <typename... Args>
   inline bool logt(Args&&... args)
   {
@@ -86,6 +86,6 @@ struct Log
   }
 };
 
-// ---
+//---
 extern Log log;
 }

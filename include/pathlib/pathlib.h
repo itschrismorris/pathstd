@@ -1,3 +1,7 @@
+/*
+  Documentation: https://www.path.blog/docs/pathlib.html
+*/
+
 #pragma once
 #include "pathlib/error/error.h"
 #include "pathlib/log/log.h"
@@ -18,7 +22,7 @@
 
 namespace Pathlib {
 
-// ---
+//---
 bool initiate(const utf8* log_path = nullptr);
 void shutdown();
 }

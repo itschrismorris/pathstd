@@ -8,21 +8,21 @@
 
 namespace Pathlib::Math {
 
-// ---
+//---
 template <typename T>
 static inline constexpr T min(T a, T b)
 { 
   return (a < b) ? a : b; 
 }
 
-// ---
+//---
 template <typename T>
 static inline constexpr T max(T a, T b)
 { 
   return (a > b) ? a : b;
 }
 
-// ---
+//---
 template <typename T>
 static inline i32 lsb_set(T value)
 {
@@ -35,7 +35,7 @@ static inline i32 lsb_set(T value)
   }
 }
 
-// ---
+//---
 template <typename T>
 static inline i32 msb_set(T value)
 {
@@ -48,7 +48,7 @@ static inline i32 msb_set(T value)
   }
 }
 
-// ---
+//---
 template <typename T>
 static inline constexpr T abs(T value)
 {
@@ -65,14 +65,14 @@ static inline constexpr T abs(T value)
   }
 }
 
-// ---
+//---
 template <typename T>
 static inline constexpr T log2(T value)
 {
   return msb_set(value);
 }
 
-// ---
+//---
 template <typename T>
 static inline constexpr bool is_inf(T value)
 {
@@ -83,7 +83,7 @@ static inline constexpr bool is_inf(T value)
   }
 }
 
-// ---
+//---
 template <typename T>
 static inline constexpr bool is_nan(T value)
 {
@@ -94,7 +94,7 @@ static inline constexpr bool is_nan(T value)
   }
 }
    
-// ---
+//---
 template <typename T>
 static inline constexpr bool is_pot(T value)
 {
@@ -102,7 +102,7 @@ static inline constexpr bool is_pot(T value)
   return ((value & (value - 1)) == 0);
 }
 
-// ---
+//---
 template <typename T, T MULTIPLE>
 static inline constexpr bool is_multiple_of(T value)
 {
@@ -113,7 +113,7 @@ static inline constexpr bool is_multiple_of(T value)
   }
 }
 
-// ---
+//---
 template <typename T, T MULTIPLE>
 static inline constexpr T previous_multiple_of(T value)
 { 
@@ -124,7 +124,7 @@ static inline constexpr T previous_multiple_of(T value)
   }
 }
 
-// ---
+//---
 template <typename T, T MULTIPLE>
 static inline constexpr T next_multiple_of(T value)
 {
@@ -135,7 +135,7 @@ static inline constexpr T next_multiple_of(T value)
   }
 }
   
-// ---
+//---
 template <typename T>
 static inline constexpr T round_down_to_pot(T value)
 {
@@ -150,7 +150,7 @@ static inline constexpr T round_down_to_pot(T value)
   }
 }
   
-// ---
+//---
 template <typename T>
 static inline constexpr T round_up_to_pot(T value)
 {
@@ -176,7 +176,7 @@ static inline u32 hash(u32 value)
   return value;
 }
 
-// ---
+//---
 static inline u32 reverse_hash(u32 value)
 {
   value ^= value >> 15;
@@ -189,28 +189,28 @@ static inline u32 reverse_hash(u32 value)
   return --value;
 }
 
-// ---
+//---
 static inline u32 hash(u64 value)
 {
   return (hash((u32)(value & 0x00000000FFFFFFFFLLU)) +
           hash((u32)(value >> 32)));
 }
 
-// ---
+//---
 static inline u32 hash(f32 f)
 {
   u32 value = *(u32*)&f;
   return hash(value);
 }
 
-// ---
+//---
 static inline u32 hash(f64 d)
 {
   u64 value = *(u64*)&d;
   return hash(value);
 }
 
-// ---
+//---
 template <typename T>
 static inline u32 hash(T* key,
                        u64 size)

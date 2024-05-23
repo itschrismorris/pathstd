@@ -6,10 +6,10 @@
 
 namespace Pathlib {
 
-// ---
+//---
 Error error;
 
-// ---
+//---
 bool Error::last_error_from_win32()
 {
   if ((last_error.size = Win32::get_last_error_string(last_error.str, last_error.capacity)) == 0) {
@@ -18,7 +18,7 @@ bool Error::last_error_from_win32()
   return true;
 }
 
-// ---
+//---
 bool Error::to_log(bool use_color)
 {
   String::LongString callstack;
@@ -38,7 +38,7 @@ bool Error::to_log(bool use_color)
   }
 }
 
-// ---
+//---
 bool Error::to_popup()
 {
   return true;

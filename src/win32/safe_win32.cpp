@@ -7,7 +7,7 @@
 
 namespace Pathlib::Win32 { 
 
-// ---
+//---
 bool get_callstack(String::LongString<>* string_out)
 {
   HANDLE callstack[10];
@@ -50,13 +50,13 @@ bool get_callstack(String::LongString<>* string_out)
   return true;
 }
 
-// ---
+//---
 i32 get_last_error()
 {
   return GetLastError();
 }
 
-// ---
+//---
 u64 get_last_error_string(utf8* string_out,
                           u64 string_capacity)
 {
@@ -76,7 +76,7 @@ u64 get_last_error_string(utf8* string_out,
   }
 }
 
-// ---
+//---
 bool write_log(const utf8* string,
                u64 size)
 {
@@ -96,7 +96,7 @@ bool write_log(const utf8* string,
   return false;
 }
 
-// ---
+//---
 bool set_console_text_attributes(u16 attributes)
 {
   void* out = GetStdHandle(STD_OUTPUT_HANDLE);
@@ -114,7 +114,7 @@ bool set_console_text_attributes(u16 attributes)
   return true;
 }
 
-// ---
+//---
 bool write_console(const utf8* string,
                    u64 size)
 {
@@ -136,7 +136,7 @@ bool write_console(const utf8* string,
   return true;
 }
 
-// ---
+//---
 u64 utf16_to_utf8(utf8* utf8_string_out,
                   u64 utf8_capacity,
                   const wchar_t* utf16_string,
@@ -156,7 +156,7 @@ u64 utf16_to_utf8(utf8* utf8_string_out,
   return 0;
 }
 
-// ---
+//---
 u64 utf8_to_utf16(wchar_t* utf16_string_out,
                   u64 utf16_capacity,
                   const utf8* utf8_string,
@@ -176,7 +176,7 @@ u64 utf8_to_utf16(wchar_t* utf16_string_out,
   return 0;
 }
 
-// ---
+//---
 void get_local_time(SystemTime* system_time)
 {
   GetLocalTime((LPSYSTEMTIME)system_time);

@@ -3,7 +3,7 @@
 
 namespace Pathlib {
 
-// ---
+//---
 bool initiate(const utf8* log_path)
 {
   SetConsoleOutputCP(CP_UTF8);
@@ -26,7 +26,7 @@ bool initiate(const utf8* log_path)
   return true;
 }
 
-// ---
+//---
 void shutdown()
 {
   timer.shutdown();

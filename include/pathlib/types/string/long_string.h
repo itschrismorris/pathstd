@@ -9,16 +9,16 @@
 
 namespace Pathlib::String {
 
-// ---
+//---
 template <u64 RESERVE_CAPACITY = 128LLU>
 struct LongString
 {
-  // ---
+  //---
   utf8* str;
   u64 capacity;
   u64 size;
   
-  // ---
+  //---
   LongString()
   {
     capacity = RESERVE_CAPACITY;
@@ -26,7 +26,7 @@ struct LongString
     clear();
   }
 
-  // ---
+  //---
   ~LongString() 
   {
     if (str) {
@@ -34,7 +34,7 @@ struct LongString
     }
   }
 
-  // ---
+  //---
   LongString(const LongString& string)
   {
     str = (utf8*)MALLOC(string.capacity + 1);
@@ -43,7 +43,7 @@ struct LongString
     size = string.size;
   }
   
-  // ---
+  //---
   template <typename... Args>
   LongString(Args&&... args)
   {
@@ -53,7 +53,7 @@ struct LongString
     (LongString::_append(this, args), ...);
   }
 
-  // ---
+  //---
   inline LongString& operator =(const LongString& string)
   {
     size = string.size;
@@ -66,7 +66,7 @@ struct LongString
     return *this;
   }
 
-  // ---
+  //---
   template <typename T>
   inline LongString& operator =(const T arg)
   {
@@ -79,19 +79,19 @@ struct LongString
     return *this;
   }
 
-  // ---
+  //---
   inline bool operator ==(const utf8* string) const
   {
     return String::compare<true, false>(str, string, size);
   }
 
-  // ---
+  //---
   inline bool operator ==(const LongString& string) const
   {
     return String::compare<true, true>(str, string.str, size, string.size);
   }
 
-  // ---
+  //---
   template <typename T>
   inline const LongString operator +(const T arg)
   {
@@ -102,7 +102,7 @@ struct LongString
     return new_string;
   }
 
-  // ---
+  //---
   inline LongString& operator +=(const LongString& arg)
   {
     size += arg.size;
@@ -114,7 +114,7 @@ struct LongString
     return *this;
   }
 
-  // ---
+  //---
   template <typename T>
   inline LongString& operator +=(const T arg)
   {
@@ -122,7 +122,7 @@ struct LongString
     return *this;
   }
 
-  // ---
+  //---
   template <typename... Args>
   inline void format(Args&&... args)
   {
@@ -130,21 +130,21 @@ struct LongString
     (LongString::_append(this, args), ...);
   }
 
-  // ---
+  //---
   inline void clear()
   {
     str[0] = u8'\0';
     size = 0;
   }
 
-  // ---
+  //---
   template <typename... Args>
   inline void append(Args&&... args)
   {
     (_append(this, args), ...);
   }
 
-  // ---
+  //---
   template <u64 CAPACITY>
   static inline void _append(LongString* string_out, 
                              const ShortString<CAPACITY>& arg)
@@ -158,7 +158,7 @@ struct LongString
     string_out->size = new_size;
   }
 
-  // ---
+  //---
   static inline void _append(LongString* string_out, 
                              const LongString& arg)
   {
@@ -171,7 +171,7 @@ struct LongString
     string_out->size = new_size;
   }
 
-  // ---
+  //---
   template <typename T>
   static inline void _append(LongString* string_out, 
                              const T arg)
@@ -179,7 +179,7 @@ struct LongString
     String::from_type_grow(arg, &string_out->str, &string_out->size, &string_out->capacity);
   }
 
-  // ---
+  //---
   template <typename... Args>
   static inline void append(LongString* string_out,
                             Args&&... args)
@@ -187,7 +187,7 @@ struct LongString
     (_append(string_out, args), ...);
   }
 
-  // ---
+  //---
   template <typename... Args>
   static inline LongString format(LongString* string_out,
                                    Args&&... args)
@@ -195,7 +195,7 @@ struct LongString
     (_append(string_out, args), ...);
   }
 
-  // ---
+  //---
   template <typename... Args>
   static inline LongString format_copy(Args&&... args)
   {
@@ -204,13 +204,13 @@ struct LongString
     return string;
   }
 
-  // ---
+  //---
   static inline u32 hash(const utf8* value)
   {
     return Math::hash(value, String::size_of(value));
   }
 
-  // ---
+  //---
   inline u32 hash() const
   {
     return Math::hash(str, size);
@@ -218,6 +218,6 @@ struct LongString
 };
 }
 
-// ---
+//---
 template <typename T> struct _is_long_string : false_type {};
 template <u64 RESERVE_CAPACITY> struct _is_long_string<Pathlib::String::LongString<RESERVE_CAPACITY>> : true_type {};
