@@ -21,11 +21,11 @@
 #define IS_SHORT_STRING(A) _is_short_string<A>::value
 #define IS_LONG_STRING(A) _is_long_string<A>::value
 
-/**/
+// ---
 struct false_type { static constexpr bool value = false; constexpr operator bool() const { return value; } };
 struct true_type { static constexpr bool value = true; constexpr operator bool() const { return value; } };
 
-/**/
+// ---
 typedef unsigned __int8   u8;
 typedef   signed __int8   i8;
 typedef unsigned __int16 u16;
@@ -38,13 +38,13 @@ typedef float  f32;
 typedef double f64;
 typedef char8_t utf8;
 
-/**/
+// ---
 template <typename T> struct vec2 { T x, y; };
 template <typename T> struct vec3 { T x, y, z; };
 template <typename T> struct alignas(16) vec4 { T x, y, z, w; };
 template <typename T> struct alignas(32) vec8 { vec4<T> lo; vec4<T> hi; };
 
-/**/
+// ---
 template <typename T> struct _is_integral : false_type {};
 template <> struct _is_integral<i8> : true_type {};
 template <> struct _is_integral<i16> : true_type {};

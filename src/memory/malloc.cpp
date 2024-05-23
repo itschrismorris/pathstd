@@ -3,7 +3,7 @@
 
 namespace Pathlib::Memory {
 
-/**/
+// ---
 void* malloc(u64 size,
              const utf8* name)
 {
@@ -11,7 +11,7 @@ void* malloc(u64 size,
   return ptr;
 }
 
-/**/
+// ---
 void* realloc(void* ptr,
               u64 size,
               const utf8* name)
@@ -20,7 +20,7 @@ void* realloc(void* ptr,
   return new_ptr;
 }
 
-/**/
+// ---
 void free(void** ptr)
 {
   mi_free_aligned(*ptr, 128);

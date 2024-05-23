@@ -8,35 +8,35 @@
 
 namespace Pathlib::String {
 
-/**/
+// ---
 template <u64 CAPACITY>
 struct ShortString
 {
-  /**/
+  // ---
   alignas(32) utf8 str[CAPACITY];
   u64 size;
   
-  /**/
+  // ---
   ShortString()
   {
     clear();
   }
   ~ShortString() {}
 
-  /**/
+  // ---
   ShortString(const ShortString& string)
   {
     Memory::memcpy<true, true>(str, string.str, string.size + 1);
     size = string.size;
   }
 
-  /**/
+  // ---
   constexpr u64 capacity()
   {
     return CAPACITY;
   }
   
-  /**/
+  // ---
   template <typename... Args>
   ShortString(Args&&... args)
   {
@@ -44,7 +44,7 @@ struct ShortString
     (ShortString::_append(this, args), ...);
   }
 
-  /**/
+  // ---
   inline ShortString& operator =(const ShortString& string)
   {
     Memory::memcpy<true, true>(str, string.str, string.size + 1);
@@ -52,7 +52,7 @@ struct ShortString
     return *this;
   }
 
-  /**/
+  // ---
   template <typename T>
   inline ShortString& operator =(const T arg)
   {
@@ -60,13 +60,13 @@ struct ShortString
     return *this;
   }
 
-  /**/
+  // ---
   inline bool operator ==(const utf8* string) const
   {
     return String::compare<true, false>(str, string, size);
   }
 
-  /**/
+  // ---
   inline bool operator ==(const ShortString& string) const
   {
     if (size != string.size) {
@@ -75,7 +75,7 @@ struct ShortString
     return String::compare<true, true>(str, string.str);
   }
 
-  /**/
+  // ---
   template <typename T>
   inline const ShortString operator +(const T arg)
   {
@@ -86,7 +86,7 @@ struct ShortString
     return new_string;
   }
 
-  /**/
+  // ---
   inline ShortString& operator +=(const ShortString& arg)
   {
     u64 copy_size = Math::min((CAPACITY - 1) - size, arg.size);
@@ -95,7 +95,7 @@ struct ShortString
     return *this;
   }
 
-  /**/
+  // ---
   template <typename T>
   inline ShortString& operator +=(const T arg)
   {
@@ -103,7 +103,7 @@ struct ShortString
     return *this;
   }
 
-  /**/
+  // ---
   template <typename... Args>
   inline void format(Args&&... args)
   {
@@ -111,21 +111,21 @@ struct ShortString
     (ShortString::_append(this, args), ...);
   }
 
-  /**/
+  // ---
   inline void clear()
   {
     str[0] = u8'\0';
     size = 0;
   }
 
-  /**/
+  // ---
   template <typename... Args>
   inline void append(Args&&... args)
   {
     (_append(this, args), ...);
   }
 
-  /**/
+  // ---
   static inline void _append(ShortString* string_out, 
                              const ShortString& arg)
   {
@@ -134,7 +134,7 @@ struct ShortString
     string_out->size += copy_size;
   }
 
-  /**/
+  // ---
   template <typename T>
   static inline void _append(ShortString* string_out, 
                              const T arg)
@@ -142,7 +142,7 @@ struct ShortString
     String::from_type_clip(arg, string_out->str, &string_out->size, string_out->capacity());
   }
 
-  /**/
+  // ---
   template <typename... Args>
   static inline void append(ShortString* string_out,
                             Args&&... args)
@@ -150,7 +150,7 @@ struct ShortString
     (_append(string_out, args), ...);
   }
 
-  /**/
+  // ---
   template <typename... Args>
   static inline ShortString format(ShortString* string_out,
                                    Args&&... args)
@@ -158,7 +158,7 @@ struct ShortString
     (_append(string_out, args), ...);
   }
 
-  /**/
+  // ---
   template <typename... Args>
   static inline ShortString format_copy(Args&&... args)
   {
@@ -167,13 +167,13 @@ struct ShortString
     return string;
   }
 
-  /**/
+  // ---
   static inline u32 hash(const utf8* value)
   {
     return Math::hash(value, String::size_of(value));
   }
 
-  /**/
+  // ---
   inline u32 hash() const 
   {
     return Math::hash(str, size);
@@ -181,6 +181,6 @@ struct ShortString
 };
 }
 
-/**/
+// ---
 template <typename T> struct _is_short_string : false_type {};
 template <u64 CAPACITY> struct _is_short_string<Pathlib::String::ShortString<CAPACITY>> : true_type {};

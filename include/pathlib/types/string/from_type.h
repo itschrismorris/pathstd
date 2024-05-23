@@ -52,7 +52,7 @@
 
 namespace Pathlib::String {
 
-/**/
+// ---
 static inline u16 const two_digits[100] =
 {
   0x3030, 0x3130, 0x3230, 0x3330, 0x3430, 0x3530, 0x3630, 0x3730, 0x3830, 0x3930,
@@ -67,7 +67,7 @@ static inline u16 const two_digits[100] =
   0x3039, 0x3139, 0x3239, 0x3339, 0x3439, 0x3539, 0x3639, 0x3739, 0x3839, 0x3939
 };
 
-/**/
+// ---
 template <typename T>
 static inline utf8* _from_number(T value,
                                  utf8* buffer,
@@ -144,7 +144,7 @@ static inline utf8* _from_number(T value,
   }
 }
 
-/**/
+// ---
 template <typename T>
 static inline void from_type_clip(const T arg,
                                   utf8* string,
@@ -227,7 +227,7 @@ static inline void from_type_clip(const T arg,
   }
 }
 
-/**/
+// ---
 template <typename T>
 static inline void from_type_grow(const T arg,
                                   utf8** string,

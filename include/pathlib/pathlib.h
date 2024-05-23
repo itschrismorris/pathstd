@@ -18,7 +18,7 @@
 
 namespace Pathlib {
 
-/**/
+// ---
 bool initiate(const utf8* log_path = nullptr);
 void shutdown();
 }

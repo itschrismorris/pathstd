@@ -3,10 +3,10 @@
 
 namespace Pathlib {
 
-/**/
+// ---
 Timer timer;
 
-/**/
+// ---
 bool Timer::initiate(void)
 {
   LOGT(u8"Initiating timer.");
@@ -27,13 +27,13 @@ bool Timer::initiate(void)
   return true;
 }
 
-/**/
+// ---
 void Timer::shutdown(void)
 {
   LOGT(u8"Shutting down timer.");
 }
 
-/**/
+// ---
 u64 Timer::now_ms(void)
 {
   LARGE_INTEGER now_ticks;
@@ -46,7 +46,7 @@ u64 Timer::now_ms(void)
   return (now_ms - start_time);
 }
 
-/**/
+// ---
 u64 Timer::now_us(void)
 {
   LARGE_INTEGER now_ticks;

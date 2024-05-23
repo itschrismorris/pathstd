@@ -9,7 +9,7 @@
 
 namespace Pathlib::String {
 
-/**/
+// ---
 template <u32 REGISTER_COUNT>
 static inline bool compare_sse(const utf8* first,
                                const utf8* second)
@@ -27,7 +27,7 @@ static inline bool compare_sse(const utf8* first,
   return true;
 }
 
-/**/
+// ---
 template <u32 REGISTER_COUNT>
 static inline bool compare_avx(const utf8* first,
                                const utf8* second)
@@ -45,7 +45,7 @@ static inline bool compare_avx(const utf8* first,
   return true;
 }
 
-/**/
+// ---
 static inline bool compare_256(const utf8* first,
                                const utf8* second,
                                u64 size)
@@ -314,7 +314,7 @@ static inline bool compare_256(const utf8* first,
   }
 }
 
-/**/
+// ---
 template <u32 FIRST_ALIGNED_32 = false, 
           u64 SECOND_ALIGNED_32 = false>
 static inline bool compare(const utf8* first,

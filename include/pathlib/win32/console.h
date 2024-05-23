@@ -11,39 +11,39 @@
 
 namespace Pathlib {
   
-/**/
+// ---
 struct Console
 {
-  /**/
+  // ---
   String::LongString<> buffer;
 
-  /**/
+  // ---
   inline bool set_text_attributes(u16 attributes)
   {
     return Win32::set_console_text_attributes(attributes);
   }
 
-  /**/
+  // ---
   template <u64 CAPACITY>
   inline bool write(const String::ShortString<CAPACITY>& string)
   {
     return Win32::write_console(string.str, string.size) && Win32::write_console(u8"\n", 1);
   }
 
-  /**/
+  // ---
   template <u64 RESERVE_CAPACITY>
   inline bool write(const String::LongString<RESERVE_CAPACITY>& string)
   {
     return Win32::write_console(string.str, string.size) && Win32::write_console(u8"\n", 1);
   }
 
-  /**/
+  // ---
   inline bool write(const utf8* string)
   {
     return Win32::write_console(string, String::size_of(string)) && Win32::write_console(u8"\n", 1);
   }
 
-  /**/
+  // ---
   template <typename... Args>
   inline bool write(Args&&... args)
   {
@@ -54,6 +54,6 @@ struct Console
   }
 };
 
-/**/
+// ---
 extern Console console;
 }

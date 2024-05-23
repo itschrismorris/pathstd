@@ -5,7 +5,7 @@
 
 #pragma once
 
-/**/
+// ---
 #define STD_OUTPUT_HANDLE  ((unsigned long) - 11)
 #define CP_UTF8 65001
 #define CREATE_ALWAYS 2
@@ -20,10 +20,10 @@
 #define MAKELANGID(p, s) ((((WORD)(s)) << 10) | (WORD)(p))
 #define MAX_SYM_NAME 2000
 
-/**/
+// ---
 #define ERROR_IO_PENDING 0x3E5
 
-/**/
+// ---
 typedef __int64 LONG_PTR;
 typedef void* LPVOID;
 typedef void* PVOID;
@@ -57,7 +57,7 @@ typedef DWORD64* PDWORD64;
 
 extern "C" {
 
-/**/
+// ---
 typedef union _LARGE_INTEGER {
   struct {
     DWORD LowPart;
@@ -70,14 +70,14 @@ typedef union _LARGE_INTEGER {
   LONGLONG QuadPart;
 } LARGE_INTEGER;
 
-/**/
+// ---
 typedef struct _SECURITY_ATTRIBUTES {
   DWORD  nLength;
   void* lpSecurityDescriptor;
   int   bInheritHandle;
 } SECURITY_ATTRIBUTES, *PSECURITY_ATTRIBUTES, *LPSECURITY_ATTRIBUTES;
 
-/**/
+// ---
 typedef struct _SYSTEMTIME {
   WORD wYear;
   WORD wMonth;
@@ -89,7 +89,7 @@ typedef struct _SYSTEMTIME {
   WORD wMilliseconds;
 } SYSTEMTIME, *PSYSTEMTIME, *LPSYSTEMTIME;
 
-/**/
+// ---
 typedef struct _SYMBOL_INFO {
   ULONG       SizeOfStruct;
   ULONG       TypeIndex;
@@ -108,7 +108,7 @@ typedef struct _SYMBOL_INFO {
   CHAR        Name[1];
 } SYMBOL_INFO, *PSYMBOL_INFO;
 
-/**/
+// ---
 __declspec(dllimport) HANDLE __stdcall GetCurrentProcess();
 __declspec(dllimport) BOOL __stdcall SymInitialize(HANDLE hProcess,
                                                    PCSTR UserSearchPath,

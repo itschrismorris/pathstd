@@ -1,6 +1,7 @@
 /*
   Documentation: https://www.path.blog/docs/malloc.html
 */
+
 #pragma once
 #include "pathlib/types/types.h"
 
@@ -14,7 +15,7 @@
 
 namespace Pathlib::Memory {
 
-/**/
+// ---
 void* malloc(u64 size,
              const utf8* name = nullptr);
 void* realloc(void* ptr,

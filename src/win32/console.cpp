@@ -2,6 +2,6 @@
 
 namespace Pathlib {
 
-/**/
+// ---
 Console console;
 } 

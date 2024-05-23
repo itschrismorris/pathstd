@@ -7,7 +7,7 @@
 #include "pathlib/types/string/short_string.h"
 #include "pathlib/types/string/long_string.h"
 
-/**/
+// ---
 #define MAX_PATH_LENGTH 260
 #define CONSOLE_FOREGROUND_BLUE 0x0001
 #define CONSOLE_FOREGROUND_GREEN 0x0002
@@ -20,7 +20,7 @@
 #define CONSOLE_BACKGROUND_INTENSITY 0x0080
 #define CONSOLE_BACKGROUND_WHITE (CONSOLE_BACKGROUND_RED | CONSOLE_BACKGROUND_GREEN | CONSOLE_BACKGROUND_BLUE)
 
-/**/
+// ---
 struct SystemTime 
 {
   u16 wYear;
@@ -35,7 +35,7 @@ struct SystemTime
 
 namespace Pathlib::Win32 {
 
-/**/
+// ---
 bool get_callstack(String::LongString<>* string_out);
 u64 get_last_error_string(utf8* string_out,
                           u64 string_capacity);

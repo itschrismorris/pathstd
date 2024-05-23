@@ -8,7 +8,7 @@
 #include "pathlib/types/string/size_of.h"
 #include "pathlib/types/string/long_string.h"
 
-/**/
+// ---
 #define MAX_REHASHES 1
 #define DIGEST_MASK 0x0FFFFFFF
 #define OCCUPIED_AND_DIGEST_MASK 0x1FFFFFFF
@@ -19,11 +19,11 @@
 
 namespace Pathlib::Containers {
 
-/**/
+// ---
 template <typename K, typename V>
 struct Hashmap
 {
-  /**/
+  // ---
   u64 capacity;
   u64 max_probe_length;
   u32* slot_kv_index;
@@ -32,7 +32,7 @@ struct Hashmap
   Containers::LongVector<V, 64> values;
   Containers::LongVector<u32, 64> kv_slot_lookup;
 
-  /**/
+  // ---
   Hashmap()
   {
     capacity = 64;
@@ -45,7 +45,7 @@ struct Hashmap
     }
   }
 
-  /**/
+  // ---
   ~Hashmap()
   {
     if (slot_kv_index) {
@@ -56,7 +56,7 @@ struct Hashmap
     }
   }
   
-  /**/
+  // ---
   template <typename T>
   u32 hash(T key)
   {
@@ -73,7 +73,7 @@ struct Hashmap
     }
   }
 
-  /**/
+  // ---
   inline V* find(const K& key,
                  u32 existing_hash = NEW_HASH,
                  u32 hash_count = 0)
@@ -101,13 +101,13 @@ struct Hashmap
     return nullptr;
   }
 
-  /**/
+  // ---
   V* operator [](const K& key)
   {
     return find(key);
   }
 
-  /**/
+  // ---
   inline bool insert(const K& key,
                      const V& value,
                      u32 kv_index = NEW_KV,
@@ -173,7 +173,7 @@ struct Hashmap
     return rebuild_larger();
   }
 
-  /**/
+  // ---
   inline bool remove(const K& key,
                      u32 existing_hash = U32_MAX,
                      u32 hash_count = 0)
@@ -206,7 +206,7 @@ struct Hashmap
     return false;
   }
 
-  /**/
+  // ---
   inline bool rebuild_larger()
   {
     console.write(load_factor());
@@ -224,7 +224,7 @@ struct Hashmap
     return true;
   }
  
-  /**/
+  // ---
   inline f32 load_factor()
   {
     u32 used_slots = 0;

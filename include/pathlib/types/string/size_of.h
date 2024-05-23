@@ -8,7 +8,7 @@
 
 namespace Pathlib::String {
 
-/**/
+// ---
 template <u32 ALIGNED_32 = false,
           typename T>
 static inline u64 size_of(const T arg)
