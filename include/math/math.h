@@ -165,30 +165,27 @@ static inline constexpr T round_up_to_pot(T value)
   }
 }
 
-/**/
 static inline u32 hash(u32 value)
 {
   ++value;
-  value ^= value >> 17;
-  value *= 0xed5ad4bb;
-  value ^= value >> 11;
-  value *= 0xac4c1b51;
+  value ^= value >> 16;
+  value *= 0x21f0aaad;
   value ^= value >> 15;
-  value *= 0x31848bab;
-  value ^= value >> 14;
+  value *= 0xd35a2d97;
+  value ^= value >> 15;
   return value;
 }
 
 /**/
 static inline u32 reverse_hash(u32 value)
 {
-  value ^= value >> 14 ^ value >> 28;
-  value *= 0x32b21703;
-  value ^= value >> 15 ^ value >> 30;
-  value *= 0x469e0db1;
-  value ^= value >> 11 ^ value >> 22;
-  value *= 0x79a85073;
-  value ^= value >> 17;
+  value ^= value >> 15;
+  value ^= value >> 30;
+  value *= 0x37132227;
+  value ^= value >> 15;
+  value ^= value >> 30;
+  value *= 0x333c4925;
+  value ^= value >> 16;
   return --value;
 }
 
