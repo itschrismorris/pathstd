@@ -1,157 +1,177 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
+    <Filter Include="include">
+      <UniqueIdentifier>{9246ff1e-fe85-4525-8057-e3e3edea0ff4}</UniqueIdentifier>
+    </Filter>
     <Filter Include="src">
-      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
-      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+      <UniqueIdentifier>{aceaa235-9e66-4549-9136-f035e56a12d8}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\log">
-      <UniqueIdentifier>{497846fd-64f3-4164-b392-2c52df3fa143}</UniqueIdentifier>
+    <Filter Include="include\error">
+      <UniqueIdentifier>{5788b976-6db0-4b45-948d-fe9fd16fe5b1}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\timer">
-      <UniqueIdentifier>{2b376509-a07e-4c1f-aff7-a66fbe4882d8}</UniqueIdentifier>
+    <Filter Include="include\log">
+      <UniqueIdentifier>{3961ed13-c4de-4413-b7df-63828e85afc9}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\memory">
-      <UniqueIdentifier>{76f6eae3-6af2-42d2-9767-a3203251b3b3}</UniqueIdentifier>
+    <Filter Include="include\math">
+      <UniqueIdentifier>{ee7eca6c-58e7-4b2a-a00c-adbc0e056228}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\math">
-      <UniqueIdentifier>{cc017e24-fbd4-454f-806a-654d251a7b05}</UniqueIdentifier>
+    <Filter Include="include\math\intrinsics">
+      <UniqueIdentifier>{f786c65c-8e0e-45a9-a2d9-817bb5cf36db}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\win32">
-      <UniqueIdentifier>{16d2d0b7-e002-4fd8-9b3e-c83e9186dfe6}</UniqueIdentifier>
+    <Filter Include="include\memory">
+      <UniqueIdentifier>{6364dbb3-f06d-446b-a20e-068fdb0adc29}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\profile">
-      <UniqueIdentifier>{25b3823b-ad20-4502-927d-29a802e934ef}</UniqueIdentifier>
+    <Filter Include="include\profile">
+      <UniqueIdentifier>{fe9c90cd-340e-490c-a2bc-29fcf6b3dc70}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\math\intrinsics">
-      <UniqueIdentifier>{e94351a3-e755-4283-bb8d-12a9a0ded9a8}</UniqueIdentifier>
+    <Filter Include="include\timer">
+      <UniqueIdentifier>{2b3b7103-ac64-4aab-9626-cf2968a3d7ef}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\types">
-      <UniqueIdentifier>{5e00edd4-c155-440d-96a5-9fd831fb3b48}</UniqueIdentifier>
+    <Filter Include="include\types">
+      <UniqueIdentifier>{d05e2e79-c570-4826-9298-96f2925d1e05}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\types\containers">
-      <UniqueIdentifier>{ad885453-f5c8-402b-8230-05b1739913bd}</UniqueIdentifier>
+    <Filter Include="include\types\string">
+      <UniqueIdentifier>{f3c40e4b-f1b6-438c-b2d9-88f9e3af97c4}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\types\string">
-      <UniqueIdentifier>{be4cd9b0-3c34-4658-b0f1-2dbeba03b610}</UniqueIdentifier>
+    <Filter Include="include\types\containers">
+      <UniqueIdentifier>{d7e27849-648a-4632-a1c3-11a8d908637e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\win32">
+      <UniqueIdentifier>{9cc8f082-5005-4d43-942d-bfa730da8cc5}</UniqueIdentifier>
     </Filter>
     <Filter Include="src\error">
-      <UniqueIdentifier>{d07ce96f-4d19-4267-a7b7-1e219ab65262}</UniqueIdentifier>
+      <UniqueIdentifier>{183fdfd9-c6e7-40e3-88e6-c833164048db}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\log">
+      <UniqueIdentifier>{338e94cd-b7ab-4e99-af0c-d5c6cf1d2c5e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\memory">
+      <UniqueIdentifier>{97291b7b-8a35-4e02-b3ac-e7372acdf444}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\profile">
+      <UniqueIdentifier>{b38a053e-57a0-4598-98ab-c6be87742d25}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\timer">
+      <UniqueIdentifier>{e3bc1941-8dcc-4048-aa05-1020530d9ca3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\win32">
+      <UniqueIdentifier>{77590d47-cd89-4013-b328-b6fcd8895471}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\src\log\log.cpp">
-      <Filter>src\log</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\timer\timer.cpp">
-      <Filter>src\timer</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\win32\safe_win32.cpp">
+    <ClInclude Include="..\..\include\pathlib\error\error.h">
+      <Filter>include\error</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\pathlib\log\log.h">
+      <Filter>include\log</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\pathlib\math\math.h">
+      <Filter>include\math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\pathlib\math\simd_math.h">
+      <Filter>include\math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\pathlib\math\intrinsics\avx2intrin.h">
+      <Filter>include\math\intrinsics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\pathlib\math\intrinsics\avxintrin.h">
+      <Filter>include\math\intrinsics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\pathlib\math\intrinsics\bmiintrin.h">
+      <Filter>include\math\intrinsics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\pathlib\math\intrinsics\emmintrin.h">
+      <Filter>include\math\intrinsics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\pathlib\math\intrinsics\intrinsics.h">
+      <Filter>include\math\intrinsics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\pathlib\math\intrinsics\mmintrin.h">
+      <Filter>include\math\intrinsics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\pathlib\math\intrinsics\xmmintrin.h">
+      <Filter>include\math\intrinsics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\pathlib\memory\malloc.h">
+      <Filter>include\memory</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\pathlib\memory\memcpy.h">
+      <Filter>include\memory</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\pathlib\memory\memset.h">
+      <Filter>include\memory</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\pathlib\profile\profile.h">
+      <Filter>include\profile</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\pathlib\timer\timer.h">
+      <Filter>include\timer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\pathlib\types\types.h">
+      <Filter>include\types</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\pathlib\types\containers\hashmap.h">
+      <Filter>include\types\containers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\pathlib\types\containers\long_vector.h">
+      <Filter>include\types\containers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\pathlib\types\containers\short_vector.h">
+      <Filter>include\types\containers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\pathlib\types\string\compare.h">
+      <Filter>include\types\string</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\pathlib\types\string\from_type.h">
+      <Filter>include\types\string</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\pathlib\types\string\long_string.h">
+      <Filter>include\types\string</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\pathlib\types\string\short_string.h">
+      <Filter>include\types\string</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\pathlib\types\string\size_of.h">
+      <Filter>include\types\string</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\pathlib\win32\console.h">
+      <Filter>include\win32</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\pathlib\win32\safe_win32.h">
+      <Filter>include\win32</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\pathlib\pathlib.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\win32\mindows.h">
       <Filter>src\win32</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\memory\malloc.cpp">
-      <Filter>src\memory</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\profile\profile.cpp">
-      <Filter>src\profile</Filter>
-    </ClCompile>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
     <ClCompile Include="..\..\src\pathlib.cpp">
       <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\error\error.cpp">
       <Filter>src\error</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\log\log.cpp">
+      <Filter>src\log</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\memory\malloc.cpp">
+      <Filter>src\memory</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\src\win32\console.cpp">
       <Filter>src\win32</Filter>
     </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="..\..\include\log\log.h">
-      <Filter>src\log</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\memory\memcpy.h">
-      <Filter>src\memory</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\memory\memset.h">
-      <Filter>src\memory</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\timer\timer.h">
+    <ClCompile Include="..\..\src\win32\safe_win32.cpp">
+      <Filter>src\win32</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\timer\timer.cpp">
       <Filter>src\timer</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\math\math.h">
-      <Filter>src\math</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\win32\console.h">
-      <Filter>src\win32</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\math\simd_math.h">
-      <Filter>src\math</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\pathlib.h">
-      <Filter>src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\win32\mindows.h">
-      <Filter>src\win32</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\win32\safe_win32.h">
-      <Filter>src\win32</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\memory\malloc.h">
-      <Filter>src\memory</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\profile\profile.h">
+    </ClCompile>
+    <ClCompile Include="..\..\src\profile\profile.cpp">
       <Filter>src\profile</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\math\intrinsics\avx2intrin.h">
-      <Filter>src\math\intrinsics</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\math\intrinsics\avxintrin.h">
-      <Filter>src\math\intrinsics</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\math\intrinsics\bmiintrin.h">
-      <Filter>src\math\intrinsics</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\math\intrinsics\emmintrin.h">
-      <Filter>src\math\intrinsics</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\math\intrinsics\intrinsics.h">
-      <Filter>src\math\intrinsics</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\math\intrinsics\mmintrin.h">
-      <Filter>src\math\intrinsics</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\math\intrinsics\xmmintrin.h">
-      <Filter>src\math\intrinsics</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\types\containers\hashmap.h">
-      <Filter>src\types\containers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\types\types.h">
-      <Filter>src\types</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\types\string\compare.h">
-      <Filter>src\types\string</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\types\string\from_type.h">
-      <Filter>src\types\string</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\types\string\long_string.h">
-      <Filter>src\types\string</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\types\string\short_string.h">
-      <Filter>src\types\string</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\types\string\size_of.h">
-      <Filter>src\types\string</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\error\error.h">
-      <Filter>src\error</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\types\containers\short_vector.h">
-      <Filter>src\types\containers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\types\containers\long_vector.h">
-      <Filter>src\types\containers</Filter>
-    </ClInclude>
+    </ClCompile>
   </ItemGroup>
 </Project>

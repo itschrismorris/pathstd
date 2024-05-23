@@ -1,7 +1,7 @@
-﻿#include "../win32/mindows.h"
-#include "win32/safe_win32.h"
-#include "error/error.h"
-#include "log/log.h"
+﻿#include "../src/win32/mindows.h"
+#include "pathlib/win32/safe_win32.h"
+#include "pathlib/error/error.h"
+#include "pathlib/log/log.h"
 
 #pragma comment(lib, "Dbghelp.lib")
 

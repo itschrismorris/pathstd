@@ -1,7 +1,7 @@
-#include "error/error.h"
-#include "win32/console.h"
-#include "../win32/mindows.h"
-#include "pathlib.h"
+#include "pathlib/error/error.h"
+#include "pathlib/win32/console.h"
+#include "../src/win32/mindows.h"
+#include "pathlib/pathlib.h"
 
 namespace Pathlib {
 

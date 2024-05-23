@@ -18,6 +18,47 @@
       <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\include\pathlib\error\error.h" />
+    <ClInclude Include="..\..\include\pathlib\log\log.h" />
+    <ClInclude Include="..\..\include\pathlib\math\intrinsics\avx2intrin.h" />
+    <ClInclude Include="..\..\include\pathlib\math\intrinsics\avxintrin.h" />
+    <ClInclude Include="..\..\include\pathlib\math\intrinsics\bmiintrin.h" />
+    <ClInclude Include="..\..\include\pathlib\math\intrinsics\emmintrin.h" />
+    <ClInclude Include="..\..\include\pathlib\math\intrinsics\intrinsics.h" />
+    <ClInclude Include="..\..\include\pathlib\math\intrinsics\mmintrin.h" />
+    <ClInclude Include="..\..\include\pathlib\math\intrinsics\xmmintrin.h" />
+    <ClInclude Include="..\..\include\pathlib\math\math.h" />
+    <ClInclude Include="..\..\include\pathlib\math\simd_math.h" />
+    <ClInclude Include="..\..\include\pathlib\memory\malloc.h" />
+    <ClInclude Include="..\..\include\pathlib\memory\memcpy.h" />
+    <ClInclude Include="..\..\include\pathlib\memory\memset.h" />
+    <ClInclude Include="..\..\include\pathlib\pathlib.h" />
+    <ClInclude Include="..\..\include\pathlib\profile\profile.h" />
+    <ClInclude Include="..\..\include\pathlib\timer\timer.h" />
+    <ClInclude Include="..\..\include\pathlib\types\containers\hashmap.h" />
+    <ClInclude Include="..\..\include\pathlib\types\containers\long_vector.h" />
+    <ClInclude Include="..\..\include\pathlib\types\containers\short_vector.h" />
+    <ClInclude Include="..\..\include\pathlib\types\string\compare.h" />
+    <ClInclude Include="..\..\include\pathlib\types\string\from_type.h" />
+    <ClInclude Include="..\..\include\pathlib\types\string\long_string.h" />
+    <ClInclude Include="..\..\include\pathlib\types\string\short_string.h" />
+    <ClInclude Include="..\..\include\pathlib\types\string\size_of.h" />
+    <ClInclude Include="..\..\include\pathlib\types\types.h" />
+    <ClInclude Include="..\..\include\pathlib\win32\console.h" />
+    <ClInclude Include="..\..\include\pathlib\win32\safe_win32.h" />
+    <ClInclude Include="..\..\src\win32\mindows.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\src\error\error.cpp" />
+    <ClCompile Include="..\..\src\log\log.cpp" />
+    <ClCompile Include="..\..\src\memory\malloc.cpp" />
+    <ClCompile Include="..\..\src\pathlib.cpp" />
+    <ClCompile Include="..\..\src\profile\profile.cpp" />
+    <ClCompile Include="..\..\src\timer\timer.cpp" />
+    <ClCompile Include="..\..\src\win32\console.cpp" />
+    <ClCompile Include="..\..\src\win32\safe_win32.cpp" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
@@ -112,7 +153,7 @@
       <PreprocessorDefinitions>
       </PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir)..\..\include;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)..\..\include\mimalloc;$(ProjectDir)..\..\include</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpplatest</LanguageStandard>
       <AdditionalOptions>/Fa"$(IntDir)/" -Wno-ignored-attributes -Wno-unused-function</AdditionalOptions>
       <TreatWarningAsError>true</TreatWarningAsError>
@@ -146,7 +187,7 @@
       <PreprocessorDefinitions>
       </PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir)..\..\include;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)..\..\include\mimalloc;$(ProjectDir)..\..\include</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpplatest</LanguageStandard>
       <AdditionalOptions>/Fa"$(IntDir)/" -Wno-ignored-attributes -Wno-unused-function</AdditionalOptions>
       <TreatWarningAsError>true</TreatWarningAsError>
@@ -176,47 +217,6 @@
       <IgnoreAllDefaultLibraries>true</IgnoreAllDefaultLibraries>
     </Lib>
   </ItemDefinitionGroup>
-  <ItemGroup>
-    <ClCompile Include="..\..\src\error\error.cpp" />
-    <ClCompile Include="..\..\src\log\log.cpp" />
-    <ClCompile Include="..\..\src\memory\malloc.cpp" />
-    <ClCompile Include="..\..\src\pathlib.cpp" />
-    <ClCompile Include="..\..\src\profile\profile.cpp" />
-    <ClCompile Include="..\..\src\timer\timer.cpp" />
-    <ClCompile Include="..\..\src\win32\console.cpp" />
-    <ClCompile Include="..\..\src\win32\safe_win32.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="..\..\include\error\error.h" />
-    <ClInclude Include="..\..\include\log\log.h" />
-    <ClInclude Include="..\..\include\math\intrinsics\avx2intrin.h" />
-    <ClInclude Include="..\..\include\math\intrinsics\avxintrin.h" />
-    <ClInclude Include="..\..\include\math\intrinsics\bmiintrin.h" />
-    <ClInclude Include="..\..\include\math\intrinsics\emmintrin.h" />
-    <ClInclude Include="..\..\include\math\intrinsics\intrinsics.h" />
-    <ClInclude Include="..\..\include\math\intrinsics\mmintrin.h" />
-    <ClInclude Include="..\..\include\math\intrinsics\xmmintrin.h" />
-    <ClInclude Include="..\..\include\math\math.h" />
-    <ClInclude Include="..\..\include\math\simd_math.h" />
-    <ClInclude Include="..\..\include\memory\malloc.h" />
-    <ClInclude Include="..\..\include\memory\memcpy.h" />
-    <ClInclude Include="..\..\include\memory\memset.h" />
-    <ClInclude Include="..\..\include\pathlib.h" />
-    <ClInclude Include="..\..\include\profile\profile.h" />
-    <ClInclude Include="..\..\include\timer\timer.h" />
-    <ClInclude Include="..\..\include\types\containers\hashmap.h" />
-    <ClInclude Include="..\..\include\types\containers\long_vector.h" />
-    <ClInclude Include="..\..\include\types\containers\short_vector.h" />
-    <ClInclude Include="..\..\include\types\string\compare.h" />
-    <ClInclude Include="..\..\include\types\string\from_type.h" />
-    <ClInclude Include="..\..\include\types\string\long_string.h" />
-    <ClInclude Include="..\..\include\types\string\short_string.h" />
-    <ClInclude Include="..\..\include\types\string\size_of.h" />
-    <ClInclude Include="..\..\include\types\types.h" />
-    <ClInclude Include="..\..\include\win32\console.h" />
-    <ClInclude Include="..\..\include\win32\safe_win32.h" />
-    <ClInclude Include="..\..\src\win32\mindows.h" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
     <Import Project="$(VCTargetsPath)\BuildCustomizations\masm.targets" />

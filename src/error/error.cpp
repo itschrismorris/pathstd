@@ -1,8 +1,8 @@
-#include "win32/safe_win32.h"
-#include "win32/console.h"
-#include "log/log.h"
-#include "../win32/mindows.h"
-#include "error/error.h"
+#include "pathlib/win32/safe_win32.h"
+#include "pathlib/win32/console.h"
+#include "pathlib/log/log.h"
+#include "../src/win32/mindows.h"
+#include "pathlib/error/error.h"
 
 namespace Pathlib {
 

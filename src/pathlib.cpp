@@ -1,5 +1,5 @@
-#include "pathlib.h"
-#include "win32/mindows.h"
+#include "pathlib/pathlib.h"
+#include "../src/win32/mindows.h"
 
 namespace Pathlib {
 

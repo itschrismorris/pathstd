@@ -1,5 +1,5 @@
-#include "pathlib.h"
-#include "../src/third_party/mimalloc/mimalloc.h"
+#include "pathlib/pathlib.h"
+#include "mimalloc/mimalloc.h"
 
 namespace Pathlib {
 
