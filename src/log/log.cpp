@@ -3,10 +3,9 @@
 #include "../src/win32/mindows.h"
 #include "pathlib/pathlib.h"
 
-namespace Pathlib {
+namespace Pathlib { _Internal::Log log; }
 
-//---
-Log log;
+namespace Pathlib::_Internal {
 
 //---
 bool Log::initiate(const utf8* log_path)

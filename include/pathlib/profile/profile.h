@@ -5,7 +5,7 @@
 #pragma once
 #include "pathlib/types/types.h"
 
-namespace Pathlib {
+namespace Pathlib::_Internal {
 
 //---
 struct Profile
@@ -14,7 +14,7 @@ struct Profile
   bool initiate();
   void shutdown();
 };
+}
 
 //---
-extern Profile profile;
-}
+namespace Pathlib { extern _Internal::Profile profile; }

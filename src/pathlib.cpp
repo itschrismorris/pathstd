@@ -4,7 +4,7 @@
 namespace Pathlib {
 
 //---
-bool initiate(const utf8* log_path)
+bool pathlib_initiate(const utf8* log_path)
 {
   SetConsoleOutputCP(CP_UTF8);
   console.set_text_attributes(CONSOLE_FOREGROUND_GREEN);
@@ -27,7 +27,7 @@ bool initiate(const utf8* log_path)
 }
 
 //---
-void shutdown()
+void pathlib_shutdown()
 {
   timer.shutdown();
   profile.shutdown();

@@ -1,10 +1,10 @@
 #include "pathlib/pathlib.h"
 #include "mimalloc/mimalloc.h"
 
-namespace Pathlib {
-
 //---
-Profile profile;
+namespace Pathlib { _Internal::Profile profile; }
+
+namespace Pathlib::_Internal {
 
 //---
 bool Profile::initiate()

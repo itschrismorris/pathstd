@@ -12,7 +12,7 @@
 #define LOG(A) ::Pathlib::log.log(A)
 #define LOGT(A) ::Pathlib::log.logt(A)
 
-namespace Pathlib {
+namespace Pathlib::_Internal {
 
 //---
 struct Log
@@ -85,7 +85,7 @@ struct Log
     return false;
   }
 };
+}
 
 //---
-extern Log log;
-}
+namespace Pathlib { extern _Internal::Log log; }

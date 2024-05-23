@@ -9,7 +9,7 @@
 #include "pathlib/types/string/short_string.h"
 #include "pathlib/types/string/long_string.h"
 
-namespace Pathlib {
+namespace Pathlib::_Internal {
   
 //---
 struct Console
@@ -53,7 +53,7 @@ struct Console
     return Win32::write_console(buffer.str, buffer.size);
   }
 };
+}
 
 //---
-extern Console console;
-}
+namespace Pathlib { extern _Internal::Console console; }

@@ -5,7 +5,7 @@
 #pragma once
 #include "pathlib/types/types.h"
 
-namespace Pathlib {
+namespace Pathlib::_Internal {
 
 //---
 struct Timer
@@ -20,7 +20,7 @@ struct Timer
   u64 now_ms();
   u64 now_us();
 };
+}
 
 //---
-extern Timer timer;
-}
+namespace Pathlib { extern _Internal::Timer timer; }

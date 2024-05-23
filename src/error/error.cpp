@@ -4,10 +4,9 @@
 #include "../src/win32/mindows.h"
 #include "pathlib/error/error.h"
 
-namespace Pathlib {
+namespace Pathlib { _Internal::Error error; }
 
-//---
-Error error;
+namespace Pathlib::_Internal {
 
 //---
 bool Error::last_error_from_win32()

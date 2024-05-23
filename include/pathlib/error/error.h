@@ -6,7 +6,7 @@
 #include "pathlib/types/types.h"
 #include "pathlib/types/string/long_string.h"
 
-namespace Pathlib {
+namespace Pathlib::_Internal {
 
 //---
 struct Error {
@@ -19,6 +19,7 @@ struct Error {
   bool to_log(bool use_color = true);
   bool to_popup();
 };
-
-extern Error error;
 }
+
+//---
+namespace Pathlib { extern _Internal::Error error; }

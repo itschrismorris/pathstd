@@ -23,6 +23,6 @@
 namespace Pathlib {
 
 //---
-bool initiate(const utf8* log_path = nullptr);
-void shutdown();
+bool pathlib_initiate(const utf8* log_path = nullptr);
+void pathlib_shutdown();
 }

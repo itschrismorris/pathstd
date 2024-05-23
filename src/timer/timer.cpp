@@ -1,7 +1,10 @@
 #include "pathlib/pathlib.h"
 #include "../src/win32/mindows.h"
 
-namespace Pathlib {
+//---
+namespace Pathlib { _Internal::Timer timer; }
+
+namespace Pathlib::_Internal {
 
 //---
 Timer timer;
