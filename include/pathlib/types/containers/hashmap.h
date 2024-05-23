@@ -20,22 +20,23 @@
 namespace Pathlib::Containers {
 
 //---
-template <typename K, typename V>
+template <typename K, typename V, u64 RESERVE_CAPACITY = 64>
 struct Hashmap
 {
+  static_assert(Math::is_pot(RESERVE_CAPACITY) && (RESERVE_CAPACITY >= 8), "Hashmap RESERVE_CAPACITY must be a power of two, greater or equal to 8.");
   //---
-  u64 capacity;
-  u64 max_probe_length;
+  u32 capacity;
+  u32 max_probe_length;
   u32* slot_kv_index;
   u32* slot_distance_digest;
-  Containers::LongVector<K, 64> keys;
-  Containers::LongVector<V, 64> values;
-  Containers::LongVector<u32, 64> kv_slot_lookup;
+  Containers::LongVector<K, RESERVE_CAPACITY> keys;
+  Containers::LongVector<V, RESERVE_CAPACITY> values;
+  Containers::LongVector<u32, RESERVE_CAPACITY> kv_slot_lookup;
 
   //---
   Hashmap()
   {
-    capacity = 64;
+    capacity = RESERVE_CAPACITY;
     max_probe_length = 1 + (Math::log2(capacity) >> 2);
     slot_kv_index = (u32*)MALLOC(sizeof(u32) * capacity);
     slot_distance_digest = (u32*)MALLOC(sizeof(u32) * capacity);
@@ -93,7 +94,7 @@ struct Hashmap
         }
         digest_mask ^= (0xF << (distance << 2));
       }
-      slot_index += 8;
+      slot_index = (slot_index + 8) & (capacity - 1);
     }
     if (hash_count < MAX_REHASHES) {
       return find(key, hash(key_hash), hash_count + 1);
@@ -156,7 +157,7 @@ struct Hashmap
           return insert(swap_key, swap_value, swap_kv_index);
         }
       }
-      slot_index += 8;
+      slot_index = (slot_index + 8) & (capacity - 1);
     }
     if (hash_count < MAX_REHASHES) {
       if (kv_index == NEW_KV) {
@@ -198,7 +199,7 @@ struct Hashmap
         }
         digest_mask ^= (0xF << (distance << 2));
       }
-      slot_index += 8;
+      slot_index = (slot_index + 8) & (capacity - 1);
     }
     if (hash_count < MAX_REHASHES) {
       return remove(key, hash(key_hash), hash_count + 1);
