@@ -10,15 +10,12 @@
 
 /**/
 #define MAX_REHASHES 1
-#define MAX_PROBE_CYCLES 2
-#define MAX_PROBE_DISTANCE_BITS 3
-#define DISTANCE_SHIFT (32 - MAX_PROBE_DISTANCE_BITS)
-#define MAX_PROBE_DISTANCE (0x1 << MAX_PROBE_DISTANCE_BITS)
-#define DIGEST_MASK (0xFFFFFFFF >> (MAX_PROBE_DISTANCE_BITS + 1))
-#define DIGEST_MASK_READ (0xFFFFFFFF >> MAX_PROBE_DISTANCE_BITS)
-#define EMPTY_BUCKET (0xFFFFFFFF >> MAX_PROBE_DISTANCE_BITS)
-#define NEW_VALUE_INDEX U32_MAX
-#define SET_DISTANCE(A) ((A) << (DISTANCE_SHIFT))
+#define DIGEST_MASK 0x0FFFFFFF
+#define OCCUPIED_AND_DIGEST_MASK 0x1FFFFFFF
+#define EMPTY_SLOT 0x7FFFFFFF
+#define NEW_KV U32_MAX
+#define NEW_HASH U32_MAX
+#define DISTANCE_SHIFT(A) ((A) << 29)
 
 namespace Pathlib::Containers {
 
@@ -28,32 +25,34 @@ struct Hashmap
 {
   /**/
   u64 capacity;
-  u32* bucket_value_index;
-  u32* bucket_distance_digest;
+  u64 max_probe_length;
+  u32* slot_kv_index;
+  u32* slot_distance_digest;
   Containers::LongVector<K, 64> keys;
   Containers::LongVector<V, 64> values;
-  Containers::LongVector<u32, 64> bucket_indexes;
+  Containers::LongVector<u32, 64> kv_slot_lookup;
 
   /**/
   Hashmap()
   {
     capacity = 64;
-    bucket_value_index = (u32*)MALLOC(sizeof(u32) * capacity);
-    bucket_distance_digest = (u32*)MALLOC(sizeof(u32) * capacity);
-    I8 empty_bucket = I8_SET1(EMPTY_BUCKET);
+    max_probe_length = 1 + (Math::log2(capacity) >> 2);
+    slot_kv_index = (u32*)MALLOC(sizeof(u32) * capacity);
+    slot_distance_digest = (u32*)MALLOC(sizeof(u32) * capacity);
+    I8 empty_slot = I8_SET1(EMPTY_SLOT);
     for (u32 r = 0; r < (capacity >> 3); ++r) {
-      I8_STORE(&((I8*)bucket_distance_digest)[r], empty_bucket);
+      I8_STORE(&((I8*)slot_distance_digest)[r], empty_slot);
     }
   }
 
   /**/
   ~Hashmap()
   {
-    if (bucket_value_index) {
-      FREE(bucket_value_index);
+    if (slot_kv_index) {
+      FREE(slot_kv_index);
     }
-    if (bucket_distance_digest) {
-      FREE(bucket_distance_digest);
+    if (slot_distance_digest) {
+      FREE(slot_distance_digest);
     }
   }
   
@@ -76,26 +75,25 @@ struct Hashmap
 
   /**/
   inline V* find(const K& key,
-                 u32 existing_hash = U32_MAX,
+                 u32 existing_hash = NEW_HASH,
                  u32 hash_count = 0)
   {
-    u32 key_hash = (existing_hash == U32_MAX) ? hash(key) : existing_hash;
-    u32 bucket_index = (key_hash & (capacity - 1));
-
-    for (u32 i = 0; i < MAX_PROBE_CYCLES; ++i) {
-      bucket_index = Math::min((u32)capacity - MAX_PROBE_DISTANCE, bucket_index);
+    u32 key_hash = (existing_hash == NEW_HASH) ? hash(key) : existing_hash;
+    u32 slot_index = (key_hash & (capacity - 1));
+    for (u32 i = 0; i < max_probe_length; ++i) {
+      slot_index = Math::min((u32)capacity - 8, slot_index);
       I8 key_digest = I8_SET1(hash(key_hash) & DIGEST_MASK);
-      I8 digests = I8_AND(I8_LOADU(&bucket_distance_digest[bucket_index]), I8_SET1(DIGEST_MASK_READ));
+      I8 digests = I8_AND(I8_LOADU(&slot_distance_digest[slot_index]), I8_SET1(OCCUPIED_AND_DIGEST_MASK));
       u32 digest_mask = I8_MOVEMASK(I8_CMP_EQ(key_digest, digests));
       while (digest_mask) {
         u32 distance = Math::lsb_set(digest_mask) >> 2;
-        u32 value_index = bucket_value_index[bucket_index + distance];
-        if (keys[value_index] == key) {
-          return &values[value_index];
+        u32 kv_index = slot_kv_index[slot_index + distance];
+        if (keys[kv_index] == key) {
+          return &values[kv_index];
         }
         digest_mask ^= (0xF << (distance << 2));
       }
-      bucket_index += 8;
+      slot_index += 8;
     }
     if (hash_count < MAX_REHASHES) {
       return find(key, hash(key_hash), hash_count + 1);
@@ -112,66 +110,65 @@ struct Hashmap
   /**/
   inline bool insert(const K& key,
                      const V& value,
-                     u32 value_index = NEW_VALUE_INDEX,
-                     u32 existing_bucket = U32_MAX,
-                     u32 existing_hash = U32_MAX,
+                     u32 kv_index = NEW_KV,
+                     u32 existing_hash = NEW_HASH,
                      u32 hash_count = 0)
   {
-    u32 key_hash = (existing_hash == U32_MAX) ? hash(key) : existing_hash;
-    u32 bucket_index = (existing_bucket == U32_MAX) ? (key_hash & (capacity - 1)) : existing_bucket;
-    for (u32 i = 0; i < MAX_PROBE_CYCLES; ++i) {
-      bucket_index = Math::min((u32)capacity - MAX_PROBE_DISTANCE, bucket_index);
-      I8 probe = I8_LOADU(&bucket_distance_digest[bucket_index]);
-      I8 empty_bucket = I8_SET1(EMPTY_BUCKET);
+    u32 key_hash = (existing_hash == NEW_HASH) ? hash(key) : existing_hash;
+    u32 slot_index = key_hash & (capacity - 1);
+    for (u32 i = 0; i < max_probe_length; ++i) {
+      slot_index = Math::min((u32)capacity - 8, slot_index);
+      I8 slots = I8_LOADU(&slot_distance_digest[slot_index]);
+      I8 slot_distances = I8_SHIFTR(slots, 29);
+      I8 empty_slot = I8_SET1(EMPTY_SLOT);
       I8 distance_check = I8_SET(0, 1, 2, 3, 4, 5, 6, 7);
-      I8 probe_distances = I8_SHIFTR(probe, DISTANCE_SHIFT);
-      u32 empty_mask = I8_MOVEMASK(I8_CMP_EQ(probe, empty_bucket));
-      u32 distance_mask = I8_MOVEMASK(I8_CMP_GT(probe_distances, distance_check));
-      if (empty_mask || distance_mask) {
+      u32 empty_mask = I8_MOVEMASK(I8_CMP_EQ(slots, empty_slot));
+      u32 swap_mask = I8_MOVEMASK(I8_CMP_GT(slot_distances, distance_check));
+      if (empty_mask || swap_mask) {
         u32 empty_distance = Math::lsb_set(empty_mask) >> 2;
-        u32 distance_distance = Math::lsb_set(distance_mask) >> 2;
-        if (empty_distance <= distance_distance) {
-          u32 insert_index = bucket_index + empty_distance;
-          if (value_index == NEW_VALUE_INDEX) {
+        u32 swap_distance = Math::lsb_set(swap_mask) >> 2;
+        if (empty_distance <= swap_distance) {
+          u32 insert_index = slot_index + empty_distance;
+          if (kv_index == NEW_KV) {
             *keys.emplace_back(1) = key;
             *values.emplace_back(1) = value;
-            bucket_indexes.emplace_back(1);
-            value_index = values.count - 1;
+            kv_slot_lookup.emplace_back(1);
+            kv_index = values.count - 1;
           }
-          bucket_value_index[insert_index] = value_index;
-          bucket_distance_digest[insert_index] = SET_DISTANCE(empty_distance) | (hash(key_hash) & DIGEST_MASK);
-          bucket_indexes[value_index] = insert_index;
+          slot_kv_index[insert_index] = kv_index;
+          slot_distance_digest[insert_index] = DISTANCE_SHIFT(empty_distance) | (hash(key_hash) & DIGEST_MASK);
+          kv_slot_lookup[kv_index] = insert_index;
           return true;
         } else {
-          u32 insert_index = bucket_index + distance_distance;
-          if (value_index == NEW_VALUE_INDEX) {
+          u32 insert_index = slot_index + swap_distance;
+          if (kv_index == NEW_KV) {
             *keys.emplace_back(1) = key;
             *values.emplace_back(1) = value;
-            bucket_indexes.emplace_back(1);
-            value_index = values.count - 1;
+            kv_slot_lookup.emplace_back(1);
+            kv_index = values.count - 1;
           }
-          u32 swap_value_index = bucket_value_index[insert_index];
-          K& swap_key = keys[swap_value_index];
-          V& swap_value = values[swap_value_index];
-          bucket_value_index[insert_index] = value_index;
-          bucket_distance_digest[insert_index] = SET_DISTANCE(distance_distance) | (hash(key_hash) & DIGEST_MASK);
-          bucket_indexes[value_index] = insert_index;
-          return insert(swap_key, swap_value, swap_value_index);
+          u32 swap_kv_index = slot_kv_index[insert_index];
+          K& swap_key = keys[swap_kv_index];
+          V& swap_value = values[swap_kv_index];
+          slot_kv_index[insert_index] = kv_index;
+          slot_distance_digest[insert_index] = DISTANCE_SHIFT(swap_distance) | (hash(key_hash) & DIGEST_MASK);
+          kv_slot_lookup[kv_index] = insert_index;
+          return insert(swap_key, swap_value, swap_kv_index);
         }
       }
-      bucket_index += 8;
+      slot_index += 8;
     }
     if (hash_count < MAX_REHASHES) {
-      if (value_index == NEW_VALUE_INDEX) {
-        return insert(key, value, value_index, U32_MAX, hash(key_hash), hash_count + 1);
+      if (kv_index == NEW_KV) {
+        return insert(key, value, kv_index, hash(key_hash), hash_count + 1);
       } else {
-        return insert(keys[value_index], values[value_index], value_index, U32_MAX, hash(key_hash), hash_count + 1);
+        return insert(keys[kv_index], values[kv_index], kv_index, hash(key_hash), hash_count + 1);
       }
     }
-    if (value_index == NEW_VALUE_INDEX) {
+    if (kv_index == NEW_KV) {
       *keys.emplace_back(1) = key;
       *values.emplace_back(1) = value;
-      bucket_indexes.emplace_back(1);
+      kv_slot_lookup.emplace_back(1);
     }
     return rebuild_larger();
   }
@@ -182,26 +179,26 @@ struct Hashmap
                      u32 hash_count = 0)
   {
     u32 key_hash = (existing_hash == U32_MAX) ? hash(key) : existing_hash;
-    u32 bucket_index = (key_hash & (capacity - 1));
-    for (u32 i = 0; i < MAX_PROBE_CYCLES; ++i) {
-      bucket_index = Math::min((u32)capacity - MAX_PROBE_DISTANCE, bucket_index);
+    u32 slot_index = (key_hash & (capacity - 1));
+    for (u32 i = 0; i < max_probe_length; ++i) {
+      slot_index = Math::min((u32)capacity - 8, slot_index);
       I8 key_digest = I8_SET1(hash(key_hash) & DIGEST_MASK);
-      I8 digests = I8_AND(I8_LOADU(&bucket_distance_digest[bucket_index]), I8_SET1(DIGEST_MASK_READ));
+      I8 digests = I8_AND(I8_LOADU(&slot_distance_digest[slot_index]), I8_SET1(OCCUPIED_AND_DIGEST_MASK));
       u32 digest_mask = I8_MOVEMASK(I8_CMP_EQ(key_digest, digests));
       while (digest_mask) {
         u32 distance = Math::lsb_set(digest_mask) >> 2;
-        u32 value_index = bucket_value_index[bucket_index + distance];
-        if (keys[value_index] == key) {
-          bucket_value_index[bucket_indexes[bucket_indexes.count - 1]] = value_index;
-          bucket_distance_digest[bucket_index + distance] = EMPTY_BUCKET;
-          keys.remove(value_index, 1);
-          values.remove(value_index, 1);
-          bucket_indexes.remove(value_index, 1);
+        u32 kv_index = slot_kv_index[slot_index + distance];
+        if (keys[kv_index] == key) {
+          slot_kv_index[kv_slot_lookup[kv_slot_lookup.count - 1]] = kv_index;
+          slot_distance_digest[slot_index + distance] = EMPTY_SLOT;
+          keys.remove(kv_index, 1);
+          values.remove(kv_index, 1);
+          kv_slot_lookup.remove(kv_index, 1);
           return true;
         }
         digest_mask ^= (0xF << (distance << 2));
       }
-      bucket_index += 8;
+      slot_index += 8;
     }
     if (hash_count < MAX_REHASHES) {
       return remove(key, hash(key_hash), hash_count + 1);
@@ -214,11 +211,12 @@ struct Hashmap
   {
     console.write(load_factor());
     capacity <<= 1;
-    bucket_value_index = (u32*)REALLOC(bucket_value_index, sizeof(u32) * capacity);
-    bucket_distance_digest = (u32*)REALLOC(bucket_distance_digest, sizeof(u32) * capacity);
-    I8 empty_bucket = I8_SET1(EMPTY_BUCKET);
+    max_probe_length = 1 + (Math::log2(capacity) >> 2);
+    slot_kv_index = (u32*)REALLOC(slot_kv_index, sizeof(u32) * capacity);
+    slot_distance_digest = (u32*)REALLOC(slot_distance_digest, sizeof(u32) * capacity);
+    I8 empty_slot = I8_SET1(EMPTY_SLOT);
     for (u32 r = 0; r < (capacity >> 3); ++r) {
-      I8_STORE(&((I8*)bucket_distance_digest)[r], empty_bucket);
+      I8_STORE(&((I8*)slot_distance_digest)[r], empty_slot);
     }
     for (u32 v = 0; v < values.count; ++v) {
       insert(keys[v], values[v], v);
@@ -229,11 +227,11 @@ struct Hashmap
   /**/
   inline f32 load_factor()
   {
-    u32 used_buckets = 0;
+    u32 used_slots = 0;
     for (u32 b = 0; b < capacity; ++b) {
-      used_buckets += (bucket_distance_digest[b] != EMPTY_BUCKET);
+      used_slots += (slot_distance_digest[b] != EMPTY_SLOT);
     }
-    return ((f32)used_buckets / (f32)capacity);
+    return ((f32)used_slots / (f32)capacity);
   }
 };
 }
