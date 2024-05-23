@@ -192,7 +192,7 @@ static inline u32 reverse_hash(u32 value)
 /**/
 static inline u32 hash(u64 value)
 {
-  return (hash((u32)(value & 0x00000000FFFFFFFFLLU)) ^
+  return (hash((u32)(value & 0x00000000FFFFFFFFLLU)) +
           hash((u32)(value >> 32)));
 }
 
@@ -208,5 +208,24 @@ static inline u32 hash(f64 d)
 {
   u64 value = *(u64*)&d;
   return hash(value);
+}
+
+template <typename T>
+static inline u32 hash(T* key,
+                       u64 size)
+{
+  u32 h = 0;
+  u32 passes = (size >> 2);
+  for (u32 p = 0; p < passes; ++p) {
+    h += hash(((u32*)key)[p]);
+  }
+  u32 leftover = size - (passes << 2);
+  if (leftover) {
+    key = (T*)((u32*)key + passes);
+    for (u32 b = 0; b < leftover; ++b) {
+      h += hash((u32)((u8*)key)[b]);
+    }
+  }
+  return h;
 }
 }

@@ -109,11 +109,12 @@
     <ClCompile>
       <WarningLevel>EnableAllWarnings</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>
+      </PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir)..\..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)..\..\include;</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpplatest</LanguageStandard>
-      <AdditionalOptions>/Fa"$(IntDir)/" -Wno-ignored-attributes -Wno-unused-function %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>/Fa"$(IntDir)/" -Wno-ignored-attributes -Wno-unused-function</AdditionalOptions>
       <TreatWarningAsError>true</TreatWarningAsError>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <EnableEnhancedInstructionSet>AdvancedVectorExtensions2</EnableEnhancedInstructionSet>
@@ -142,11 +143,12 @@
       <WarningLevel>EnableAllWarnings</WarningLevel>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>
+      </PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir)..\..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)..\..\include;</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpplatest</LanguageStandard>
-      <AdditionalOptions>/Fa"$(IntDir)/" -Wno-ignored-attributes -Wno-unused-function %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>/Fa"$(IntDir)/" -Wno-ignored-attributes -Wno-unused-function</AdditionalOptions>
       <TreatWarningAsError>true</TreatWarningAsError>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <Optimization>MaxSpeedHighLevel</Optimization>
@@ -158,7 +160,7 @@
       <FloatingPointExceptions>false</FloatingPointExceptions>
       <FloatingPointModel>Fast</FloatingPointModel>
       <UseProcessorExtensions>None</UseProcessorExtensions>
-      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <StringPooling>true</StringPooling>
       <GuardEHContMetadata>false</GuardEHContMetadata>
     </ClCompile>

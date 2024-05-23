@@ -30,14 +30,14 @@ struct Hashmap
   u64 capacity;
   u32* bucket_value_index;
   u32* bucket_distance_digest;
-  Containers::LongVector<K, 128> keys;
-  Containers::LongVector<V, 128> values;
-  Containers::LongVector<u32, 128> bucket_indexes;
+  Containers::LongVector<K, 64> keys;
+  Containers::LongVector<V, 64> values;
+  Containers::LongVector<u32, 64> bucket_indexes;
 
   /**/
   Hashmap()
   {
-    capacity = 128;
+    capacity = 64;
     bucket_value_index = (u32*)MALLOC(sizeof(u32) * capacity);
     bucket_distance_digest = (u32*)MALLOC(sizeof(u32) * capacity);
     I8 empty_bucket = I8_SET1(EMPTY_BUCKET);
@@ -61,13 +61,13 @@ struct Hashmap
   template <typename T>
   u32 hash(T key)
   {
-    if constexpr (IS_INTEGRAL(K) || IS_FLOAT(K)) {
+    if constexpr (IS_INTEGRAL(T) || IS_FLOAT(T)) {
       return Math::hash(key);
-    } else if constexpr (IS_SHORT_STRING(K)) {
+    } else if constexpr (IS_SHORT_STRING(T)) {
       return key.hash();
-    } else if constexpr (IS_LONG_STRING(K)) {
+    } else if constexpr (IS_LONG_STRING(T)) {
       return key.hash();
-    } else if constexpr (SAME_TYPE(K, const utf8*)) {
+    } else if constexpr (SAME_TYPE(T, const utf8*)) {
       return String::LongString<>::hash(key);
     } else {
       static_assert(false, "Unsupported type used for hashmap key.");
@@ -119,7 +119,6 @@ struct Hashmap
   {
     u32 key_hash = (existing_hash == U32_MAX) ? hash(key) : existing_hash;
     u32 bucket_index = (existing_bucket == U32_MAX) ? (key_hash & (capacity - 1)) : existing_bucket;
-
     for (u32 i = 0; i < MAX_PROBE_CYCLES; ++i) {
       bucket_index = Math::min((u32)capacity - MAX_PROBE_DISTANCE, bucket_index);
       I8 probe = I8_LOADU(&bucket_distance_digest[bucket_index]);

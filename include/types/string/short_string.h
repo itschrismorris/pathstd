@@ -170,22 +170,13 @@ struct ShortString
   /**/
   static inline u32 hash(const utf8* value)
   {
-    u64 size = String::size_of(value);
-    u32 hash = Math::hash(((u32*)value)[0]);
-    for (u32 b = 1; b < (size + 3) >> 2; ++b) {
-      hash ^= Math::hash(((u32*)value)[b]);
-    }
-    return hash;
+    return Math::hash(value, String::size_of(value));
   }
 
   /**/
   inline u32 hash() const 
   {
-    u32 hash = Math::hash(((u32*)str)[0]);
-    for (u32 b = 1; b < (size + 3) >> 2; ++b) {
-      hash ^= Math::hash(((u32*)str)[b]);
-    }
-    return hash;
+    return Math::hash(str, size);
   }
 };
 }
