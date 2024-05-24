@@ -19,7 +19,7 @@ struct Log
 {
   //---
   void* file;
-  String::LongString<> buffer;
+  String::LongString<256> _buffer;
 
   //---
   Log()
@@ -61,10 +61,10 @@ struct Log
   inline bool log(Args&&... args)
   {
     if (file) {
-      buffer.size = 0;
-      (buffer._append(&buffer, args), ...);
-      buffer.append(u8'\n');
-      return (Win32::write_console(buffer.str, buffer.size) && Win32::write_log(buffer.str, buffer.size));
+      _buffer.size = 0;
+      (_buffer._append(&_buffer, args), ...);
+      _buffer.append(u8'\n');
+      return (Win32::write_console(_buffer.str, _buffer.size) && Win32::write_log(_buffer.str, _buffer.size));
     }
     return false;
   }
@@ -76,11 +76,11 @@ struct Log
     if (file) {
       SystemTime time;
       Win32::get_local_time(&time);
-      buffer.size = 0;
-      buffer.append(time.wHour, u8":", time.wMinute, u8":", time.wSecond, u8":", time.wMilliseconds, u8": ");
-      (buffer._append(&buffer, args), ...);
-      buffer.append(u8'\n');
-      return (Win32::write_console(buffer.str, buffer.size) && Win32::write_log(buffer.str, buffer.size));
+      _buffer.size = 0;
+      _buffer.append(time.wHour, u8":", time.wMinute, u8":", time.wSecond, u8":", time.wMilliseconds, u8": ");
+      (_buffer._append(&_buffer, args), ...);
+      _buffer.append(u8'\n');
+      return (Win32::write_console(_buffer.str, _buffer.size) && Win32::write_log(_buffer.str, _buffer.size));
     }
     return false;
   }

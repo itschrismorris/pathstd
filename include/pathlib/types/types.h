@@ -14,6 +14,7 @@
 #define IS_FLOAT(A) _is_float<A>::value
 #define IS_SHORT_STRING(A) _is_short_string<A>::value
 #define IS_LONG_STRING(A) _is_long_string<A>::value
+#define EXPECT(A) __builtin_expect((A), 1)
 
 //---
 struct false_type { static constexpr bool value = false; constexpr operator bool() const { return value; } };

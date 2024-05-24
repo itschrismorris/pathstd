@@ -26,7 +26,7 @@ namespace Pathlib::Win32 {
 static constexpr u32 MAX_PATH_LENGTH = 260;
 
 //---
-bool get_callstack(String::LongString<>* string_out);
+bool get_callstack(String::LongString<256>* string_out);
 u64 get_last_error_string(utf8* string_out,
                           u64 string_capacity);
 bool write_console(const utf8* string,

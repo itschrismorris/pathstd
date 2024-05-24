@@ -45,9 +45,10 @@
     <ClInclude Include="..\..\include\pathlib\profile\profile.h" />
     <ClInclude Include="..\..\include\pathlib\timer\timer.h" />
     <ClInclude Include="..\..\include\pathlib\types\containers\hashmap.h" />
-    <ClInclude Include="..\..\include\pathlib\types\containers\long_vector.h" />
+    <ClInclude Include="..\..\include\pathlib\types\containers\vector.h" />
     <ClInclude Include="..\..\include\pathlib\types\containers\pool.h" />
-    <ClInclude Include="..\..\include\pathlib\types\containers\short_vector.h" />
+    <ClInclude Include="..\..\include\pathlib\types\containers\pools.h" />
+    <ClInclude Include="..\..\include\pathlib\types\containers\array.h" />
     <ClInclude Include="..\..\include\pathlib\types\string\compare.h" />
     <ClInclude Include="..\..\include\pathlib\types\string\from_type.h" />
     <ClInclude Include="..\..\include\pathlib\types\string\long_string.h" />

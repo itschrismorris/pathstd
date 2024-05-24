@@ -20,11 +20,10 @@ bool Error::last_error_from_win32()
 //---
 bool Error::to_log(bool use_color)
 {
-  String::LongString callstack;
-  if (!Win32::get_callstack(&callstack)) {
+  if (!Win32::get_callstack(&_buffer)) {
     return false;
   }
-  String::LongString string(u8"\n************\n", last_error, u8"\n\n", callstack, u8"************");
+  String::LongString<512> string(u8"\n************\n", last_error, u8"\n\n", _buffer, u8"************");
   if (use_color) {
     if  (!console.set_text_attributes(Console::FOREGROUND_RED) ||
          !LOGT(string.str) ||

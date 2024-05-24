@@ -27,7 +27,7 @@ struct Console
   static constexpr u16 BACKGROUND_WHITE = (BACKGROUND_RED | BACKGROUND_GREEN | BACKGROUND_BLUE);
 
   //---
-  String::LongString<> buffer;
+  String::LongString<256> _buffer;
 
   //---
   inline bool set_text_attributes(u16 attributes)
@@ -59,10 +59,10 @@ struct Console
   template <typename... Args>
   inline bool write(Args&&... args)
   {
-    buffer.size = 0;
-    (buffer._append(&buffer, args), ...);
-    buffer.append(u8'\n');
-    return Win32::write_console(buffer.str, buffer.size);
+    _buffer.size = 0;
+    (_buffer._append(&_buffer, args), ...);
+    _buffer.append(u8'\n');
+    return Win32::write_console(_buffer.str, _buffer.size);
   }
 };
 }

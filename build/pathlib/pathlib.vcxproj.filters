@@ -120,10 +120,10 @@
     <ClInclude Include="..\..\include\pathlib\types\containers\hashmap.h">
       <Filter>include\types\containers</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\include\pathlib\types\containers\long_vector.h">
+    <ClInclude Include="..\..\include\pathlib\types\containers\vector.h">
       <Filter>include\types\containers</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\include\pathlib\types\containers\short_vector.h">
+    <ClInclude Include="..\..\include\pathlib\types\containers\array.h">
       <Filter>include\types\containers</Filter>
     </ClInclude>
     <ClInclude Include="..\..\include\pathlib\types\string\compare.h">
@@ -179,6 +179,9 @@
     </ClInclude>
     <ClInclude Include="..\..\include\mimalloc\mimalloc\mimalloc\types.h">
       <Filter>include\mimalloc\mimalloc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\pathlib\types\containers\pools.h">
+      <Filter>include\types\containers</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

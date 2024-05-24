@@ -1,5 +1,5 @@
 /*
-  Documentation: https://www.path.blog/docs/long_vector.html
+  Documentation: https://www.path.blog/docs/vector.html
 */
 
 #pragma once
@@ -10,8 +10,8 @@ namespace Pathlib::Containers {
 
 //---
 template <typename T, 
-          u64 RESERVE_CAPACITY = 128LLU>
-struct LongVector
+          u64 RESERVE_CAPACITY>
+struct Vector
 {
   //---
   T* data;
@@ -19,7 +19,7 @@ struct LongVector
   u64 capacity;
 
   //---
-  LongVector()
+  Vector()
   {
     capacity = RESERVE_CAPACITY;
     data = (T*)MALLOC(sizeof(T) * RESERVE_CAPACITY);
@@ -27,9 +27,12 @@ struct LongVector
   }
 
   //---
-  ~LongVector()
+  ~Vector()
   {
     if (data) {
+      for (u64 c = 0; c < count; ++c) {
+        Memory::call_destructor<T>(&data[c]);
+      }
       FREE(data);
     }
   }
@@ -47,7 +50,7 @@ struct LongVector
   }
 
   //---
-  inline T* emplace_back(u64 _count)
+  inline T* emplace_back(u64 _count = 1)
   {
     u64 original_count = count;
     count += _count;
@@ -55,23 +58,29 @@ struct LongVector
       capacity = count * 1.5;
       data = (T*)REALLOC(data, sizeof(T) * capacity);
     }
+    Memory::call_constructor<T>(data + original_count);
     return (data + original_count);
   }
 
   //---
-  inline T pop()
+  inline void remove(u64 index)
   {
-    return *(data + (--count));
+    Memory::call_destructor<T>(&data[index]);
+    --count;
+    Memory::memcpy(index, data + count, sizeof(T));
   }
 
   //---
-  inline void remove(u64 start_index,
-                     u64 width)
+  inline void remove(u64 index,
+                     u64 _count)
   {
-    T* start = (data + start_index);
-    T* end = (data + count - width);
-    count -= width;
-    Memory::memcpy(start, end, width);
+    for (u64 c = index; c < _count; ++c) {
+      Memory::call_destructor<T>(&data[c]);
+    }
+    T* start = (data + index);
+    T* end = (data + count - _count);
+    count -= _count;
+    Memory::memcpy(start, end, sizeof(T) * _count);
   }
 
   //---

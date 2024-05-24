@@ -8,7 +8,7 @@
 namespace Pathlib::Win32 { 
 
 //---
-bool get_callstack(String::LongString<>* string_out)
+bool get_callstack(String::LongString<256>* string_out)
 {
   HANDLE callstack[10];
   HANDLE process = GetCurrentProcess();
@@ -17,12 +17,12 @@ bool get_callstack(String::LongString<>* string_out)
     error.to_log();
     return false;
   }
-  if (!SymInitialize(process, NULL, true)) {
+  if (!SymInitialize(process, nullptr, true)) {
     error.last_error_from_win32();
     error.to_log();
     return false;
   }
-  WORD frames = RtlCaptureStackBackTrace(0, 10, callstack, NULL);
+  WORD frames = RtlCaptureStackBackTrace(0, 10, callstack, nullptr);
   if (frames == 0) {
     error.last_error_from_win32();
     error.to_log();
@@ -34,7 +34,7 @@ bool get_callstack(String::LongString<>* string_out)
   symbol->SizeOfStruct = sizeof(SYMBOL_INFO);
   for (WORD i = 0; i < frames; ++i) {
     DWORD64 address = (DWORD64)(callstack[i]);
-    if (!SymFromAddr(process, address, NULL, symbol)) {
+    if (!SymFromAddr(process, address, nullptr, symbol)) {
       error.last_error_from_win32();
       error.to_log();
       return false;
@@ -62,7 +62,7 @@ u64 get_last_error_string(utf8* string_out,
 {
   LPWSTR utf16_string = nullptr;
   u64 utf16_size = FormatMessageW(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
-                                  NULL, get_last_error(), MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), (LPWSTR)&utf16_string, 0, NULL);
+    nullptr, get_last_error(), MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), (LPWSTR)&utf16_string, 0, nullptr);
   if (utf16_string && (utf16_size > 0)) {
     u64 utf8_size = utf16_to_utf8(string_out, string_capacity, utf16_string, utf16_size);
     LocalFree(utf16_string);
@@ -142,10 +142,10 @@ u64 utf16_to_utf8(utf8* utf8_string_out,
                   const wchar_t* utf16_string,
                   i64 utf16_size)
 {
-  u64 utf8_size = WideCharToMultiByte(CP_UTF8, 0, utf16_string, utf16_size, NULL, 0, NULL, NULL);
+  u64 utf8_size = WideCharToMultiByte(CP_UTF8, 0, utf16_string, utf16_size, nullptr, 0, nullptr, nullptr);
   utf8_size = Math::min(utf8_size, utf8_capacity);
   if (utf8_size > 0) {
-    utf8_size = WideCharToMultiByte(CP_UTF8, 0, utf16_string, utf16_size, (LPSTR)utf8_string_out, utf8_size, NULL, NULL);
+    utf8_size = WideCharToMultiByte(CP_UTF8, 0, utf16_string, utf16_size, (LPSTR)utf8_string_out, utf8_size, nullptr, nullptr);
     if (utf8_size > 0) {
       return (utf8_size - (utf16_size == -1));
     }
@@ -162,7 +162,7 @@ u64 utf8_to_utf16(wchar_t* utf16_string_out,
                   const utf8* utf8_string,
                   i64 utf8_size)
 {
-  u64 utf16_size = MultiByteToWideChar(CP_UTF8, 0, (LPCSTR)utf8_string, utf8_size, NULL, 0);
+  u64 utf16_size = MultiByteToWideChar(CP_UTF8, 0, (LPCSTR)utf8_string, utf8_size, nullptr, 0);
   utf16_size = Math::min(utf16_size, utf16_capacity);
   if (utf16_size > 0) {
     utf16_size = MultiByteToWideChar(CP_UTF8, 0, (LPCSTR)utf8_string, utf8_size, utf16_string_out, utf16_size);

@@ -10,7 +10,7 @@
 namespace Pathlib::String {
 
 //---
-template <u64 RESERVE_CAPACITY = 128LLU>
+template <u64 RESERVE_CAPACITY>
 struct LongString
 {
   //---
@@ -159,8 +159,9 @@ struct LongString
   }
 
   //---
-  static inline void _append(LongString* string_out, 
-                             const LongString& arg)
+  template <u64 CAPACITY>
+  static inline void _append(LongString* string_out,
+                             const LongString<CAPACITY>& arg)
   {
     u64 new_size = string_out->size + arg.size;
     if (new_size > string_out->capacity) {
@@ -190,7 +191,7 @@ struct LongString
   //---
   template <typename... Args>
   static inline LongString format(LongString* string_out,
-                                   Args&&... args)
+                                  Args&&... args)
   {
     (_append(string_out, args), ...);
   }

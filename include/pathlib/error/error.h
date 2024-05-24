@@ -12,7 +12,8 @@ namespace Pathlib::_Internal {
 struct Error {
 
   //---
-  String::LongString<> last_error;
+  String::LongString<256> last_error;
+  String::LongString<256> _buffer;
 
   //---
   bool last_error_from_win32();

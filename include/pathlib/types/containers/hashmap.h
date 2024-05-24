@@ -4,7 +4,7 @@
 
 #pragma once
 #include "pathlib/types/types.h"
-#include "pathlib/types/containers/long_vector.h"
+#include "pathlib/types/containers/vector.h"
 #include "pathlib/types/string/size_of.h"
 #include "pathlib/types/string/long_string.h"
 
@@ -13,7 +13,7 @@ namespace Pathlib::Containers {
 //---
 template <typename K, 
           typename V, 
-          u64 RESERVE_CAPACITY = 64>
+          u64 RESERVE_CAPACITY>
 struct Hashmap
 {
   //---
@@ -33,9 +33,9 @@ struct Hashmap
   u32 max_probe_length;
   u32* slot_kv_index;
   u32* slot_distance_digest;
-  Containers::LongVector<K, RESERVE_CAPACITY> keys;
-  Containers::LongVector<V, RESERVE_CAPACITY> values;
-  Containers::LongVector<u32, RESERVE_CAPACITY> kv_slot_lookup;
+  Containers::Vector<K, RESERVE_CAPACITY> keys;
+  Containers::Vector<V, RESERVE_CAPACITY> values;
+  Containers::Vector<u32, RESERVE_CAPACITY> kv_slot_lookup;
 
   //---
   Hashmap()
@@ -72,7 +72,7 @@ struct Hashmap
     } else if constexpr (IS_LONG_STRING(T)) {
       return key.hash();
     } else if constexpr (SAME_TYPE(T, const utf8*)) {
-      return String::LongString<>::hash(key);
+      return String::LongString<64>::hash(key);
     } else {
       static_assert(false, "Unsupported type used for hashmap key.");
     }
