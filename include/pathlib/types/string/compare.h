@@ -7,20 +7,22 @@
 #include "pathlib/types/string/short_string.h"
 #include "pathlib/math/math.h"
 
-namespace Pathlib::String {
+namespace Pathlib {
+namespace String {
+namespace _Internal {
 
 //---
 template <u32 REGISTER_COUNT>
 static inline bool compare_sse(const utf8* first,
                                const utf8* second)
 {
-  u32 bitmask = U16_MAX;
+  u32 bitmask = Types::U16_MAX;
   #pragma unroll
   for (u32 r = 0; r < REGISTER_COUNT; ++r) {
     I4 first_v = I4_LOADU(&first[r * 16]);
     I4 second_v = I4_LOADU(&second[r * 16]);
     bitmask &= I4_MOVEMASK(I4_CMP_EQ(first_v, second_v));
-    if (bitmask != U16_MAX) {
+    if (bitmask != Types::U16_MAX) {
       return false;
     }
   }
@@ -32,13 +34,13 @@ template <u32 REGISTER_COUNT>
 static inline bool compare_avx(const utf8* first,
                                const utf8* second)
 {
-  u32 bitmask = U32_MAX;
+  u32 bitmask = Types::U32_MAX;
   #pragma unroll
   for (u32 r = 0; r < REGISTER_COUNT; ++r) {
     I8 first_v = I8_LOADU(&first[r * 32]);
     I8 second_v = I8_LOADU(&second[r * 32]);
     bitmask &= I8_MOVEMASK(I8_CMP_EQ(first_v, second_v));
-    if (bitmask != U32_MAX) {
+    if (bitmask != Types::U32_MAX) {
       return false;
     }
   }
@@ -313,6 +315,7 @@ static inline bool compare_256(const utf8* first,
     default: return false;
   }
 }
+}
 
 //---
 template <u32 FIRST_ALIGNED_32 = false, 
@@ -331,7 +334,7 @@ static inline bool compare(const utf8* first,
     return compare_256(first, second, first_size);
   }
   u32 avx_count = first_size / 32;
-  u32 bitmask = U32_MAX;
+  u32 bitmask = Types::U32_MAX;
   #pragma unroll
   for (u32 c = 0; c < avx_count; ++c) {
     I8 first_v, second_v;
@@ -346,11 +349,12 @@ static inline bool compare(const utf8* first,
       second_v = I8_LOADU(&second[c * 32]);
     }
     bitmask &= I8_MOVEMASK(I8_CMP_EQ(first_v, second_v));
-    if (bitmask != U32_MAX) {
+    if (bitmask != Types::U32_MAX) {
       return false;
     }
   }
   u64 leftover = first_size - (avx_count << 5);
   return compare_256(&first[avx_count << 5], &second[avx_count << 5], leftover);
+}
 }
 }

@@ -8,6 +8,7 @@
 #include "pathlib/math/simd_math.h"
 
 namespace Pathlib::Memory {
+namespace _Internal {
 
 //---
 template <typename T>
@@ -316,6 +317,7 @@ static inline void memset_256(void* dst,
     case 256: memset_avx<8>(_dst - 256, value); break;
   }
 }
+}
 
 //---
 template <bool DST_ALIGNED_32 = false>
@@ -324,7 +326,7 @@ static inline void memset(void* dst,
                           u64 size)
 {
   if (size <= 256) {
-    memset_256(dst, value, size);
+    _Internal::memset_256(dst, value, size);
     return;
   }
   I8* dst_v = (I8*)dst;
@@ -360,6 +362,6 @@ static inline void memset(void* dst,
     FENCE();
   }
   dst = (u8*)dst_v;
-  memset_256(dst, value, size);
+  _Internal::memset_256(dst, value, size);
 }
 }

@@ -9,7 +9,8 @@
 namespace Pathlib::Containers {
 
 //---
-template <typename T, u64 RESERVE_CAPACITY = 128LLU>
+template <typename T, 
+          u64 RESERVE_CAPACITY = 128LLU>
 struct LongVector
 {
   //---

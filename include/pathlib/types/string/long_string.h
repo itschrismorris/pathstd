@@ -75,7 +75,7 @@ struct LongString
       capacity = arg_size * 1.5;
       str = (utf8*)REALLOC(str, capacity + 1);
     }
-    String::from_type_grow(arg, &str, &size, &capacity);
+    String::_Internal::from_type_grow(arg, &str, &size, &capacity);
     return *this;
   }
 
@@ -118,7 +118,7 @@ struct LongString
   template <typename T>
   inline LongString& operator +=(const T arg)
   {
-    String::from_type_grow(arg, &str, &size, &capacity);
+    String::_Internal::from_type_grow(arg, &str, &size, &capacity);
     return *this;
   }
 
@@ -176,7 +176,7 @@ struct LongString
   static inline void _append(LongString* string_out, 
                              const T arg)
   {
-    String::from_type_grow(arg, &string_out->str, &string_out->size, &string_out->capacity);
+    String::_Internal::from_type_grow(arg, &string_out->str, &string_out->size, &string_out->capacity);
   }
 
   //---

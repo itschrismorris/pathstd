@@ -103,7 +103,8 @@ static inline constexpr bool is_pot(T value)
 }
 
 //---
-template <typename T, T MULTIPLE>
+template <typename T, 
+          T MULTIPLE>
 static inline constexpr bool is_multiple_of(T value)
 {
   if constexpr (Math::is_pot(MULTIPLE)) {
@@ -114,7 +115,8 @@ static inline constexpr bool is_multiple_of(T value)
 }
 
 //---
-template <typename T, T MULTIPLE>
+template <typename T, 
+          T MULTIPLE>
 static inline constexpr T previous_multiple_of(T value)
 { 
   if constexpr (Math::is_pot(MULTIPLE)) {
@@ -125,7 +127,8 @@ static inline constexpr T previous_multiple_of(T value)
 }
 
 //---
-template <typename T, T MULTIPLE>
+template <typename T, 
+          T MULTIPLE>
 static inline constexpr T next_multiple_of(T value)
 {
   if constexpr (Math::is_pot(MULTIPLE)) {

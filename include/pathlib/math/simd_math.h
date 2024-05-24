@@ -9,7 +9,8 @@
 namespace Pathlib::Math {
 
   //---
-  template <u64 ALIGNMENT, typename T>
+  template <u64 ALIGNMENT, 
+            typename T>
   inline T* align_previous(T* ptr)
   {
     static_assert(Math::is_pot(ALIGNMENT), "Template parameter ALIGNMENT must be power of two.");
@@ -17,7 +18,8 @@ namespace Pathlib::Math {
   };
 
   //---
-  template <u64 ALIGNMENT, typename T>
+  template <u64 ALIGNMENT, 
+            typename T>
   inline T* align_next(T* ptr)
   {
     static_assert(Math::is_pot(ALIGNMENT), "Template parameter ALIGNMENT must be power of two.");
@@ -25,7 +27,8 @@ namespace Pathlib::Math {
   };
 
   //---
-  template <u64 ALIGNMENT, typename T>
+  template <u64 ALIGNMENT, 
+            typename T>
   inline bool is_aligned(T* ptr)
   {
     static_assert(Math::is_pot(ALIGNMENT), "Template parameter ALIGNMENT must be power of two.");

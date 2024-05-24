@@ -9,7 +9,8 @@
 namespace Pathlib::Containers {
 
 //---
-template <typename T, size_t CAPACITY>
+template <typename T, 
+          u64 CAPACITY>
 struct ShortVector
 {
   //---

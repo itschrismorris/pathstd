@@ -8,22 +8,26 @@
 #include "pathlib/types/string/size_of.h"
 #include "pathlib/types/string/long_string.h"
 
-//---
-#define MAX_REHASHES 1
-#define DIGEST_MASK 0x0FFFFFFF
-#define OCCUPIED_AND_DIGEST_MASK 0x1FFFFFFF
-#define EMPTY_SLOT 0x7FFFFFFF
-#define NEW_KV U32_MAX
-#define NEW_HASH U32_MAX
-#define DISTANCE_SHIFT(A) ((A) << 29)
-
 namespace Pathlib::Containers {
 
 //---
-template <typename K, typename V, u64 RESERVE_CAPACITY = 64>
+template <typename K, 
+          typename V, 
+          u64 RESERVE_CAPACITY = 64>
 struct Hashmap
 {
+  //---
   static_assert(Math::is_pot(RESERVE_CAPACITY) && (RESERVE_CAPACITY >= 8), "Hashmap RESERVE_CAPACITY must be a power of two, greater or equal to 8.");
+
+  //---
+  static u32 constexpr MAX_REHASHES = 2;
+  static u32 constexpr DIGEST_MASK = 0x0FFFFFFF;
+  static u32 constexpr OCCUPIED_AND_DIGEST_MASK = 0x1FFFFFFF;
+  static u32 constexpr EMPTY_SLOT = 0x7FFFFFFF;
+  static u32 constexpr NEW_KV = Types::U32_MAX;
+  static u32 constexpr NEW_HASH = Types::U32_MAX;
+  static u32 constexpr DISTANCE_SHIFT = 29;
+
   //---
   u32 capacity;
   u32 max_probe_length;
@@ -137,7 +141,7 @@ struct Hashmap
             kv_index = values.count - 1;
           }
           slot_kv_index[insert_index] = kv_index;
-          slot_distance_digest[insert_index] = DISTANCE_SHIFT(empty_distance) | (hash(key_hash) & DIGEST_MASK);
+          slot_distance_digest[insert_index] = (empty_distance << DISTANCE_SHIFT) | (hash(key_hash) & DIGEST_MASK);
           kv_slot_lookup[kv_index] = insert_index;
           return true;
         } else {
@@ -152,7 +156,7 @@ struct Hashmap
           K& swap_key = keys[swap_kv_index];
           V& swap_value = values[swap_kv_index];
           slot_kv_index[insert_index] = kv_index;
-          slot_distance_digest[insert_index] = DISTANCE_SHIFT(swap_distance) | (hash(key_hash) & DIGEST_MASK);
+          slot_distance_digest[insert_index] = (swap_distance << DISTANCE_SHIFT) | (hash(key_hash) & DIGEST_MASK);
           kv_slot_lookup[kv_index] = insert_index;
           return insert(swap_key, swap_value, swap_kv_index);
         }
@@ -176,10 +180,10 @@ struct Hashmap
 
   //---
   inline bool remove(const K& key,
-                     u32 existing_hash = U32_MAX,
+                     u32 existing_hash = Types::U32_MAX,
                      u32 hash_count = 0)
   {
-    u32 key_hash = (existing_hash == U32_MAX) ? hash(key) : existing_hash;
+    u32 key_hash = (existing_hash == Types::U32_MAX) ? hash(key) : existing_hash;
     u32 slot_index = (key_hash & (capacity - 1));
     for (u32 i = 0; i < max_probe_length; ++i) {
       slot_index = Math::min((u32)capacity - 8, slot_index);

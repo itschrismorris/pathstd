@@ -9,6 +9,7 @@
 #include "pathlib/math/simd_math.h"
 
 namespace Pathlib::Memory {
+namespace _Internal {
 
 //---
 template <u32 REGISTER_COUNT>
@@ -301,6 +302,7 @@ static inline void memcpy_256(void* dst,
     case 256: memcpy_avx<8>(_dst - 256, _src - 256); break;
   }
 }
+}
 
 //---
 template <bool DST_ALIGNED_32 = false,
@@ -310,7 +312,7 @@ static inline void memcpy(void* dst,
                           u64 size)
 {
   if (size <= 256) {
-    memcpy_256(dst, src, size);
+    _Internal::memcpy_256(dst, src, size);
     return;
   }
   const I8* src_v = (const I8*)src;
@@ -365,6 +367,6 @@ static inline void memcpy(void* dst,
     }
     FENCE();
   }
-  memcpy_256((u8*)dst_v, (u8*)src_v, size);
+  _Internal::memcpy_256((u8*)dst_v, (u8*)src_v, size);
 }
 }

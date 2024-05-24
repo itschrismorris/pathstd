@@ -21,7 +21,7 @@ static inline u64 size_of(const T arg)
     if (!ALIGNED_32 && !Math::is_aligned<32>(arg)) {
       str_v = (I8*)Math::align_previous<32>(arg);
       i32 ignore_bytes = (u8*)arg - (u8*)str_v;
-      u32 mask = (I8_MOVEMASK(I8_CMP_EQ8(I8_LOAD(str_v), zero))) & (U32_MAX << ignore_bytes);
+      u32 mask = (I8_MOVEMASK(I8_CMP_EQ8(I8_LOAD(str_v), zero))) & (Types::U32_MAX << ignore_bytes);
       if (mask) {
         return (Math::lsb_set(mask) - ignore_bytes);
       }
@@ -47,15 +47,15 @@ static inline u64 size_of(const T arg)
   } else if constexpr (IS_INTEGRAL(T) || IS_FLOAT(T)) {
     utf8 buffer[32];
     u64 size;
-    _from_number(arg, buffer, &size);
+    from_number(arg, buffer, &size);
     return size;
   } else if constexpr (IS_VEC2(T))  {
     utf8 buffer[32];
     u64 size;
     u64 conversion_size;
-    _from_number(arg.x, buffer, &conversion_size);
+    from_number(arg.x, buffer, &conversion_size);
     size = conversion_size;
-    _from_number(arg.y, buffer, &conversion_size);
+    from_number(arg.y, buffer, &conversion_size);
     size += conversion_size;
     size += 12;
     return size;
@@ -63,11 +63,11 @@ static inline u64 size_of(const T arg)
     utf8 buffer[32];
     u64 size;
     u64 conversion_size;
-    _from_number(arg.x, buffer, &conversion_size);
+    from_number(arg.x, buffer, &conversion_size);
     size = conversion_size;
-    _from_number(arg.y, buffer, &conversion_size);
+    from_number(arg.y, buffer, &conversion_size);
     size += conversion_size;
-    _from_number(arg.z, buffer, &conversion_size);
+    from_number(arg.z, buffer, &conversion_size);
     size += conversion_size;
     size += 17;
     return size;
@@ -75,13 +75,13 @@ static inline u64 size_of(const T arg)
     utf8 buffer[32];
     u64 size;
     u64 conversion_size;
-    _from_number(arg.x, buffer, &conversion_size);
+    from_number(arg.x, buffer, &conversion_size);
     size = conversion_size;
-    _from_number(arg.y, buffer, &conversion_size);
+    from_number(arg.y, buffer, &conversion_size);
     size += conversion_size;
-    _from_number(arg.z, buffer, &conversion_size);
+    from_number(arg.z, buffer, &conversion_size);
     size += conversion_size;
-    _from_number(arg.w, buffer, &conversion_size);
+    from_number(arg.w, buffer, &conversion_size);
     size += conversion_size;
     size += 22;
     return size;
@@ -89,21 +89,21 @@ static inline u64 size_of(const T arg)
     utf8 buffer[32];
     u64 size;
     u64 conversion_size;
-    _from_number(arg.lo.x, buffer, &conversion_size);
+    from_number(arg.lo.x, buffer, &conversion_size);
     size = conversion_size;
-    _from_number(arg.lo.y, buffer, &conversion_size);
+    from_number(arg.lo.y, buffer, &conversion_size);
     size += conversion_size;
-    _from_number(arg.lo.z, buffer, &conversion_size);
+    from_number(arg.lo.z, buffer, &conversion_size);
     size += conversion_size;
-    _from_number(arg.lo.w, buffer, &conversion_size);
+    from_number(arg.lo.w, buffer, &conversion_size);
     size += conversion_size;
-    _from_number(arg.hi.x, buffer, &conversion_size);
+    from_number(arg.hi.x, buffer, &conversion_size);
     size += conversion_size;
-    _from_number(arg.hi.y, buffer, &conversion_size);
+    from_number(arg.hi.y, buffer, &conversion_size);
     size += conversion_size;
-    _from_number(arg.hi.z, buffer, &conversion_size);
+    from_number(arg.hi.z, buffer, &conversion_size);
     size += conversion_size;
-    _from_number(arg.hi.w, buffer, &conversion_size);
+    from_number(arg.hi.w, buffer, &conversion_size);
     size += 56;
     return size;
   } else {

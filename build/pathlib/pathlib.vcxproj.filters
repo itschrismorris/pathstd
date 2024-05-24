@@ -58,6 +58,12 @@
     <Filter Include="src\win32">
       <UniqueIdentifier>{77590d47-cd89-4013-b328-b6fcd8895471}</UniqueIdentifier>
     </Filter>
+    <Filter Include="include\mimalloc">
+      <UniqueIdentifier>{f1a74ada-2636-4e69-86ad-aaaec677cb59}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\mimalloc\mimalloc">
+      <UniqueIdentifier>{0a2a5b8f-a8ea-4ed7-be4c-88d621470b7c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\include\pathlib\error\error.h">
@@ -146,6 +152,33 @@
     </ClInclude>
     <ClInclude Include="..\..\src\win32\mindows.h">
       <Filter>src\win32</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\pathlib\types\containers\pool.h">
+      <Filter>include\types\containers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\mimalloc\mimalloc\mimalloc.h">
+      <Filter>include\mimalloc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\mimalloc\mimalloc\mimalloc-new-delete.h">
+      <Filter>include\mimalloc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\mimalloc\mimalloc\mimalloc-override.h">
+      <Filter>include\mimalloc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\mimalloc\mimalloc\mimalloc\atomic.h">
+      <Filter>include\mimalloc\mimalloc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\mimalloc\mimalloc\mimalloc\internal.h">
+      <Filter>include\mimalloc\mimalloc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\mimalloc\mimalloc\mimalloc\prim.h">
+      <Filter>include\mimalloc\mimalloc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\mimalloc\mimalloc\mimalloc\track.h">
+      <Filter>include\mimalloc\mimalloc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\mimalloc\mimalloc\mimalloc\types.h">
+      <Filter>include\mimalloc\mimalloc</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

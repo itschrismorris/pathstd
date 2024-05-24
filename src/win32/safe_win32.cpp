@@ -118,7 +118,7 @@ bool set_console_text_attributes(u16 attributes)
 bool write_console(const utf8* string,
                    u64 size)
 {
-  if (size == U64_MAX) {
+  if (size == Types::U64_MAX) {
     size = String::size_of(string);
   }
   void* out = GetStdHandle(STD_OUTPUT_HANDLE);

@@ -24,11 +24,11 @@ bool Error::to_log(bool use_color)
   if (!Win32::get_callstack(&callstack)) {
     return false;
   }
-  String::LongString string(u8"\n************\n", last_error, u8'\n', callstack, u8"\n************\n");
+  String::LongString string(u8"\n************\n", last_error, u8"\n\n", callstack, u8"************");
   if (use_color) {
-    if  (!console.set_text_attributes(CONSOLE_FOREGROUND_RED) ||
+    if  (!console.set_text_attributes(Console::FOREGROUND_RED) ||
          !LOGT(string.str) ||
-         !console.set_text_attributes(CONSOLE_FOREGROUND_RED | CONSOLE_FOREGROUND_GREEN | CONSOLE_FOREGROUND_BLUE)) {
+         !console.set_text_attributes(Console::FOREGROUND_RED | Console::FOREGROUND_GREEN | Console::FOREGROUND_BLUE)) {
       return false;
     }
     return true;

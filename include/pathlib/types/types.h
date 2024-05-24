@@ -5,12 +5,6 @@
 #pragma once
 
 #define EXPORT __declspec(dllexport)
-#define U16_MAX 0xFFFFU
-#define U32_MAX 0xFFFFFFFFU
-#define U64_MAX 0xFFFFFFFFFFFFFFFFLLU
-#define I16_MAX 0x7FFF
-#define I32_MAX 0x7FFFFFFF
-#define I64_MAX 0x7FFFFFFFFFFFFFFFLL
 #define SAME_TYPE(A, B) __is_same(A, B)
 #define IS_VEC2(A) _is_vec2<A>::value
 #define IS_VEC3(A) _is_vec3<A>::value
@@ -37,6 +31,17 @@ typedef   signed __int64 i64;
 typedef float  f32;
 typedef double f64;
 typedef char8_t utf8;
+
+namespace Pathlib::Types {
+
+  //---
+  static constexpr u16 U16_MAX = 0xFFFFU;
+  static constexpr u32 U32_MAX = 0xFFFFFFFFU;
+  static constexpr u64 U64_MAX = 0xFFFFFFFFFFFFFFFFLLU;
+  static constexpr i16 I16_MAX = 0x7FFF;
+  static constexpr i32 I32_MAX = 0x7FFFFFFF;
+  static constexpr i64 I64_MAX = 0x7FFFFFFFFFFFFFFFLL;
+}
 
 //---
 template <typename T> struct vec2 { T x, y; };
@@ -66,6 +71,7 @@ template <typename T> struct _is_vec4<vec4<T>> : true_type {};
 template <typename T> struct _is_vec8 : false_type {};
 template <typename T> struct _is_vec8<vec8<T>> : true_type {};
 
+//---
 #define I4 __m128i
 #define I8 __m256i
 #define F4 __m128

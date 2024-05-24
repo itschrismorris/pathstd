@@ -3,6 +3,7 @@
 */
 
 #pragma once
+#include "pathlib/win32/console.h"
 #include "pathlib/error/error.h"
 #include "pathlib/log/log.h"
 #include "pathlib/math/math.h"
@@ -12,6 +13,7 @@
 #include "pathlib/types/containers/short_vector.h"
 #include "pathlib/types/containers/long_vector.h"
 #include "pathlib/types/containers/hashmap.h"
+#include "pathlib/types/containers/pool.h"
 #include "pathlib/types/string/compare.h"
 #include "pathlib/types/string/from_type.h"
 #include "pathlib/types/string/long_string.h"

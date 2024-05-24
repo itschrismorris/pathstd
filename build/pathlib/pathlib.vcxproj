@@ -19,6 +19,14 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\include\mimalloc\mimalloc\mimalloc-new-delete.h" />
+    <ClInclude Include="..\..\include\mimalloc\mimalloc\mimalloc-override.h" />
+    <ClInclude Include="..\..\include\mimalloc\mimalloc\mimalloc.h" />
+    <ClInclude Include="..\..\include\mimalloc\mimalloc\mimalloc\atomic.h" />
+    <ClInclude Include="..\..\include\mimalloc\mimalloc\mimalloc\internal.h" />
+    <ClInclude Include="..\..\include\mimalloc\mimalloc\mimalloc\prim.h" />
+    <ClInclude Include="..\..\include\mimalloc\mimalloc\mimalloc\track.h" />
+    <ClInclude Include="..\..\include\mimalloc\mimalloc\mimalloc\types.h" />
     <ClInclude Include="..\..\include\pathlib\error\error.h" />
     <ClInclude Include="..\..\include\pathlib\log\log.h" />
     <ClInclude Include="..\..\include\pathlib\math\intrinsics\avx2intrin.h" />
@@ -38,6 +46,7 @@
     <ClInclude Include="..\..\include\pathlib\timer\timer.h" />
     <ClInclude Include="..\..\include\pathlib\types\containers\hashmap.h" />
     <ClInclude Include="..\..\include\pathlib\types\containers\long_vector.h" />
+    <ClInclude Include="..\..\include\pathlib\types\containers\pool.h" />
     <ClInclude Include="..\..\include\pathlib\types\containers\short_vector.h" />
     <ClInclude Include="..\..\include\pathlib\types\string\compare.h" />
     <ClInclude Include="..\..\include\pathlib\types\string\from_type.h" />

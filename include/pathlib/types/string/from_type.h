@@ -8,49 +8,7 @@
 #include "pathlib/types/string/size_of.h"
 #include "pathlib/types/types.h"
 
-#define __DECORATE_CLIP(DECORATE, DECORATE_SIZE) \
-  { \
-    u64 copy_size = Math::min(string_capacity - 1 - size_added, DECORATE_SIZE); \
-    Memory::memcpy(&string[*string_size + size_added], &decorate[DECORATE], copy_size); \
-    size_added += copy_size; \
-  }
-
-#define __DECORATE_NUMBER_CLIP(ARG, DECORATE, DECORATE_SIZE) \
-  { \
-    u64 copy_size = Math::min(string_capacity - 1 - size_added, DECORATE_SIZE); \
-    Memory::memcpy(&string[*string_size + size_added], &decorate[DECORATE], copy_size); \
-    size_added += copy_size; \
-    utf8* buffer_str = _from_number(ARG, buffer, &conversion_size); \
-    copy_size = Math::min(string_capacity - 1 - size_added, conversion_size); \
-    Memory::memcpy(&string[*string_size + size_added], buffer_str, copy_size); \
-    size_added += copy_size; \
-  }
-
-#define __DECORATE_GROW(DECORATE, DECORATE_SIZE) \
-  { \
-    u64 new_size = *string_size + DECORATE_SIZE; \
-    if (new_size > *string_capacity) { \
-      *string_capacity = new_size * 1.5; \
-      *string = (utf8*)REALLOC(*string, *string_capacity + 1); \
-    } \
-    Memory::memcpy(&(*string)[*string_size], &decorate[DECORATE], DECORATE_SIZE); \
-    *string_size = new_size; \
-  }
-
-#define __DECORATE_NUMBER_GROW(ARG, DECORATE, DECORATE_SIZE) \
-  { \
-    utf8* buffer_str = _from_number(ARG, buffer, &conversion_size); \
-    u64 new_size = *string_size + DECORATE_SIZE + conversion_size; \
-    if (new_size > *string_capacity) { \
-      *string_capacity = new_size * 1.5; \
-      *string = (utf8*)REALLOC(*string, *string_capacity + 1); \
-    } \
-    Memory::memcpy(&(*string)[*string_size], &decorate[DECORATE], DECORATE_SIZE); \
-    Memory::memcpy(&(*string)[*string_size + DECORATE_SIZE], buffer_str, conversion_size); \
-    *string_size = new_size; \
-  }
-
-namespace Pathlib::String {
+namespace Pathlib::String::_Internal {
 
 //---
 static inline u16 const two_digits[100] =
@@ -69,9 +27,9 @@ static inline u16 const two_digits[100] =
 
 //---
 template <typename T>
-static inline utf8* _from_number(T value,
-                                 utf8* buffer,
-                                 u64* size_out = nullptr)
+static inline utf8* from_number(T value,
+                                utf8* buffer,
+                                u64* size_out = nullptr)
 {
   if constexpr (IS_INTEGRAL(T)) {
     u64 v = Math::abs(value);
@@ -120,7 +78,7 @@ static inline utf8* _from_number(T value,
     utf8* output = buffer;
     i32 whole_number = (i32)v;
     u64 whole_number_size;
-    output = _from_number(whole_number, output, &whole_number_size);
+    output = from_number(whole_number, output, &whole_number_size);
     output[whole_number_size] = '.';
     u32 fractional_number = (u32)(Math::abs(v - (u32)whole_number) * 1000000.0);
     utf8* fractional_start = &output[whole_number_size + 1];
@@ -134,7 +92,7 @@ static inline utf8* _from_number(T value,
     }
     utf8* fraction_string = fractional_start;
     u64 fraction_size;
-    fraction_string = _from_number(fractional_number, fraction_string, &fraction_size);
+    fraction_string = from_number(fractional_number, fraction_string, &fraction_size);
     Memory::memcpy(fractional_start, fraction_string, sizeof(utf8) * fraction_size);
     if (size_out) {
       *size_out = whole_number_size + 1 + 6;
@@ -143,6 +101,52 @@ static inline utf8* _from_number(T value,
     return output;
   }
 }
+
+//---
+#define __PATHLIB_DECORATE_CLIP(DECORATE, DECORATE_SIZE) \
+  { \
+    u64 copy_size = Math::min(string_capacity - 1 - size_added, DECORATE_SIZE); \
+    Memory::memcpy(&string[*string_size + size_added], &decorate[DECORATE], copy_size); \
+    size_added += copy_size; \
+  }
+
+//---
+#define __PATHLIB_DECORATE_NUMBER_CLIP(ARG, DECORATE, DECORATE_SIZE) \
+  { \
+    u64 copy_size = Math::min(string_capacity - 1 - size_added, DECORATE_SIZE); \
+    Memory::memcpy(&string[*string_size + size_added], &decorate[DECORATE], copy_size); \
+    size_added += copy_size; \
+    utf8* buffer_str = from_number(ARG, buffer, &conversion_size); \
+    copy_size = Math::min(string_capacity - 1 - size_added, conversion_size); \
+    Memory::memcpy(&string[*string_size + size_added], buffer_str, copy_size); \
+    size_added += copy_size; \
+  }
+
+//---
+#define __PATHLIB_DECORATE_GROW(DECORATE, DECORATE_SIZE) \
+  { \
+    u64 new_size = *string_size + DECORATE_SIZE; \
+    if (new_size > *string_capacity) { \
+      *string_capacity = new_size * 1.5; \
+      *string = (utf8*)REALLOC(*string, *string_capacity + 1); \
+    } \
+    Memory::memcpy(&(*string)[*string_size], &decorate[DECORATE], DECORATE_SIZE); \
+    *string_size = new_size; \
+  }
+
+//---
+#define __PATHLIB_DECORATE_NUMBER_GROW(ARG, DECORATE, DECORATE_SIZE) \
+  { \
+    utf8* buffer_str = from_number(ARG, buffer, &conversion_size); \
+    u64 new_size = *string_size + DECORATE_SIZE + conversion_size; \
+    if (new_size > *string_capacity) { \
+      *string_capacity = new_size * 1.5; \
+      *string = (utf8*)REALLOC(*string, *string_capacity + 1); \
+    } \
+    Memory::memcpy(&(*string)[*string_size], &decorate[DECORATE], DECORATE_SIZE); \
+    Memory::memcpy(&(*string)[*string_size + DECORATE_SIZE], buffer_str, conversion_size); \
+    *string_size = new_size; \
+  }
 
 //---
 template <typename T>
@@ -167,7 +171,7 @@ static inline void from_type_clip(const T arg,
   } else if constexpr (IS_INTEGRAL(T) || IS_FLOAT(T)) {
     utf8 buffer[32];
     u64 conversion_size;
-    utf8* buffer_str = _from_number(arg, buffer, &conversion_size);
+    utf8* buffer_str = from_number(arg, buffer, &conversion_size);
     u64 copy_size = Math::min(string_capacity - 1, conversion_size);
     Memory::memcpy(&string[*string_size], buffer_str, copy_size);
     *string_size += copy_size;
@@ -177,9 +181,9 @@ static inline void from_type_clip(const T arg,
     utf8 buffer[32];
     u64 size_added = 0;
     u64 conversion_size;
-    __DECORATE_NUMBER_CLIP(arg.x, 0LLU, 5LLU);
-    __DECORATE_NUMBER_CLIP(arg.y, 5LLU, 5LLU);
-    __DECORATE_CLIP(9LLU, 2LLU);
+    __PATHLIB_DECORATE_NUMBER_CLIP(arg.x, 0LLU, 5LLU);
+    __PATHLIB_DECORATE_NUMBER_CLIP(arg.y, 5LLU, 5LLU);
+    __PATHLIB_DECORATE_CLIP(9LLU, 2LLU);
     *string_size += size_added;
     string[*string_size] = u8'\0';
   } else if constexpr (IS_VEC3(T))  {
@@ -187,10 +191,10 @@ static inline void from_type_clip(const T arg,
     utf8 buffer[32];
     u64 size_added = 0;
     u64 conversion_size;
-    __DECORATE_NUMBER_CLIP(arg.x, 0LLU, 5LLU);
-    __DECORATE_NUMBER_CLIP(arg.y, 5LLU, 5LLU);
-    __DECORATE_NUMBER_CLIP(arg.z, 10LLU, 5LLU);
-    __DECORATE_CLIP(14LLU, 2LLU);
+    __PATHLIB_DECORATE_NUMBER_CLIP(arg.x, 0LLU, 5LLU);
+    __PATHLIB_DECORATE_NUMBER_CLIP(arg.y, 5LLU, 5LLU);
+    __PATHLIB_DECORATE_NUMBER_CLIP(arg.z, 10LLU, 5LLU);
+    __PATHLIB_DECORATE_CLIP(14LLU, 2LLU);
     *string_size += size_added;
     string[*string_size] = u8'\0';
   } else if constexpr (IS_VEC4(T))  {
@@ -198,11 +202,11 @@ static inline void from_type_clip(const T arg,
     utf8 buffer[32];
     u64 size_added = 0;
     u64 conversion_size;
-    __DECORATE_NUMBER_CLIP(arg.x, 0LLU, 5LLU);
-    __DECORATE_NUMBER_CLIP(arg.y, 5LLU, 5LLU);
-    __DECORATE_NUMBER_CLIP(arg.z, 10LLU, 5LLU);
-    __DECORATE_NUMBER_CLIP(arg.w, 15LLU, 5LLU);
-    __DECORATE_CLIP(19LLU, 2LLU);
+    __PATHLIB_DECORATE_NUMBER_CLIP(arg.x, 0LLU, 5LLU);
+    __PATHLIB_DECORATE_NUMBER_CLIP(arg.y, 5LLU, 5LLU);
+    __PATHLIB_DECORATE_NUMBER_CLIP(arg.z, 10LLU, 5LLU);
+    __PATHLIB_DECORATE_NUMBER_CLIP(arg.w, 15LLU, 5LLU);
+    __PATHLIB_DECORATE_CLIP(19LLU, 2LLU);
     *string_size += size_added;
     string[*string_size] = u8'\0';
   } else if constexpr (IS_VEC8(T))  {
@@ -210,16 +214,16 @@ static inline void from_type_clip(const T arg,
     utf8 buffer[32];
     u64 size_added = 0;
     u64 conversion_size;
-    __DECORATE_NUMBER_CLIP(arg.lo.x, 0LLU, 11LLU);
-    __DECORATE_NUMBER_CLIP(arg.lo.y, 11LLU, 5LLU);
-    __DECORATE_NUMBER_CLIP(arg.lo.z, 16LLU, 5LLU);
-    __DECORATE_NUMBER_CLIP(arg.lo.w, 21LLU, 5LLU);
-    __DECORATE_CLIP(25LLU, 8LLU);
-    __DECORATE_NUMBER_CLIP(arg.hi.x, 6LLU, 5LLU);
-    __DECORATE_NUMBER_CLIP(arg.hi.y, 11LLU, 5LLU);
-    __DECORATE_NUMBER_CLIP(arg.hi.z, 16LLU, 5LLU);
-    __DECORATE_NUMBER_CLIP(arg.hi.w, 21LLU, 5LLU);
-    __DECORATE_CLIP(25LLU, 2LLU);
+    __PATHLIB_DECORATE_NUMBER_CLIP(arg.lo.x, 0LLU, 11LLU);
+    __PATHLIB_DECORATE_NUMBER_CLIP(arg.lo.y, 11LLU, 5LLU);
+    __PATHLIB_DECORATE_NUMBER_CLIP(arg.lo.z, 16LLU, 5LLU);
+    __PATHLIB_DECORATE_NUMBER_CLIP(arg.lo.w, 21LLU, 5LLU);
+    __PATHLIB_DECORATE_CLIP(25LLU, 8LLU);
+    __PATHLIB_DECORATE_NUMBER_CLIP(arg.hi.x, 6LLU, 5LLU);
+    __PATHLIB_DECORATE_NUMBER_CLIP(arg.hi.y, 11LLU, 5LLU);
+    __PATHLIB_DECORATE_NUMBER_CLIP(arg.hi.z, 16LLU, 5LLU);
+    __PATHLIB_DECORATE_NUMBER_CLIP(arg.hi.w, 21LLU, 5LLU);
+    __PATHLIB_DECORATE_CLIP(25LLU, 2LLU);
     *string_size += size_added;
     string[*string_size] = u8'\0';
   } else {
@@ -258,7 +262,7 @@ static inline void from_type_grow(const T arg,
   } else if constexpr (IS_INTEGRAL(T) || IS_FLOAT(T)) {
     utf8 buffer[32];
     u64 conversion_size;
-    utf8* buffer_str = _from_number(arg, buffer, &conversion_size);
+    utf8* buffer_str = from_number(arg, buffer, &conversion_size);
     u64 new_size = *string_size + conversion_size;
     if (new_size >= *string_capacity) {
       *string_capacity = new_size * 1.5;
@@ -271,43 +275,43 @@ static inline void from_type_grow(const T arg,
     const utf8* decorate = u8"{ x: , y: }";
     utf8 buffer[32];
     u64 conversion_size;
-    __DECORATE_NUMBER_GROW(arg.x, 0LLU, 5LLU);
-    __DECORATE_NUMBER_GROW(arg.y, 5LLU, 5LLU);
-    __DECORATE_GROW(9LLU, 2LLU);
+    __PATHLIB_DECORATE_NUMBER_GROW(arg.x, 0LLU, 5LLU);
+    __PATHLIB_DECORATE_NUMBER_GROW(arg.y, 5LLU, 5LLU);
+    __PATHLIB_DECORATE_GROW(9LLU, 2LLU);
     (*string)[*string_size] = u8'\0';
   } else if constexpr (IS_VEC3(T))  {
     const utf8* decorate = u8"{ x: , y: , z: }";
     utf8 buffer[32];
     u64 conversion_size;
-    __DECORATE_NUMBER_GROW(arg.x, 0LLU, 5LLU);
-    __DECORATE_NUMBER_GROW(arg.y, 5LLU, 5LLU);
-    __DECORATE_NUMBER_GROW(arg.z, 10LLU, 5LLU);
-    __DECORATE_GROW(14LLU, 2LLU);
+    __PATHLIB_DECORATE_NUMBER_GROW(arg.x, 0LLU, 5LLU);
+    __PATHLIB_DECORATE_NUMBER_GROW(arg.y, 5LLU, 5LLU);
+    __PATHLIB_DECORATE_NUMBER_GROW(arg.z, 10LLU, 5LLU);
+    __PATHLIB_DECORATE_GROW(14LLU, 2LLU);
     (*string)[*string_size] = u8'\0';
   } else if constexpr (IS_VEC4(T))  {
     const utf8* decorate = u8"{ x: , y: , z: , w: }";
     utf8 buffer[32];
     u64 conversion_size;
-    __DECORATE_NUMBER_GROW(arg.x, 0LLU, 5LLU);
-    __DECORATE_NUMBER_GROW(arg.y, 5LLU, 5LLU);
-    __DECORATE_NUMBER_GROW(arg.z, 10LLU, 5LLU);
-    __DECORATE_NUMBER_GROW(arg.w, 15LLU, 5LLU);
-    __DECORATE_GROW(19LLU, 2LLU);
+    __PATHLIB_DECORATE_NUMBER_GROW(arg.x, 0LLU, 5LLU);
+    __PATHLIB_DECORATE_NUMBER_GROW(arg.y, 5LLU, 5LLU);
+    __PATHLIB_DECORATE_NUMBER_GROW(arg.z, 10LLU, 5LLU);
+    __PATHLIB_DECORATE_NUMBER_GROW(arg.w, 15LLU, 5LLU);
+    __PATHLIB_DECORATE_GROW(19LLU, 2LLU);
     (*string)[*string_size] = u8'\0';
   } else if constexpr (IS_VEC8(T))  {
     const utf8* decorate = u8"{ lo: { x: , y: , z: , w: }, hi: ";
     utf8 buffer[32];
     u64 conversion_size;
-    __DECORATE_NUMBER_GROW(arg.lo.x, 0LLU, 11LLU);
-    __DECORATE_NUMBER_GROW(arg.lo.y, 11LLU, 5LLU);
-    __DECORATE_NUMBER_GROW(arg.lo.z, 16LLU, 5LLU);
-    __DECORATE_NUMBER_GROW(arg.lo.w, 21LLU, 5LLU);
-    __DECORATE_GROW(25LLU, 8LLU);
-    __DECORATE_NUMBER_GROW(arg.hi.x, 6LLU, 5LLU);
-    __DECORATE_NUMBER_GROW(arg.hi.y, 11LLU, 5LLU);
-    __DECORATE_NUMBER_GROW(arg.hi.z, 16LLU, 5LLU);
-    __DECORATE_NUMBER_GROW(arg.hi.w, 21LLU, 5LLU);
-    __DECORATE_GROW(25LLU, 2LLU);
+    __PATHLIB_DECORATE_NUMBER_GROW(arg.lo.x, 0LLU, 11LLU);
+    __PATHLIB_DECORATE_NUMBER_GROW(arg.lo.y, 11LLU, 5LLU);
+    __PATHLIB_DECORATE_NUMBER_GROW(arg.lo.z, 16LLU, 5LLU);
+    __PATHLIB_DECORATE_NUMBER_GROW(arg.lo.w, 21LLU, 5LLU);
+    __PATHLIB_DECORATE_GROW(25LLU, 8LLU);
+    __PATHLIB_DECORATE_NUMBER_GROW(arg.hi.x, 6LLU, 5LLU);
+    __PATHLIB_DECORATE_NUMBER_GROW(arg.hi.y, 11LLU, 5LLU);
+    __PATHLIB_DECORATE_NUMBER_GROW(arg.hi.z, 16LLU, 5LLU);
+    __PATHLIB_DECORATE_NUMBER_GROW(arg.hi.w, 21LLU, 5LLU);
+    __PATHLIB_DECORATE_GROW(25LLU, 2LLU);
     (*string)[*string_size] = u8'\0';
   } else {
     static_assert(false, "Unsupported type used for formatting a string.");

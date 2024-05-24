@@ -7,9 +7,9 @@ namespace Pathlib {
 bool pathlib_initiate(const utf8* log_path)
 {
   SetConsoleOutputCP(CP_UTF8);
-  console.set_text_attributes(CONSOLE_FOREGROUND_GREEN);
+  console.set_text_attributes(_Internal::Console::FOREGROUND_GREEN);
   console.write(u8"========================\nInitiating Pathlib Core.\n========================");
-  console.set_text_attributes(CONSOLE_FOREGROUND_WHITE);
+  console.set_text_attributes(_Internal::Console::FOREGROUND_WHITE);
   if (!log.initiate(log_path)) {
     return false;
   }
@@ -32,8 +32,8 @@ void pathlib_shutdown()
   timer.shutdown();
   profile.shutdown();
   log.shutdown();
-  console.set_text_attributes(CONSOLE_FOREGROUND_GREEN);
+  console.set_text_attributes(_Internal::Console::FOREGROUND_GREEN);
   console.write(u8"========================\nPathlib Core shutdown.\n========================\n");
-  console.set_text_attributes(CONSOLE_FOREGROUND_WHITE);
+  console.set_text_attributes(_Internal::Console::FOREGROUND_WHITE);
 }
 }
