@@ -64,6 +64,15 @@
     <Filter Include="include\mimalloc\mimalloc">
       <UniqueIdentifier>{0a2a5b8f-a8ea-4ed7-be4c-88d621470b7c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\third_party">
+      <UniqueIdentifier>{9e96712c-7f6f-4f07-954e-2b7c2b8d6e6a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\third_party\mimalloc">
+      <UniqueIdentifier>{cea2708d-a2fb-42d6-9429-0824794df03d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\third_party\mimalloc\mimalloc">
+      <UniqueIdentifier>{2ca391e9-914a-4d9f-95d5-f4bb8fcebc2e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\include\pathlib\error\error.h">
@@ -182,6 +191,30 @@
     </ClInclude>
     <ClInclude Include="..\..\include\pathlib\types\containers\pools.h">
       <Filter>include\types\containers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\third_party\mimalloc\mimalloc\atomic.h">
+      <Filter>src\third_party\mimalloc\mimalloc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\third_party\mimalloc\mimalloc\internal.h">
+      <Filter>src\third_party\mimalloc\mimalloc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\third_party\mimalloc\mimalloc\prim.h">
+      <Filter>src\third_party\mimalloc\mimalloc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\third_party\mimalloc\mimalloc\track.h">
+      <Filter>src\third_party\mimalloc\mimalloc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\third_party\mimalloc\mimalloc\types.h">
+      <Filter>src\third_party\mimalloc\mimalloc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\third_party\mimalloc\mimalloc.h">
+      <Filter>src\third_party\mimalloc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\third_party\mimalloc\mimalloc-new-delete.h">
+      <Filter>src\third_party\mimalloc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\third_party\mimalloc\mimalloc-override.h">
+      <Filter>src\third_party\mimalloc</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -1,5 +1,5 @@
 #include "pathlib/memory/malloc.h"
-#include "mimalloc/mimalloc.h"
+#include "../src/third_party/mimalloc/mimalloc.h"
 
 namespace Pathlib::Memory {
 

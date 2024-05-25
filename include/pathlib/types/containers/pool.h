@@ -59,6 +59,11 @@ struct Pool
   //---
   inline T* alloc(u32 pools_id = 0)
   {
+    if (count >= CAPACITY) {
+      error.last_error.format(u8"Failed to alloc() from pool; it is already at capacity.");
+      error.to_log();
+      return nullptr;
+    }
     ++count;
     T* new_object = &data[free_head];
     if (--free_count == 0) {

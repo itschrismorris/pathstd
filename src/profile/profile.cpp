@@ -1,5 +1,5 @@
 #include "pathlib/pathlib.h"
-#include "mimalloc/mimalloc.h"
+#include "../src/third_party/mimalloc/mimalloc.h"
 
 //---
 namespace Pathlib { _Internal::Profile profile; }

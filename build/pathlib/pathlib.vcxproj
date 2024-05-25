@@ -57,6 +57,14 @@
     <ClInclude Include="..\..\include\pathlib\types\types.h" />
     <ClInclude Include="..\..\include\pathlib\win32\console.h" />
     <ClInclude Include="..\..\include\pathlib\win32\safe_win32.h" />
+    <ClInclude Include="..\..\src\third_party\mimalloc\mimalloc-new-delete.h" />
+    <ClInclude Include="..\..\src\third_party\mimalloc\mimalloc-override.h" />
+    <ClInclude Include="..\..\src\third_party\mimalloc\mimalloc.h" />
+    <ClInclude Include="..\..\src\third_party\mimalloc\mimalloc\atomic.h" />
+    <ClInclude Include="..\..\src\third_party\mimalloc\mimalloc\internal.h" />
+    <ClInclude Include="..\..\src\third_party\mimalloc\mimalloc\prim.h" />
+    <ClInclude Include="..\..\src\third_party\mimalloc\mimalloc\track.h" />
+    <ClInclude Include="..\..\src\third_party\mimalloc\mimalloc\types.h" />
     <ClInclude Include="..\..\src\win32\mindows.h" />
   </ItemGroup>
   <ItemGroup>
