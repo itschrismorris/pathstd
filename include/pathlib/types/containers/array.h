@@ -13,13 +13,13 @@ template <typename T,
           u64 CAPACITY>
 struct Array
 {
+private:
   //---
-  private:
   alignas(32) T data[CAPACITY];
   u64 count;
 
+public:
   //---
-  public:
   Array()
   {
     clear();
@@ -29,11 +29,12 @@ struct Array
   //---
   inline T& operator[](u64 index)
   {
-    if (EXPECT(index < CAPACITY)) {
+    if (EXPECT(index < count)) {
       return data[index];
     } else {
       error.last_error.format(u8"Out of bounds access to Array.");
       error.to_log();
+      error.fatality();
       return data[0];
     }
   }
@@ -41,11 +42,12 @@ struct Array
   //---
   inline const T& operator[](u64 index) const
   {
-    if (EXPECT(index < CAPACITY)) {
+    if (EXPECT(index < count)) {
       return data[index];
     } else {
       error.last_error.format(u8"Out of bounds access to Array.");
       error.to_log();
+      error.fatality();
       return data[0];
     }
   }
@@ -59,8 +61,9 @@ struct Array
       count += _count;
       return (data + original_count);
     } else {
-      error.last_error.format(u8"Failed to emplace_back() array; it is already at capacity.");
+      error.last_error.format(u8"Failed to emplace_back() Array; it is already at capacity.");
       error.to_log();
+      error.fatality();
       return nullptr;
     }
   }
@@ -72,8 +75,9 @@ struct Array
       --count;
       Memory::memcpy(index, data + count, sizeof(T));
     } else {
-      error.last_error.format(u8"Failed to remove() from array; invalid index.");
+      error.last_error.format(u8"Failed to remove() from Array; invalid index.");
       error.to_log();
+      error.fatality();
     }
   }
 
@@ -88,8 +92,9 @@ struct Array
       count -= _count;
       Memory::memcpy(start, end, sizeof(T) * _count);
     } else {
-      error.last_error.format(u8"Failed to remove() from array; invalid index.");
+      error.last_error.format(u8"Failed to remove() from Array; invalid index.");
       error.to_log();
+      error.fatality();
     }
   }
 

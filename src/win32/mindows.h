@@ -167,4 +167,5 @@ __declspec(dllimport) void __stdcall LocalFree(HLOCAL hMem);
 __declspec(dllimport) void __stdcall GetLocalTime(LPSYSTEMTIME lpSystemTime);
 __declspec(dllimport) BOOL __stdcall SetConsoleTextAttribute(HANDLE hConsoleOutput,
                                                              WORD wAttributes);
+__declspec(dllimport) void __stdcall ExitProcess(UINT uExitCode);
 }

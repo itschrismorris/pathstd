@@ -216,6 +216,18 @@
     <ClInclude Include="..\..\src\third_party\mimalloc\mimalloc-override.h">
       <Filter>src\third_party\mimalloc</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\include\pathlib\types\containers\array_unsafe.h">
+      <Filter>include\types\containers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\pathlib\types\containers\vector_unsafe.h">
+      <Filter>include\types\containers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\pathlib\types\containers\safe_ptr.h">
+      <Filter>include\types\containers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\pathlib\memory\memory.h">
+      <Filter>include\memory</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\pathlib.cpp">
@@ -241,6 +253,9 @@
     </ClCompile>
     <ClCompile Include="..\..\src\profile\profile.cpp">
       <Filter>src\profile</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\memory\memory.cpp">
+      <Filter>src\memory</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

@@ -40,15 +40,19 @@
     <ClInclude Include="..\..\include\pathlib\math\simd_math.h" />
     <ClInclude Include="..\..\include\pathlib\memory\malloc.h" />
     <ClInclude Include="..\..\include\pathlib\memory\memcpy.h" />
+    <ClInclude Include="..\..\include\pathlib\memory\memory.h" />
     <ClInclude Include="..\..\include\pathlib\memory\memset.h" />
     <ClInclude Include="..\..\include\pathlib\pathlib.h" />
     <ClInclude Include="..\..\include\pathlib\profile\profile.h" />
     <ClInclude Include="..\..\include\pathlib\timer\timer.h" />
     <ClInclude Include="..\..\include\pathlib\types\containers\hashmap.h" />
+    <ClInclude Include="..\..\include\pathlib\types\containers\array_unsafe.h" />
+    <ClInclude Include="..\..\include\pathlib\types\containers\safe_ptr.h" />
     <ClInclude Include="..\..\include\pathlib\types\containers\vector.h" />
     <ClInclude Include="..\..\include\pathlib\types\containers\pool.h" />
     <ClInclude Include="..\..\include\pathlib\types\containers\pools.h" />
     <ClInclude Include="..\..\include\pathlib\types\containers\array.h" />
+    <ClInclude Include="..\..\include\pathlib\types\containers\vector_unsafe.h" />
     <ClInclude Include="..\..\include\pathlib\types\string\compare.h" />
     <ClInclude Include="..\..\include\pathlib\types\string\from_type.h" />
     <ClInclude Include="..\..\include\pathlib\types\string\long_string.h" />
@@ -71,6 +75,7 @@
     <ClCompile Include="..\..\src\error\error.cpp" />
     <ClCompile Include="..\..\src\log\log.cpp" />
     <ClCompile Include="..\..\src\memory\malloc.cpp" />
+    <ClCompile Include="..\..\src\memory\memory.cpp" />
     <ClCompile Include="..\..\src\pathlib.cpp" />
     <ClCompile Include="..\..\src\profile\profile.cpp" />
     <ClCompile Include="..\..\src\timer\timer.cpp" />

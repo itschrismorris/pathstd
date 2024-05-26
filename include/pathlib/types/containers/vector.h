@@ -13,11 +13,13 @@ template <typename T,
           u64 RESERVE_CAPACITY>
 struct Vector
 {
+private:
   //---
   T* data;
   u64 count;
   u64 capacity;
 
+public:
   //---
   Vector()
   {
@@ -40,26 +42,47 @@ struct Vector
   //---
   inline T& operator[](u64 index)
   {
-    return data[index];
+    if (EXPECT(index < count)) {
+      return data[index];
+    } else {
+      error.last_error.format(u8"Out of bounds access to Vector.");
+      error.to_log();
+      error.fatality();
+      return data[0];
+    }
   }
 
   //---
   inline const T& operator[](u64 index) const
   {
-    return data[index];
+    if (EXPECT(index < count)) {
+      return data[index];
+    } else {
+      error.last_error.format(u8"Out of bounds access to Vector.");
+      error.to_log();
+      error.fatality();
+      return data[0];
+    }
   }
 
   //---
-  inline T* emplace_back(u64 _count = 1)
+  inline SafePtr<T> emplace_back(u64 _count = 1)
   {
-    u64 original_count = count;
-    count += _count;
-    if (count > capacity) {
-      capacity = count * 1.5;
-      data = (T*)REALLOC(data, sizeof(T) * capacity);
+    if (EXPECT((count + _count) > count)) {
+      u64 original_count = count;
+      count += _count;
+      if (count > capacity) {
+        capacity = count * 1.5;
+        data = (T*)REALLOC(data, sizeof(T) * capacity);
+      }
+      Memory::call_constructor<T>(data + original_count);
+      return SafePtr<T>(data + original_count, 1);
+    } else {
+      error.last_error.format(u8"Failed to emplace_back() Vector; it is already at capacity.");
+      error.to_log();
+      error.fatality();
+      return SafePtr<T>(nullptr, 0);
     }
-    Memory::call_constructor<T>(data + original_count);
-    return (data + original_count);
   }
 
   //---

@@ -2,6 +2,7 @@
 #include "pathlib/win32/console.h"
 #include "pathlib/log/log.h"
 #include "../src/win32/mindows.h"
+#include "pathlib/memory/memory.h"
 #include "pathlib/error/error.h"
 
 namespace Pathlib { _Internal::Error error; }
@@ -40,5 +41,15 @@ bool Error::to_log(bool use_color)
 bool Error::to_popup()
 {
   return true;
+}
+
+//
+void Error::fatality()
+{
+  if (Memory::_Internal::scripting_mode) {
+    ExitProcess(0);
+  } else {
+    ExitProcess(0);
+  }
 }
 } 

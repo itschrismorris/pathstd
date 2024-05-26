@@ -10,6 +10,8 @@
 #include "pathlib/memory/malloc.h"
 #include "pathlib/memory/memcpy.h"
 #include "pathlib/memory/memset.h"
+#include "pathlib/memory/memory.h"
+#include "pathlib/types/containers/safe_ptr.h"
 #include "pathlib/types/containers/array.h"
 #include "pathlib/types/containers/vector.h"
 #include "pathlib/types/containers/hashmap.h"

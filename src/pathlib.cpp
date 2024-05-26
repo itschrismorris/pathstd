@@ -22,7 +22,7 @@ bool pathlib_initiate(const utf8* log_path)
     error.to_log();
     return false;
   }
-
+  Memory::_Internal::scripting_mode = false;
   return true;
 }
 
