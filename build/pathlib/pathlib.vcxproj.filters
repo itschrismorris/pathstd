@@ -58,12 +58,6 @@
     <Filter Include="src\win32">
       <UniqueIdentifier>{77590d47-cd89-4013-b328-b6fcd8895471}</UniqueIdentifier>
     </Filter>
-    <Filter Include="include\mimalloc">
-      <UniqueIdentifier>{f1a74ada-2636-4e69-86ad-aaaec677cb59}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="include\mimalloc\mimalloc">
-      <UniqueIdentifier>{0a2a5b8f-a8ea-4ed7-be4c-88d621470b7c}</UniqueIdentifier>
-    </Filter>
     <Filter Include="src\third_party">
       <UniqueIdentifier>{9e96712c-7f6f-4f07-954e-2b7c2b8d6e6a}</UniqueIdentifier>
     </Filter>
@@ -165,30 +159,6 @@
     <ClInclude Include="..\..\include\pathlib\types\containers\pool.h">
       <Filter>include\types\containers</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\include\mimalloc\mimalloc\mimalloc.h">
-      <Filter>include\mimalloc</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\mimalloc\mimalloc\mimalloc-new-delete.h">
-      <Filter>include\mimalloc</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\mimalloc\mimalloc\mimalloc-override.h">
-      <Filter>include\mimalloc</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\mimalloc\mimalloc\mimalloc\atomic.h">
-      <Filter>include\mimalloc\mimalloc</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\mimalloc\mimalloc\mimalloc\internal.h">
-      <Filter>include\mimalloc\mimalloc</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\mimalloc\mimalloc\mimalloc\prim.h">
-      <Filter>include\mimalloc\mimalloc</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\mimalloc\mimalloc\mimalloc\track.h">
-      <Filter>include\mimalloc\mimalloc</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\mimalloc\mimalloc\mimalloc\types.h">
-      <Filter>include\mimalloc\mimalloc</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\include\pathlib\types\containers\pools.h">
       <Filter>include\types\containers</Filter>
     </ClInclude>
@@ -228,6 +198,9 @@
     <ClInclude Include="..\..\include\pathlib\memory\memory.h">
       <Filter>include\memory</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\include\pathlib\memory\malloc_unsafe.h">
+      <Filter>include\memory</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\pathlib.cpp">
@@ -255,6 +228,9 @@
       <Filter>src\profile</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\memory\memory.cpp">
+      <Filter>src\memory</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\memory\malloc_unsafe.cpp">
       <Filter>src\memory</Filter>
     </ClCompile>
   </ItemGroup>

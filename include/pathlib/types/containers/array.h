@@ -71,7 +71,7 @@ public:
   //---
   inline void remove(u64 index)
   {
-    if (EXPECT((index < count) && (count > 0))) {
+    if (EXPECT(index < count)) {
       --count;
       Memory::memcpy(index, data + count, sizeof(T));
     } else {

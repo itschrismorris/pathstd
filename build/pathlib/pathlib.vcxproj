@@ -19,14 +19,6 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\include\mimalloc\mimalloc\mimalloc-new-delete.h" />
-    <ClInclude Include="..\..\include\mimalloc\mimalloc\mimalloc-override.h" />
-    <ClInclude Include="..\..\include\mimalloc\mimalloc\mimalloc.h" />
-    <ClInclude Include="..\..\include\mimalloc\mimalloc\mimalloc\atomic.h" />
-    <ClInclude Include="..\..\include\mimalloc\mimalloc\mimalloc\internal.h" />
-    <ClInclude Include="..\..\include\mimalloc\mimalloc\mimalloc\prim.h" />
-    <ClInclude Include="..\..\include\mimalloc\mimalloc\mimalloc\track.h" />
-    <ClInclude Include="..\..\include\mimalloc\mimalloc\mimalloc\types.h" />
     <ClInclude Include="..\..\include\pathlib\error\error.h" />
     <ClInclude Include="..\..\include\pathlib\log\log.h" />
     <ClInclude Include="..\..\include\pathlib\math\intrinsics\avx2intrin.h" />
@@ -39,6 +31,7 @@
     <ClInclude Include="..\..\include\pathlib\math\math.h" />
     <ClInclude Include="..\..\include\pathlib\math\simd_math.h" />
     <ClInclude Include="..\..\include\pathlib\memory\malloc.h" />
+    <ClInclude Include="..\..\include\pathlib\memory\malloc_unsafe.h" />
     <ClInclude Include="..\..\include\pathlib\memory\memcpy.h" />
     <ClInclude Include="..\..\include\pathlib\memory\memory.h" />
     <ClInclude Include="..\..\include\pathlib\memory\memset.h" />
@@ -75,6 +68,7 @@
     <ClCompile Include="..\..\src\error\error.cpp" />
     <ClCompile Include="..\..\src\log\log.cpp" />
     <ClCompile Include="..\..\src\memory\malloc.cpp" />
+    <ClCompile Include="..\..\src\memory\malloc_unsafe.cpp" />
     <ClCompile Include="..\..\src\memory\memory.cpp" />
     <ClCompile Include="..\..\src\pathlib.cpp" />
     <ClCompile Include="..\..\src\profile\profile.cpp" />

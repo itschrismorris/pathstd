@@ -88,22 +88,35 @@ public:
   //---
   inline void remove(u64 index)
   {
-    Memory::call_destructor<T>(&data[index]);
-    --count;
-    Memory::memcpy(index, data + count, sizeof(T));
+    if (EXPECT(index < count)) {
+      Memory::call_destructor<T>(&data[index]);
+      --count;
+      Memory::memcpy(index, data + count, sizeof(T));
+    } else {
+      error.last_error.format(u8"Failed to remove() from Vector; index is out of bounds.");
+      error.to_log();
+      error.fatality();
+    }
   }
 
   //---
   inline void remove(u64 index,
                      u64 _count)
   {
-    for (u64 c = index; c < _count; ++c) {
-      Memory::call_destructor<T>(&data[c]);
+    if (EXPECT(((index + _count) > index) &&
+               ((index + _count) <= count))) {
+      for (u64 c = index; c < _count; ++c) {
+        Memory::call_destructor<T>(&data[c]);
+      }
+      T* start = (data + index);
+      T* end = (data + count - _count);
+      count -= _count;
+      Memory::memcpy(start, end, sizeof(T) * _count);
+    } else {
+      error.last_error.format(u8"Failed to remove() from Vector; removal is out of bounds.");
+      error.to_log();
+      error.fatality();
     }
-    T* start = (data + index);
-    T* end = (data + count - _count);
-    count -= _count;
-    Memory::memcpy(start, end, sizeof(T) * _count);
   }
 
   //---

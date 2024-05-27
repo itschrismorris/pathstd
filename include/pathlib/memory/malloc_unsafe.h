@@ -13,10 +13,10 @@
 namespace Pathlib::Memory {
 
 //---
-Containers::SafePtr<u8> malloc(u64 size,
-                               const utf8* name = nullptr);
-Containers::SafePtr<u8> realloc(Containers::SafePtr<u8> ptr,
-                                u64 size,
-                                const utf8* name = nullptr);
-void free(Containers::SafePtr<u8> ptr);
+void* malloc(u64 size,
+             const utf8* name = nullptr);
+void* realloc(void* ptr,
+              u64 size,
+              const utf8* name = nullptr);
+void free(void** ptr);
 }
