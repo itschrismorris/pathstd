@@ -20,7 +20,7 @@ struct PoolUnsafe
   static_assert(CAPACITY <= Types::U16_MAX, "Pool CAPACITY cannot exceed 65535 (16-bits used for pool_id).");
   static_assert(has_pool_id<T>::value, "Pool objects must contain a u32 member named 'pool_id' to be used in a pool.");
   using POOL_ID_TYPE = member_type<T, decltype(&T::pool_id)>::type;
-  static_assert(SAME_TYPE(POOL_ID_TYPE, u32), "Pool object member 'pool_id' must be of type u32 (unsigned int).");
+  static_assert(SAME_TYPE(POOL_ID_TYPE, u32), "Pool object member 'pool_id' must be of type u32.");
 
   //---
   u16 count;
@@ -35,6 +35,7 @@ struct PoolUnsafe
     free_count = 1;
     free_head = 0;
     data = (T*)MALLOC(sizeof(T) * CAPACITY);
+    Memory::memset(data, 0xFF, sizeof(T) * CAPACITY);
   }
 
   //---

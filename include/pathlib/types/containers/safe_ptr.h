@@ -61,7 +61,14 @@ public:
   //---
   T* operator->()
   {
-    return this->ptr;
+    if (EXPECT(this->ptr != nullptr)) {
+      return this->ptr;
+    } else {
+      error.last_error.format(u8"Attempt to access an object through a null SafePtr.");
+      error.to_log();
+      error.fatality();
+      return &ptr[0];
+    }
   }
 
   //---

@@ -18,7 +18,7 @@ struct Pool
   static_assert(CAPACITY <= Types::U16_MAX, "Pool CAPACITY cannot exceed 65535 (16-bits used for pool_id).");
   static_assert(has_pool_id<T>::value, "Pool objects must contain a u32 member named 'pool_id' to be used in a pool.");
   using POOL_ID_TYPE = member_type<T, decltype(&T::pool_id)>::type;
-  static_assert(SAME_TYPE(POOL_ID_TYPE, u32), "Pool object member 'pool_id' must be of type u32 (unsigned int).");
+  static_assert(SAME_TYPE(POOL_ID_TYPE, u32), "Pool object member 'pool_id' must be of type u32.");
 
 private:
   //---
@@ -35,6 +35,7 @@ public:
     free_count = 1;
     free_head = 0;
     data = (T*)MALLOC(sizeof(T) * CAPACITY);
+    Memory::memset(data, 0xFF, sizeof(T) * CAPACITY);
   }
 
   //---
@@ -86,18 +87,31 @@ public:
   //---
   inline void free(u32 id)
   {
-    --count;
-    ++free_count;
-    T* object = &data[id & 0xFFFF];
-    Memory::call_destructor<T>(object);
-    object->pool_id = free_head | 0xFFFF0000;
-    free_head = (object - data);
+    if (EXPECT(is_occupied(id) && (count > 0))) {
+      --count;
+      ++free_count;
+      T* object = &data[id & 0xFFFF];
+      Memory::call_destructor<T>(object);
+      object->pool_id = free_head | 0xFFFF0000;
+      free_head = (object - data);
+    } else {
+      error.last_error.format(u8"Attempt to free an invalid pool_id from Pool.");
+      error.to_log();
+      error.fatality();
+    }
   }
 
   //---
-  inline void free(Containers::SafePtr<T> object)
+  inline void free(Containers::SafePtr<T>& object)
   {
-    free(object->pool_id);
+    if (EXPECT(!object.is_null())) {
+      free(object->pool_id);
+      object = nullptr;
+    } else {
+      error.last_error.format(u8"Attempt to free a null SafePtr from Pool.");
+      error.to_log();
+      error.fatality();
+    }
   }
 
   //---
