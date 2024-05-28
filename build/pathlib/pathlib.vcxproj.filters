@@ -207,6 +207,12 @@
     <ClInclude Include="..\..\include\pathlib\types\containers\pool_unsafe.h">
       <Filter>include\types\containers</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\include\pathlib\types\containers\pools_unsafe.h">
+      <Filter>include\types\containers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\pathlib\types\string\short_string_unsafe.h">
+      <Filter>include\types\string</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\pathlib.cpp">

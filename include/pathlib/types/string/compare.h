@@ -4,7 +4,7 @@
 
 #pragma once
 #include "pathlib/types/types.h"
-#include "pathlib/types/string/short_string.h"
+#include "pathlib/types/string/short_string_unsafe.h"
 #include "pathlib/math/math.h"
 
 namespace Pathlib {
@@ -318,8 +318,8 @@ static inline bool compare_256(const utf8* first,
 }
 
 //---
-template <u32 FIRST_ALIGNED_32 = false, 
-          u64 SECOND_ALIGNED_32 = false>
+template <bool FIRST_ALIGNED_32 = false, 
+          bool SECOND_ALIGNED_32 = false>
 static inline bool compare(const utf8* first,
                            const utf8* second,
                            u64 first_size = 0,
@@ -331,7 +331,7 @@ static inline bool compare(const utf8* first,
     return false;
   }
   if (first_size <= 256) {
-    return compare_256(first, second, first_size);
+    return _Internal::compare_256(first, second, first_size);
   }
   u32 avx_count = first_size / 32;
   u32 bitmask = Types::U32_MAX;
@@ -354,7 +354,7 @@ static inline bool compare(const utf8* first,
     }
   }
   u64 leftover = first_size - (avx_count << 5);
-  return compare_256(&first[avx_count << 5], &second[avx_count << 5], leftover);
+  return _Internal::compare_256(&first[avx_count << 5], &second[avx_count << 5], leftover);
 }
 }
 }

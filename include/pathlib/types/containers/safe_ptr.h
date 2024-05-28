@@ -51,6 +51,18 @@ public:
   }
 
   //---
+  SafePtr(const T* _ptr)
+  {
+    ptr = offset_ptr = (T*)_ptr;
+    if (_ptr == nullptr) {
+      count = 0;
+    }
+    else {
+      count = 1;
+    }
+  }
+
+  //---
   ~SafePtr() {}
 
   //---
@@ -59,12 +71,17 @@ public:
   }
 
   //---
+  operator utf8*() const {
+    return (utf8*)offset_ptr;
+  }
+
+  //---
   T* operator->()
   {
     if (EXPECT(this->ptr != nullptr)) {
       return this->ptr;
     } else {
-      error.last_error.format(u8"Attempt to access an object through a null SafePtr.");
+      error.last_error = u8"Attempt to access an object through a null SafePtr.";
       error.to_log();
       error.fatality();
       return &ptr[0];
@@ -77,7 +94,7 @@ public:
     if (EXPECT(offset_ptr != nullptr)) {
       return offset_ptr[0];
     } else {
-      error.last_error.format(u8"Attempt to access a null SafePtr.");
+      error.last_error = u8"Attempt to access a null SafePtr.";
       error.to_log();
       error.fatality();
       return ptr[0];
@@ -91,9 +108,9 @@ public:
       return offset_ptr[index];
     } else {
       if (ptr == nullptr) {
-        error.last_error.format(u8"Attempt to access a null SafePtr.");
+        error.last_error = u8"Attempt to access a null SafePtr.";
       } else {
-        error.last_error.format(u8"Out of bounds access to SafePtr.");
+        error.last_error = u8"Out of bounds access to SafePtr.";
       }
       error.to_log();
       error.fatality();
@@ -123,6 +140,19 @@ public:
   }
 
   //---
+  inline SafePtr& operator =(const T* _ptr)
+  {
+    ptr = offset_ptr = _ptr;
+    if (_ptr == nullptr) {
+      count = 0;
+    }
+    else {
+      count = 1;
+    }
+    return *this;
+  }
+
+  //---
   inline const SafePtr operator-(u64 offset)
   {
     if (EXPECT(((offset_ptr - offset) < offset_ptr) &&
@@ -133,7 +163,7 @@ public:
       new_ptr.count = count;
       return new_ptr;
     } else {
-      error.last_error.format(u8"Out of bounds pointer arithmetic; pointer must remain at, or after, original address.");
+      error.last_error = u8"Out of bounds pointer arithmetic; pointer must remain at, or after, original address.";
       error.to_log();
       error.fatality();
       return SafePtr(nullptr, 0);
@@ -151,7 +181,7 @@ public:
       new_ptr.count = count;
       return new_ptr;
     } else {
-      error.last_error.format(u8"Out of bounds pointer arithmetic.");
+      error.last_error = u8"Out of bounds pointer arithmetic.";
       error.to_log();
       error.fatality();
       return SafePtr(nullptr, 0);

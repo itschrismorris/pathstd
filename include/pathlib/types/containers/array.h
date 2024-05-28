@@ -32,7 +32,7 @@ public:
     if (EXPECT(index < count)) {
       return data[index];
     } else {
-      error.last_error.format(u8"Out of bounds access to Array.");
+      error.last_error = u8"Out of bounds access to Array.";
       error.to_log();
       error.fatality();
       return data[0];
@@ -45,7 +45,7 @@ public:
     if (EXPECT(index < count)) {
       return data[index];
     } else {
-      error.last_error.format(u8"Out of bounds access to Array.");
+      error.last_error = u8"Out of bounds access to Array.";
       error.to_log();
       error.fatality();
       return data[0];
@@ -61,7 +61,7 @@ public:
       count += _count;
       return (data + original_count);
     } else {
-      error.last_error.format(u8"Failed to emplace_back() Array; it is already at capacity.");
+      error.last_error = u8"Failed to emplace_back() Array; it is already at capacity.";
       error.to_log();
       error.fatality();
       return nullptr;
@@ -75,7 +75,7 @@ public:
       --count;
       Memory::memcpy(index, data + count, sizeof(T));
     } else {
-      error.last_error.format(u8"Failed to remove() from Array; invalid index.");
+      error.last_error = u8"Failed to remove() from Array; invalid index.";
       error.to_log();
       error.fatality();
     }
@@ -92,7 +92,7 @@ public:
       count -= _count;
       Memory::memcpy(start, end, sizeof(T) * _count);
     } else {
-      error.last_error.format(u8"Failed to remove() from Array; invalid index.");
+      error.last_error = u8"Failed to remove() from Array; invalid index.";
       error.to_log();
       error.fatality();
     }

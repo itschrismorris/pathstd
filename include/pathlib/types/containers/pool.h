@@ -11,20 +11,20 @@ namespace Pathlib::Containers {
 
 //---
 template <typename T, 
-          u16 CAPACITY>
+          u32 CAPACITY>
 struct Pool
 {
   //---
   static_assert(CAPACITY <= Types::U16_MAX, "Pool CAPACITY cannot exceed 65535 (16-bits used for pool_id).");
   static_assert(has_pool_id<T>::value, "Pool objects must contain a u32 member named 'pool_id' to be used in a pool.");
-  using POOL_ID_TYPE = member_type<T, decltype(&T::pool_id)>::type;
+  using POOL_ID_TYPE = _member_type<T, decltype(&T::pool_id)>::type;
   static_assert(SAME_TYPE(POOL_ID_TYPE, u32), "Pool object member 'pool_id' must be of type u32.");
 
 private:
   //---
-  u16 count;
-  u16 free_count;
-  u16 free_head;
+  u32 count;
+  u32 free_count;
+  u32 free_head;
   T* data;
 
 public:
@@ -67,7 +67,7 @@ public:
   inline Containers::SafePtr<T> get_vacant(u32 pools_id = 0)
   {
     if (count >= CAPACITY) {
-      error.last_error.format(u8"Failed to alloc() from pool; it is already at capacity.");
+      error.last_error = u8"Failed to alloc() from pool; it is already at capacity.";
       error.to_log();
       return nullptr;
     }
@@ -95,7 +95,7 @@ public:
       object->pool_id = free_head | 0xFFFF0000;
       free_head = (object - data);
     } else {
-      error.last_error.format(u8"Attempt to free an invalid pool_id from Pool.");
+      error.last_error = u8"Attempt to free an invalid pool_id from Pool.";
       error.to_log();
       error.fatality();
     }
@@ -108,7 +108,7 @@ public:
       free(object->pool_id);
       object = nullptr;
     } else {
-      error.last_error.format(u8"Attempt to free a null SafePtr from Pool.");
+      error.last_error = u8"Attempt to free a null SafePtr from Pool.";
       error.to_log();
       error.fatality();
     }

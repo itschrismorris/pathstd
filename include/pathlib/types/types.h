@@ -4,22 +4,6 @@
 
 #pragma once
 
-#define EXPORT __declspec(dllexport)
-#define SAME_TYPE(A, B) __is_same(A, B)
-#define IS_VEC2(A) _is_vec2<A>::value
-#define IS_VEC3(A) _is_vec3<A>::value
-#define IS_VEC4(A) _is_vec4<A>::value
-#define IS_VEC8(A) _is_vec8<A>::value
-#define IS_INTEGRAL(A) _is_integral<A>::value
-#define IS_FLOAT(A) _is_float<A>::value
-#define IS_SHORT_STRING(A) _is_short_string<A>::value
-#define IS_LONG_STRING(A) _is_long_string<A>::value
-#define EXPECT(A) __builtin_expect((A), 1)
-
-//---
-struct false_type { static constexpr bool value = false; constexpr operator bool() const { return value; } };
-struct true_type { static constexpr bool value = true; constexpr operator bool() const { return value; } };
-
 //---
 typedef unsigned __int8   u8;
 typedef   signed __int8   i8;
@@ -32,33 +16,6 @@ typedef   signed __int64 i64;
 typedef float  f32;
 typedef double f64;
 typedef char8_t utf8;
-
-//---
-template <typename...>
-using void_t = void;
-
-//---
-template <typename T>
-T declval() noexcept {}
-
-//---
-template <typename T>
-struct return_false : false_type {};
-
-//---
-#define CHECK_HAS_MEMBER(CALL_NAME, MEMBER_NAME) \
-  template <typename T, typename = void> \
-  struct CALL_NAME : false_type {}; \
-  template <typename T> \
-  struct CALL_NAME<T, void_t<decltype(declval<T>().MEMBER_NAME)>> : true_type {};
-
-//---
-template <typename T, typename U>
-struct member_type;
-template <typename T, typename U>
-struct member_type<T, U T::*> {
-  using type = U;
-};
 
 namespace Pathlib::Types {
 
@@ -78,6 +35,51 @@ template <typename T> struct alignas(16) vec4 { T x, y, z, w; };
 template <typename T> struct alignas(32) vec8 { vec4<T> lo; vec4<T> hi; };
 
 //---
+#define I4 __m128i
+#define I8 __m256i
+#define F4 __m128
+#define F8 __m256
+
+//---
+#define EXPORT __declspec(dllexport)
+#define SAME_TYPE(A, B) __is_same(A, B)
+#define IS_VEC2(A) _is_vec2<A>::value
+#define IS_VEC3(A) _is_vec3<A>::value
+#define IS_VEC4(A) _is_vec4<A>::value
+#define IS_VEC8(A) _is_vec8<A>::value
+#define IS_INTEGRAL(A) _is_integral<A>::value
+#define IS_FLOAT(A) _is_float<A>::value
+#define IS_SHORT_STRING(A) _is_short_string<A>::value
+#define IS_LONG_STRING(A) _is_long_string<A>::value
+#define IS_POINTER(A) _is_pointer<A>::value
+#define EXPECT(A) __builtin_expect((A), 1)
+
+//---
+struct false_type { static constexpr bool value = false; constexpr operator bool() const { return value; } };
+struct true_type { static constexpr bool value = true; constexpr operator bool() const { return value; } };
+
+//---
+template <typename...>
+using void_t = void;
+
+//---
+template <typename T>
+T declval() noexcept {}
+
+//---
+#define CHECK_HAS_MEMBER(CALL_NAME, MEMBER_NAME) \
+  template <typename T, typename = void> \
+  struct CALL_NAME : false_type {}; \
+  template <typename T> \
+  struct CALL_NAME<T, void_t<decltype(declval<T>().MEMBER_NAME)>> : true_type {};
+
+//---
+template <typename T, typename U> struct _member_type;
+template <typename T, typename U> struct _member_type<T, U T::*> { using type = U; };
+
+//---
+template <typename T> struct _is_pointer { static constexpr bool value = false; };
+template <typename T> struct _is_pointer<T*> { static constexpr bool value = true; };
 template <typename T> struct _is_integral : false_type {};
 template <> struct _is_integral<i8> : true_type {};
 template <> struct _is_integral<i16> : true_type {};
@@ -100,7 +102,4 @@ template <typename T> struct _is_vec8 : false_type {};
 template <typename T> struct _is_vec8<vec8<T>> : true_type {};
 
 //---
-#define I4 __m128i
-#define I8 __m256i
-#define F4 __m128
-#define F8 __m256
+template <typename T> struct return_false : false_type {};

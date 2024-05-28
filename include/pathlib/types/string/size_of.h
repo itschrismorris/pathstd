@@ -9,12 +9,17 @@
 namespace Pathlib::String {
 
 //---
-template <u32 ALIGNED_32 = false,
+template <bool ALIGNED_32 = false,
           typename T>
 static inline u64 size_of(const T arg)
 {
   static_assert(!SAME_TYPE(T, const char*), "String literals must be prepended with 'u8' for utf-8 encoding: 'u8\"Hello world!\"'");
   static_assert(!SAME_TYPE(T, char*), "Replace string usages of char with utf8, for utf-8 encoding.");
+  if constexpr (IS_POINTER(T)) {
+    if (!arg) {
+      return 0;
+    }
+  }
   if constexpr (SAME_TYPE(T, const utf8*) || SAME_TYPE(T, utf8*) || SAME_TYPE(T, volatile utf8*)) {
     I8 zero = I8_SETZERO();
     I8* str_v = (I8*)arg;

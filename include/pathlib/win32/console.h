@@ -6,7 +6,7 @@
 #include "pathlib/win32/safe_win32.h"
 #include "pathlib/types/types.h"
 #include "pathlib/error/error.h"
-#include "pathlib/types/string/short_string.h"
+#include "pathlib/types/string/short_string_unsafe.h"
 #include "pathlib/types/string/long_string.h"
 
 namespace Pathlib::_Internal {
@@ -38,6 +38,13 @@ struct Console
   //---
   template <u64 CAPACITY>
   inline bool write(const String::ShortString<CAPACITY>& string)
+  {
+    return Win32::write_console(string.str, string.size) && Win32::write_console(u8"\n", 1);
+  }
+
+  //---
+  template <u64 CAPACITY>
+  inline bool write(const String::ShortStringUnsafe<CAPACITY>& string)
   {
     return Win32::write_console(string.str, string.size) && Win32::write_console(u8"\n", 1);
   }

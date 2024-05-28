@@ -41,6 +41,14 @@ struct Log
   }
 
   //---
+  template <u64 CAPACITY>
+  inline bool log(const String::ShortStringUnsafe<CAPACITY>& string)
+  {
+    return (Win32::write_console(string.str, string.size) && Win32::write_console(u8"\n", 1)) &&
+           (Win32::write_log(string.str, string.size) && Win32::write_log(u8"\n", 1));
+  }
+
+  //---
   template <u64 RESERVE_CAPACITY>
   inline bool log(const String::LongString<RESERVE_CAPACITY>& string)
   {
@@ -51,9 +59,15 @@ struct Log
   //---
   inline bool log(const utf8* string)
   {
-    u64 size = String::size_of(string);
-    return (Win32::write_console(string, size) && Win32::write_console(u8"\n", 1)) &&
-           (Win32::write_log(string, size) && Win32::write_log(u8"\n", 1));
+    if (EXPECT(string != nullptr)) {
+      u64 size = String::size_of(string);
+      return (Win32::write_console(string, size) && Win32::write_console(u8"\n", 1)) &&
+             (Win32::write_log(string, size) && Win32::write_log(u8"\n", 1));
+    } else {
+      error.last_error = u8"Attempt to log() with a null pointer.";
+      error.to_log();
+      return false;
+    }
   }
 
   //---

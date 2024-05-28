@@ -12,7 +12,7 @@ namespace Pathlib::Containers {
 template <typename T, 
           u32 POOL_CAPACITY,
           u32 POOLS_RESERVE_CAPACITY>
-struct Pools
+struct PoolsUnsafe
 {
   //---
   static_assert(POOL_CAPACITY <= Types::U16_MAX, "POOL_CAPACITY cannot exceed 65535 (16-bits used for pool_id).");
@@ -20,19 +20,17 @@ struct Pools
   using POOL_ID_TYPE = _member_type<T, decltype(&T::pool_id)>::type;
   static_assert(SAME_TYPE(POOL_ID_TYPE, u32), "Pool object member 'pool_id' must be of type u32.");
 
-private:
   //---
   VectorUnsafe<PoolUnsafe<T, POOL_CAPACITY>, POOLS_RESERVE_CAPACITY> pools;
   u32 count;
   
-public:
   //---
-  Pools() 
+  PoolsUnsafe()
   {
     pools.emplace_back(1);
     count = 0;
   }
-  ~Pools() {}
+  ~PoolsUnsafe() {}
 
   //---
   static inline bool is_occupied(u32 id)
@@ -41,17 +39,17 @@ public:
   }
 
   //---
-  inline Containers::SafePtr<T> get_vacant()
+  inline T* alloc()
   {
     for (u32 p = 0; p < pools.count; ++p) {
       if (pools[p].count < pools[p].capacity()) {
         ++count;
-        return pools[p].get_vacant(p);
+        return pools[p].alloc(p);
       }
     }
     pools.emplace_back(1);
     ++count;
-    return Containers::SafePtr<T>(pools[pools.count - 1].get_vacant(pools.count - 1));
+    return pools[pools.count - 1].alloc(pools.count - 1);
   }
   
   //---

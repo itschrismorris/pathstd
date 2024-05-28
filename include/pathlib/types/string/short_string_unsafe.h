@@ -10,22 +10,20 @@ namespace Pathlib::String {
 
 //---
 template <u64 CAPACITY>
-struct ShortString
+struct ShortStringUnsafe
 {
-private:
   //---
   alignas(32) utf8 str[CAPACITY];
   u64 size;
-
-public:
+  
   //---
-  ShortString()
+  ShortStringUnsafe()
   {
     clear();
   }
 
   //---
-  ShortString(const ShortString& string)
+  ShortStringUnsafe(const ShortStringUnsafe& string)
   {
     Memory::memcpy<true, true>(str, string.str, string.size + 1);
     size = string.size;
@@ -33,14 +31,14 @@ public:
 
   //---
   template <typename... Args>
-  ShortString(Args&&... args)
+  ShortStringUnsafe(Args&&... args)
   {
     size = 0;
-    (ShortString::_append(this, args), ...);
+    (ShortStringUnsafe::_append(this, args), ...);
   }
 
   //---
-  ~ShortString()
+  ~ShortStringUnsafe()
   {
   }
 
@@ -51,7 +49,7 @@ public:
   }
 
   //---
-  inline ShortString& operator =(const ShortString& string)
+  inline ShortStringUnsafe& operator =(const ShortStringUnsafe& string)
   {
     Memory::memcpy<true, true>(str, string.str, string.size + 1);
     size = string.size;
@@ -60,16 +58,8 @@ public:
 
   //---
   template <typename T>
-  inline ShortString& operator =(const T arg)
+  inline ShortStringUnsafe& operator =(const T arg)
   {
-    if constexpr (IS_POINTER(T)) {
-      if (!arg) {
-        error.last_error = u8"Attempt to set ShortString to a null ptr.";
-        error.to_log();
-        error.fatality();
-        return false;
-      }
-    }
     String::_Internal::from_type_clip(arg, str, &size, CAPACITY);
     return *this;
   }
@@ -77,18 +67,11 @@ public:
   //---
   inline bool operator ==(const utf8* string) const
   {
-    if (EXPECT(string != nullptr)) {
-      return String::compare<true, false>(str, string, size);
-    } else {
-      error.last_error = u8"Attempt to set ShortString to a null ptr.";
-      error.to_log();
-      error.fatality();
-      return false;
-    }
+    return String::compare<true, false>(str, string, size);
   }
 
   //---
-  inline bool operator ==(const ShortString& string) const
+  inline bool operator ==(const ShortStringUnsafe& string) const
   {
     if (size != string.size) {
       return false;
@@ -98,17 +81,17 @@ public:
 
   //---
   template <typename T>
-  inline const ShortString operator +(const T arg)
+  inline const ShortStringUnsafe operator +(const T arg)
   {
     static_assert(!SAME_TYPE(T, const char*), "String literals must be prepended with u8 for utf-8 encoding: u8\"Hello world!\"");
     static_assert(!SAME_TYPE(T, char*), "Replace string usages of char with utf8, for utf-8 encoding.");
-    ShortString new_string = *this;
-    ShortString::_append(&new_string, arg);
+    ShortStringUnsafe new_string = *this;
+    ShortStringUnsafe::_append(&new_string, arg);
     return new_string;
   }
 
   //---
-  inline ShortString& operator +=(const ShortString& arg)
+  inline ShortStringUnsafe& operator +=(const ShortStringUnsafe& arg)
   {
     u64 copy_size = Math::min((CAPACITY - 1) - size, arg.size);
     Memory::memcpy<false, true>(&str[size], arg.str, copy_size);
@@ -118,7 +101,7 @@ public:
 
   //---
   template <typename T>
-  inline ShortString& operator +=(const T arg)
+  inline ShortStringUnsafe& operator +=(const T arg)
   {
     String::_Internal::from_type_clip(arg, str, &size, CAPACITY);
     return *this;
@@ -129,7 +112,7 @@ public:
   inline void format(Args&&... args)
   {
     size = 0;
-    (ShortString::_append(this, args), ...);
+    (ShortStringUnsafe::_append(this, args), ...);
   }
 
   //---
@@ -147,8 +130,8 @@ public:
   }
 
   //---
-  static inline void _append(ShortString* string_out, 
-                             const ShortString& arg)
+  static inline void _append(ShortStringUnsafe* string_out, 
+                             const ShortStringUnsafe& arg)
   {
     u64 copy_size = Math::min((CAPACITY - 1) - string_out->size, arg.size);
     Memory::memcpy<false, true>(&string_out->str[string_out->size], arg.str, copy_size + 1);
@@ -157,7 +140,7 @@ public:
 
   //---
   template <typename T>
-  static inline void _append(ShortString* string_out, 
+  static inline void _append(ShortStringUnsafe* string_out, 
                              const T arg)
   {
     if constexpr (IS_POINTER(T)) {
@@ -170,7 +153,7 @@ public:
 
   //---
   template <typename... Args>
-  static inline void append(ShortString* string_out,
+  static inline void append(ShortStringUnsafe* string_out,
                             Args&&... args)
   {
     (_append(string_out, args), ...);
@@ -178,7 +161,7 @@ public:
 
   //---
   template <typename... Args>
-  static inline ShortString format(ShortString* string_out,
+  static inline ShortStringUnsafe format(ShortStringUnsafe* string_out,
                                    Args&&... args)
   {
     (_append(string_out, args), ...);
@@ -186,9 +169,9 @@ public:
 
   //---
   template <typename... Args>
-  static inline ShortString format_copy(Args&&... args)
+  static inline ShortStringUnsafe format_copy(Args&&... args)
   {
-    ShortString string;
+    ShortStringUnsafe string;
     (_append(&string, args), ...);
     return string;
   }
@@ -206,3 +189,9 @@ public:
   }
 };
 }
+
+//---
+#include "pathlib/types/string/short_string.h"
+template <typename T> struct _is_short_string : false_type {};
+template <u64 CAPACITY> struct _is_short_string<Pathlib::String::ShortString<CAPACITY>> : true_type {};
+template <u64 CAPACITY> struct _is_short_string<Pathlib::String::ShortStringUnsafe<CAPACITY>> : true_type {};

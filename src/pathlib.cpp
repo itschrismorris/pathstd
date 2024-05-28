@@ -15,7 +15,7 @@ bool pathlib_initiate(const utf8* log_path)
   }
   SystemTime time;
   Win32::get_local_time(&time);
-  String::ShortString<128> time_str(time.wMonth, u8"/", time.wDay, u8"/", time.wYear);
+  String::ShortStringUnsafe<128> time_str(time.wMonth, u8"/", time.wDay, u8"/", time.wYear);
   LOG(time_str);
   if (!profile.initiate() ||
       !timer.initiate()) {

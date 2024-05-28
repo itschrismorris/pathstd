@@ -1,11 +1,11 @@
 /*
-  Documentation: https://www.path.blog/docs/short_string.html
+  Documentation: https://www.path.blog/docs/short_string_unsafe.html
 */
 
 #pragma once
 #include "pathlib/memory/malloc_unsafe.h"
 #include "pathlib/types/string/from_type.h"
-#include "pathlib/types/string/short_string.h"
+#include "pathlib/types/string/short_string_unsafe.h"
 
 namespace Pathlib::String {
 
@@ -160,6 +160,20 @@ struct LongString
 
   //---
   template <u64 CAPACITY>
+  static inline void _append(LongString* string_out, 
+                             const ShortStringUnsafe<CAPACITY>& arg)
+  {
+    u64 new_size = string_out->size + arg.size;
+    if (new_size > string_out->capacity) {
+      string_out->capacity = new_size * 1.5;
+      string_out->str = (utf8*)REALLOC(string_out->str, string_out->capacity + 1);
+    }
+    Memory::memcpy<false, true>(&string_out->str[string_out->size], arg.str, arg.size + 1);
+    string_out->size = new_size;
+  }
+
+  //---
+  template <u64 CAPACITY>
   static inline void _append(LongString* string_out,
                              const LongString<CAPACITY>& arg)
   {
@@ -177,6 +191,11 @@ struct LongString
   static inline void _append(LongString* string_out, 
                              const T arg)
   {
+    if constexpr (IS_POINTER(T)) {
+      if (!arg) {
+        return;
+      }
+    }
     String::_Internal::from_type_grow(arg, &string_out->str, &string_out->size, &string_out->capacity);
   }
 
