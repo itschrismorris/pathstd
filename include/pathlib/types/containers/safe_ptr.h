@@ -30,19 +30,52 @@ public:
   SafePtr(T* _ptr,
           u64 _count)
   {
+    
     ptr = offset_ptr = _ptr;
-    count = _count;
+    if (_ptr == nullptr) {
+      count = 0;
+    } else {
+      count = _count;
+    }
   }
 
   //---
   SafePtr(T* _ptr)
   {
     ptr = offset_ptr = _ptr;
-    count = 1;
+    if (_ptr == nullptr) {
+      count = 0;
+    } else {
+      count = 1;
+    }
   }
 
   //---
   ~SafePtr() {}
+
+  //---
+  operator void*() const {
+    return (void*)offset_ptr;
+  }
+
+  //---
+  T* operator->()
+  {
+    return this->ptr;
+  }
+
+  //---
+  T& operator*() const 
+  {
+    if (EXPECT(offset_ptr != nullptr)) {
+      return offset_ptr[0];
+    } else {
+      error.last_error.format(u8"Attempt to access a null SafePtr.");
+      error.to_log();
+      error.fatality();
+      return ptr[0];
+    }
+  }
 
   //---
   inline T& operator[](u64 index)
@@ -50,7 +83,11 @@ public:
     if (EXPECT(((offset_ptr - ptr + index) < count))) {
       return offset_ptr[index];
     } else {
-      error.last_error.format(u8"Out of bounds access to SafePtr.");
+      if (ptr == nullptr) {
+        error.last_error.format(u8"Attempt to access a null SafePtr.");
+      } else {
+        error.last_error.format(u8"Out of bounds access to SafePtr.");
+      }
       error.to_log();
       error.fatality();
       return ptr[0];
@@ -70,7 +107,11 @@ public:
   inline SafePtr& operator =(T* _ptr)
   {
     ptr = offset_ptr = _ptr;
-    count = 1;
+    if (_ptr == nullptr) {
+      count = 0;
+    } else {
+      count = 1;
+    }
     return *this;
   }
 
@@ -85,7 +126,7 @@ public:
       new_ptr.count = count;
       return new_ptr;
     } else {
-      error.last_error.format(u8"Out of bounds pointer arithmetic; cannot precede original pointer.");
+      error.last_error.format(u8"Out of bounds pointer arithmetic; pointer must remain at, or after, original address.");
       error.to_log();
       error.fatality();
       return SafePtr(nullptr, 0);
@@ -111,9 +152,15 @@ public:
   }
 
   //---
-  inline void resize(u64 _count)
+  inline void set_count(u64 _count)
   {
     count = _count;
+  }
+
+  //---
+  inline bool is_null()
+  {
+    return ((ptr == nullptr) || (count == 0));
   }
 };
 }

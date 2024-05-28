@@ -5,6 +5,7 @@
 #pragma once
 #include "pathlib/memory/memcpy.h"
 #include "pathlib/memory/memset.h"
+#include "pathlib/memory/malloc_unsafe.h"
 #include "pathlib/types/string/size_of.h"
 #include "pathlib/types/types.h"
 
@@ -314,7 +315,7 @@ static inline void from_type_grow(const T arg,
     __PATHLIB_DECORATE_GROW(25LLU, 2LLU);
     (*string)[*string_size] = u8'\0';
   } else {
-    static_assert(false, "Unsupported type used for formatting a string.");
+    static_assert(return_false<T>::value, "Unsupported type used for formatting a string.");
   }
 }
 }

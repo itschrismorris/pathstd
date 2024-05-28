@@ -19,7 +19,7 @@ struct VectorUnsafe
   u64 capacity;
 
   //---
-  Vector()
+  VectorUnsafe()
   {
     capacity = RESERVE_CAPACITY;
     data = (T*)MALLOC(sizeof(T) * RESERVE_CAPACITY);
@@ -27,7 +27,7 @@ struct VectorUnsafe
   }
 
   //---
-  ~Vector()
+  ~VectorUnsafe()
   {
     for (u64 c = 0; c < count; ++c) {
       Memory::call_destructor<T>(&data[c]);

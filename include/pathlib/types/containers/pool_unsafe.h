@@ -5,14 +5,16 @@
 #pragma once
 #include "pathlib/types/types.h"
 #include "pathlib/error/error.h"
-#include "pathlib/types/containers/pool_unsafe.h"
+
+//---
+CHECK_HAS_MEMBER(has_pool_id, pool_id);
 
 namespace Pathlib::Containers {
 
 //---
 template <typename T, 
           u16 CAPACITY>
-struct Pool
+struct PoolUnsafe
 {
   //---
   static_assert(CAPACITY <= Types::U16_MAX, "Pool CAPACITY cannot exceed 65535 (16-bits used for pool_id).");
@@ -20,16 +22,14 @@ struct Pool
   using POOL_ID_TYPE = member_type<T, decltype(&T::pool_id)>::type;
   static_assert(SAME_TYPE(POOL_ID_TYPE, u32), "Pool object member 'pool_id' must be of type u32 (unsigned int).");
 
-private:
   //---
   u16 count;
   u16 free_count;
   u16 free_head;
   T* data;
-
-public:
+  
   //---
-  Pool() 
+  PoolUnsafe()
   {
     count = 0;
     free_count = 1;
@@ -38,7 +38,7 @@ public:
   }
 
   //---
-  ~Pool() 
+  ~PoolUnsafe()
   {
     iterate([&](T* object)
       {
@@ -63,7 +63,7 @@ public:
   }
 
   //---
-  inline Containers::SafePtr<T> get_vacant(u32 pools_id = 0)
+  inline T* get_vacant(u32 pools_id = 0)
   {
     if (count >= CAPACITY) {
       error.last_error.format(u8"Failed to alloc() from pool; it is already at capacity.");
@@ -80,7 +80,7 @@ public:
     }
     Memory::call_constructor<T>(new_object);
     new_object->pool_id = (new_object - data) | (pools_id << 16);
-    return Containers::SafePtr<T>(new_object);
+    return new_object;
   }
 
   //---
@@ -95,7 +95,7 @@ public:
   }
 
   //---
-  inline void free(Containers::SafePtr<T> object)
+  inline void free(T* object)
   {
     free(object->pool_id);
   }

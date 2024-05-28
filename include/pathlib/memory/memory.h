@@ -3,6 +3,13 @@
 */
 
 #pragma once
+#include "pathlib/types/types.h"
+
+//---
+inline void* operator new(size_t, void* ptr)
+{
+  return ptr;
+}
 
 namespace Pathlib::Memory {
 
@@ -11,12 +18,6 @@ static constexpr u32 PAGE_SIZE = 0x1000;
 static constexpr u32 KILOBYTE = 1024;
 static constexpr u32 MEGABYTE = (1024 * 1024);
 static constexpr u32 GIGABYTE = (1024 * 1024 * 1024);
-
-//---
-inline void* operator new(size_t, void* ptr)
-{
-  return ptr;
-}
 
 //---
 template <typename T,

@@ -3,7 +3,7 @@
 */
 
 #pragma once
-#include "pathlib/memory/malloc.h"
+#include "pathlib/memory/malloc_unsafe.h"
 #include "pathlib/types/string/from_type.h"
 #include "pathlib/types/string/short_string.h"
 

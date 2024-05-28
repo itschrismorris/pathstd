@@ -4,7 +4,7 @@
 
 #pragma once
 #include "pathlib/types/types.h"
-#include "pathlib/memory/malloc.h"
+#include "pathlib/memory/memory.h"
 #include "pathlib/math/math.h"
 #include "pathlib/math/simd_math.h"
 

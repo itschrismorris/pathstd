@@ -33,6 +33,33 @@ typedef float  f32;
 typedef double f64;
 typedef char8_t utf8;
 
+//---
+template <typename...>
+using void_t = void;
+
+//---
+template <typename T>
+T declval() noexcept {}
+
+//---
+template <typename T>
+struct return_false : false_type {};
+
+//---
+#define CHECK_HAS_MEMBER(CALL_NAME, MEMBER_NAME) \
+  template <typename T, typename = void> \
+  struct CALL_NAME : false_type {}; \
+  template <typename T> \
+  struct CALL_NAME<T, void_t<decltype(declval<T>().MEMBER_NAME)>> : true_type {};
+
+//---
+template <typename T, typename U>
+struct member_type;
+template <typename T, typename U>
+struct member_type<T, U T::*> {
+  using type = U;
+};
+
 namespace Pathlib::Types {
 
   //---

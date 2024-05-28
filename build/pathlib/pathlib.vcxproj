@@ -40,6 +40,8 @@
     <ClInclude Include="..\..\include\pathlib\timer\timer.h" />
     <ClInclude Include="..\..\include\pathlib\types\containers\hashmap.h" />
     <ClInclude Include="..\..\include\pathlib\types\containers\array_unsafe.h" />
+    <ClInclude Include="..\..\include\pathlib\types\containers\hashmap_unsafe.h" />
+    <ClInclude Include="..\..\include\pathlib\types\containers\pool_unsafe.h" />
     <ClInclude Include="..\..\include\pathlib\types\containers\safe_ptr.h" />
     <ClInclude Include="..\..\include\pathlib\types\containers\vector.h" />
     <ClInclude Include="..\..\include\pathlib\types\containers\pool.h" />
@@ -67,7 +69,6 @@
   <ItemGroup>
     <ClCompile Include="..\..\src\error\error.cpp" />
     <ClCompile Include="..\..\src\log\log.cpp" />
-    <ClCompile Include="..\..\src\memory\malloc.cpp" />
     <ClCompile Include="..\..\src\memory\malloc_unsafe.cpp" />
     <ClCompile Include="..\..\src\memory\memory.cpp" />
     <ClCompile Include="..\..\src\pathlib.cpp" />

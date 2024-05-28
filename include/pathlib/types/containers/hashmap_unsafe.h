@@ -14,7 +14,7 @@ namespace Pathlib::Containers {
 template <typename K, 
           typename V, 
           u64 RESERVE_CAPACITY>
-struct Hashmap
+struct HashmapUnsafe
 {
   //---
   static_assert(Math::is_pot(RESERVE_CAPACITY) && (RESERVE_CAPACITY >= 8), "Hashmap RESERVE_CAPACITY must be a power of two, greater or equal to 8.");
@@ -28,7 +28,6 @@ struct Hashmap
   static u32 constexpr NEW_HASH = Types::U32_MAX;
   static u32 constexpr DISTANCE_SHIFT = 29;
 
-private:
   //---
   u32 capacity;
   u32 max_probe_length;
@@ -38,9 +37,8 @@ private:
   Containers::VectorUnsafe<V, RESERVE_CAPACITY> values;
   Containers::VectorUnsafe<u32, RESERVE_CAPACITY> kv_slot_lookup;
 
-public:
   //---
-  Hashmap()
+  HashmapUnsafe()
   {
     capacity = RESERVE_CAPACITY;
     max_probe_length = 1 + (Math::log2(capacity) >> 2);
@@ -53,7 +51,7 @@ public:
   }
 
   //---
-  ~Hashmap()
+  ~HashmapUnsafe()
   {
     if (slot_kv_index) {
       FREE(slot_kv_index);
@@ -81,9 +79,9 @@ public:
   }
 
   //---
-  inline Containers::SafePtr<V> find(const K& key,
-                                     u32 existing_hash = NEW_HASH,
-                                     u32 hash_count = 0)
+  inline V* find(const K& key,
+                 u32 existing_hash = NEW_HASH,
+                 u32 hash_count = 0)
   {
     u32 key_hash = (existing_hash == NEW_HASH) ? hash(key) : existing_hash;
     u32 slot_index = (key_hash & (capacity - 1));
@@ -96,7 +94,7 @@ public:
         u32 distance = Math::lsb_set(digest_mask) >> 2;
         u32 kv_index = slot_kv_index[slot_index + distance];
         if (keys[kv_index] == key) {
-          return Containers::SafePtr<V>(&values[kv_index]);
+          return &values[kv_index];
         }
         digest_mask ^= (0xF << (distance << 2));
       }
@@ -109,7 +107,7 @@ public:
   }
 
   //---
-  Containers::SafePtr<V> operator [](const K& key)
+  V* operator [](const K& key)
   {
     return find(key);
   }

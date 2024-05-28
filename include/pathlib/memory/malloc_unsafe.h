@@ -6,17 +6,17 @@
 #include "pathlib/types/types.h"
 
 //---
-#define MALLOC(A) ::Pathlib::Memory::malloc(A)
-#define REALLOC(A, B) ::Pathlib::Memory::realloc(A, B)
-#define FREE(A) ::Pathlib::Memory::free((void**)&A)
+#define MALLOC(A) ::Pathlib::Memory::malloc_unsafe(A)
+#define REALLOC(A, B) ::Pathlib::Memory::realloc_unsafe(A, B)
+#define FREE(A) ::Pathlib::Memory::free_unsafe((void**)&A)
 
 namespace Pathlib::Memory {
 
 //---
-void* malloc(u64 size,
-             const utf8* name = nullptr);
-void* realloc(void* ptr,
-              u64 size,
-              const utf8* name = nullptr);
-void free(void** ptr);
+void* malloc_unsafe(u64 size,
+                    const utf8* name = nullptr);
+void* realloc_unsafe(void* ptr,
+                     u64 size,
+                     const utf8* name = nullptr);
+void free_unsafe(void** ptr);
 }

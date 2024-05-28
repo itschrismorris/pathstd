@@ -18,11 +18,11 @@ struct ArrayUnsafe
   u64 count;
 
   //---
-  Array()
+  ArrayUnsafe()
   {
     clear();
   }
-  ~Array() {}
+  ~ArrayUnsafe() {}
 
   //---
   inline T& operator[](u64 index)

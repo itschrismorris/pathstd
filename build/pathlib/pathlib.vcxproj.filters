@@ -102,9 +102,6 @@
     <ClInclude Include="..\..\include\pathlib\math\intrinsics\xmmintrin.h">
       <Filter>include\math\intrinsics</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\include\pathlib\memory\malloc.h">
-      <Filter>include\memory</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\include\pathlib\memory\memcpy.h">
       <Filter>include\memory</Filter>
     </ClInclude>
@@ -201,6 +198,15 @@
     <ClInclude Include="..\..\include\pathlib\memory\malloc_unsafe.h">
       <Filter>include\memory</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\include\pathlib\memory\malloc.h">
+      <Filter>include\memory</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\pathlib\types\containers\hashmap_unsafe.h">
+      <Filter>include\types\containers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\pathlib\types\containers\pool_unsafe.h">
+      <Filter>include\types\containers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\pathlib.cpp">
@@ -211,9 +217,6 @@
     </ClCompile>
     <ClCompile Include="..\..\src\log\log.cpp">
       <Filter>src\log</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\memory\malloc.cpp">
-      <Filter>src\memory</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\win32\console.cpp">
       <Filter>src\win32</Filter>
