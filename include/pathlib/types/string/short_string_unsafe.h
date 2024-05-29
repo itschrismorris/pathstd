@@ -5,6 +5,7 @@
 #pragma once
 #include "pathlib/types/string/from_type.h"
 #include "pathlib/types/string/compare.h"
+#include "pathlib/types/string/short_string.h"
 
 namespace Pathlib::String {
 
@@ -34,7 +35,7 @@ struct ShortStringUnsafe
   ShortStringUnsafe(Args&&... args)
   {
     size = 0;
-    (ShortStringUnsafe::_append(this, args), ...);
+    (ShortStringUnsafe::_append(*this, args), ...);
   }
 
   //---
@@ -91,6 +92,15 @@ struct ShortStringUnsafe
   }
 
   //---
+  inline ShortStringUnsafe& operator +=(const ShortString<CAPACITY>& arg)
+  {
+    u64 copy_size = Math::min((CAPACITY - 1) - size, arg.size);
+    Memory::memcpy<false, true>(&str[size], arg.str, copy_size);
+    size += copy_size;
+    return *this;
+  }
+
+  //---
   inline ShortStringUnsafe& operator +=(const ShortStringUnsafe& arg)
   {
     u64 copy_size = Math::min((CAPACITY - 1) - size, arg.size);
@@ -123,24 +133,26 @@ struct ShortStringUnsafe
   }
 
   //---
-  template <typename... Args>
-  inline void append(Args&&... args)
+  static inline void _append(ShortStringUnsafe& string_out, 
+                             const ShortString<CAPACITY>& arg)
   {
-    (_append(this, args), ...);
+    u64 copy_size = Math::min((CAPACITY - 1) - string_out.size, arg.size);
+    Memory::memcpy<false, true>(&string_out.str[string_out.size], arg.str, copy_size + 1);
+    string_out.size += copy_size;
   }
 
   //---
-  static inline void _append(ShortStringUnsafe* string_out, 
+  static inline void _append(ShortStringUnsafe& string_out, 
                              const ShortStringUnsafe& arg)
   {
-    u64 copy_size = Math::min((CAPACITY - 1) - string_out->size, arg.size);
-    Memory::memcpy<false, true>(&string_out->str[string_out->size], arg.str, copy_size + 1);
-    string_out->size += copy_size;
+    u64 copy_size = Math::min((CAPACITY - 1) - string_out.size, arg.size);
+    Memory::memcpy<false, true>(&string_out.str[string_out.size], arg.str, copy_size + 1);
+    string_out.size += copy_size;
   }
 
   //---
   template <typename T>
-  static inline void _append(ShortStringUnsafe* string_out, 
+  static inline void _append(ShortStringUnsafe& string_out, 
                              const T arg)
   {
     if constexpr (IS_POINTER(T)) {
@@ -148,12 +160,19 @@ struct ShortStringUnsafe
         return;
       }
     }
-    String::_Internal::from_type_clip(arg, string_out->str, &string_out->size, string_out->capacity());
+    String::_Internal::from_type_clip(arg, string_out.str, &string_out.size, string_out.capacity());
   }
 
   //---
   template <typename... Args>
-  static inline void append(ShortStringUnsafe* string_out,
+  inline void append(Args&&... args)
+  {
+    (_append(*this, args), ...);
+  }
+
+  //---
+  template <typename... Args>
+  static inline void append(ShortStringUnsafe& string_out,
                             Args&&... args)
   {
     (_append(string_out, args), ...);
@@ -161,8 +180,8 @@ struct ShortStringUnsafe
 
   //---
   template <typename... Args>
-  static inline ShortStringUnsafe format(ShortStringUnsafe* string_out,
-                                   Args&&... args)
+  static inline ShortStringUnsafe format(ShortStringUnsafe& string_out,
+                                         Args&&... args)
   {
     (_append(string_out, args), ...);
   }
@@ -191,7 +210,6 @@ struct ShortStringUnsafe
 }
 
 //---
-#include "pathlib/types/string/short_string.h"
 template <typename T> struct _is_short_string : false_type {};
 template <u64 CAPACITY> struct _is_short_string<Pathlib::String::ShortString<CAPACITY>> : true_type {};
 template <u64 CAPACITY> struct _is_short_string<Pathlib::String::ShortStringUnsafe<CAPACITY>> : true_type {};

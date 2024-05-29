@@ -67,7 +67,7 @@ struct PoolUnsafe
   inline T* get_vacant(u32 pools_id = 0)
   {
     if (count >= CAPACITY) {
-      error.last_error = u8"Failed to alloc() from pool; it is already at capacity.";
+      error.set_last_error(u8"Failed to alloc() from pool; it is already at capacity.");
       error.to_log();
       return nullptr;
     }

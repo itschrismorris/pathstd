@@ -38,7 +38,7 @@ Containers::SafePtr<T> realloc(Containers::SafePtr<T>& _ptr,
       ptr.set_count(count);
       return ptr;
     } else {
-      error.last_error = u8"Attempt to realloc() a null SafePtr.";
+      error.set_last_error(u8"Attempt to realloc() a null SafePtr.");
       error.to_log();
       error.fatality();
     }
@@ -48,7 +48,7 @@ Containers::SafePtr<T> realloc(Containers::SafePtr<T>& _ptr,
       ptr.set_count(count);
       return ptr;
     } else {
-      error.last_error = u8"Attempt to realloc() a null SafePtr.";
+      error.set_last_error(u8"Attempt to realloc() a null SafePtr.");
       error.to_log();
       error.fatality();
     }
@@ -63,7 +63,7 @@ void free(Containers::SafePtr<T>& _ptr)
     if (!_ptr.is_null()) {
       FREE(_ptr);
     } else {
-      error.last_error = u8"Attempt to free() a null SafePtr.";
+      error.set_last_error(u8"Attempt to free() a null SafePtr.");
       error.to_log();
       error.fatality();
     }
@@ -71,7 +71,7 @@ void free(Containers::SafePtr<T>& _ptr)
     if (!_ptr.is_null()) {
       FREE(_ptr);
     } else {
-      error.last_error = u8"Attempt to free() a null SafePtr.";
+      error.set_last_error(u8"Attempt to free() a null SafePtr.");
       error.to_log();
       error.fatality();
     }

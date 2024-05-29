@@ -10,9 +10,17 @@ namespace Pathlib { _Internal::Error error; }
 namespace Pathlib::_Internal {
 
 //---
+void Error::set_last_error(const utf8* string)
+{
+  u64 size = Math::min(MAX_ERROR_LENGTH - 1, String::size_of(string));
+  Memory::memcpy(last_error, string, size);
+  last_error[size] = u8'\0';
+}
+
+//---
 bool Error::last_error_from_win32()
 {
-  if ((last_error.size = Win32::get_last_error_string(last_error.str, last_error.capacity)) == 0) {
+  if (Win32::get_last_error_string(last_error, 512) == 0) {
     return false;
   }
   return true;
@@ -21,10 +29,10 @@ bool Error::last_error_from_win32()
 //---
 bool Error::to_log(bool use_color)
 {
-  if (!Win32::get_callstack(&_buffer)) {
+  if (!Win32::get_callstack(_buffer, MAX_ERROR_LENGTH)) {
     return false;
   }
-  String::LongString<512> string(u8"\n************\n", last_error, u8"\n\n", _buffer, u8"************");
+  String::LongStringUnsafe<512> string(u8"\n************\n", last_error, u8"\n\n", _buffer, u8"************");
   if (use_color) {
     if  (!console.set_text_attributes(Console::FOREGROUND_RED) ||
          !LOGT(string.str) ||

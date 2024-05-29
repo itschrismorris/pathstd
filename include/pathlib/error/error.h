@@ -4,7 +4,6 @@
 
 #pragma once
 #include "pathlib/types/types.h"
-#include "pathlib/types/string/long_string.h"
 
 namespace Pathlib::_Internal {
 
@@ -12,10 +11,14 @@ namespace Pathlib::_Internal {
 struct Error {
 
   //---
-  String::LongString<256> last_error;
-  String::LongString<256> _buffer;
+  static constexpr u64 MAX_ERROR_LENGTH = 512;
 
   //---
+  utf8 last_error[MAX_ERROR_LENGTH];
+  utf8 _buffer[MAX_ERROR_LENGTH];
+
+  //---
+  void set_last_error(const utf8* string);
   bool last_error_from_win32();
   bool to_log(bool use_color = true);
   bool to_popup();

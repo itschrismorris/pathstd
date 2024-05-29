@@ -52,6 +52,7 @@
     <ClInclude Include="..\..\include\pathlib\types\string\compare.h" />
     <ClInclude Include="..\..\include\pathlib\types\string\from_type.h" />
     <ClInclude Include="..\..\include\pathlib\types\string\long_string.h" />
+    <ClInclude Include="..\..\include\pathlib\types\string\long_string_unsafe.h" />
     <ClInclude Include="..\..\include\pathlib\types\string\short_string.h" />
     <ClInclude Include="..\..\include\pathlib\types\string\short_string_unsafe.h" />
     <ClInclude Include="..\..\include\pathlib\types\string\size_of.h" />

@@ -5,7 +5,7 @@
 #pragma once
 #include "pathlib/types/types.h"
 #include "pathlib/types/string/short_string_unsafe.h"
-#include "pathlib/types/string/long_string.h"
+#include "pathlib/types/string/long_string_unsafe.h"
 
 //---
 struct SystemTime 
@@ -26,7 +26,8 @@ namespace Pathlib::Win32 {
 static constexpr u32 MAX_PATH_LENGTH = 260;
 
 //---
-bool get_callstack(String::LongString<256>* string_out);
+bool get_callstack(utf8* string_out,
+                   u64 string_capacity);
 u64 get_last_error_string(utf8* string_out,
                           u64 string_capacity);
 bool write_console(const utf8* string,

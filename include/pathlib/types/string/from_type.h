@@ -228,7 +228,7 @@ static inline void from_type_clip(const T arg,
     *string_size += size_added;
     string[*string_size] = u8'\0';
   } else {
-    static_assert(false, "Unsupported type used for formatting a string.");
+    static_assert(return_false<T>::value, "Unsupported type used for formatting a string.");
   }
 }
 

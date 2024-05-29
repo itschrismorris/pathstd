@@ -6,8 +6,10 @@
 #include "pathlib/win32/safe_win32.h"
 #include "pathlib/types/types.h"
 #include "pathlib/error/error.h"
-#include "pathlib/types/string/short_string_unsafe.h"
+#include "pathlib/types/string/short_string.h"
 #include "pathlib/types/string/long_string.h"
+#include "pathlib/types/string/short_string_unsafe.h"
+#include "pathlib/types/string/long_string_unsafe.h"
 
 namespace Pathlib::_Internal {
   
@@ -27,7 +29,7 @@ struct Console
   static constexpr u16 BACKGROUND_WHITE = (BACKGROUND_RED | BACKGROUND_GREEN | BACKGROUND_BLUE);
 
   //---
-  String::LongString<256> _buffer;
+  String::LongStringUnsafe<256> _buffer;
 
   //---
   inline bool set_text_attributes(u16 attributes)
@@ -39,7 +41,8 @@ struct Console
   template <u64 CAPACITY>
   inline bool write(const String::ShortString<CAPACITY>& string)
   {
-    return Win32::write_console(string.str, string.size) && Win32::write_console(u8"\n", 1);
+    return Win32::write_console(string.str, string.size) && 
+           Win32::write_console(u8"\n", 1);
   }
 
   //---
@@ -52,6 +55,14 @@ struct Console
   //---
   template <u64 RESERVE_CAPACITY>
   inline bool write(const String::LongString<RESERVE_CAPACITY>& string)
+  {
+    return Win32::write_console(string.str, string.size) &&
+           Win32::write_console(u8"\n", 1);
+  }
+
+  //---
+  template <u64 RESERVE_CAPACITY>
+  inline bool write(const String::LongStringUnsafe<RESERVE_CAPACITY>& string)
   {
     return Win32::write_console(string.str, string.size) && Win32::write_console(u8"\n", 1);
   }
@@ -67,7 +78,7 @@ struct Console
   inline bool write(Args&&... args)
   {
     _buffer.size = 0;
-    (_buffer._append(&_buffer, args), ...);
+    (_buffer._append(_buffer, args), ...);
     _buffer.append(u8'\n');
     return Win32::write_console(_buffer.str, _buffer.size);
   }

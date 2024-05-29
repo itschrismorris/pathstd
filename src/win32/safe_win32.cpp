@@ -8,7 +8,8 @@
 namespace Pathlib::Win32 { 
 
 //---
-bool get_callstack(String::LongString<256>* string_out)
+bool get_callstack(utf8* string_out,
+                   u64 string_capacity)
 {
   HANDLE callstack[10];
   HANDLE process = GetCurrentProcess();
@@ -32,6 +33,7 @@ bool get_callstack(String::LongString<256>* string_out)
   SYMBOL_INFO* symbol = (SYMBOL_INFO*)buffer;
   symbol->MaxNameLen = MAX_SYM_NAME;
   symbol->SizeOfStruct = sizeof(SYMBOL_INFO);
+  u64 string_size = 0;
   for (WORD i = 0; i < frames; ++i) {
     DWORD64 address = (DWORD64)(callstack[i]);
     if (!SymFromAddr(process, address, nullptr, symbol)) {
@@ -39,8 +41,10 @@ bool get_callstack(String::LongString<256>* string_out)
       error.to_log();
       return false;
     }
-    *string_out += (utf8*)symbol->Name;
-    *string_out += u8'\n';
+    Memory::memcpy(string_out + string_size, symbol->Name, Math::min((u64)symbol->NameLen, string_capacity - 2 - string_size));
+    string_size += symbol->NameLen + 1;
+    string_out[string_size - 1] = u8'\n';
+    string_out[string_size] = u8'\0';
   }
   if (!SymCleanup(process)) {
     error.last_error_from_win32();
@@ -89,9 +93,6 @@ bool write_log(const utf8* string,
       }
     }
     return true;
-  } else {
-    error.last_error = u8"File handle for write_file() was null.";
-    error.to_log();
   }
   return false;
 }

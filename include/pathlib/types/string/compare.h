@@ -4,7 +4,6 @@
 
 #pragma once
 #include "pathlib/types/types.h"
-#include "pathlib/types/string/short_string_unsafe.h"
 #include "pathlib/math/math.h"
 
 namespace Pathlib {

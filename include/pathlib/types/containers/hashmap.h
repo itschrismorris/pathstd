@@ -6,7 +6,7 @@
 #include "pathlib/types/types.h"
 #include "pathlib/types/containers/vector_unsafe.h"
 #include "pathlib/types/string/size_of.h"
-#include "pathlib/types/string/long_string.h"
+#include "pathlib/types/string/long_string_unsafe.h"
 
 namespace Pathlib::Containers {
 
@@ -74,7 +74,7 @@ public:
     } else if constexpr (IS_LONG_STRING(T)) {
       return key.hash();
     } else if constexpr (SAME_TYPE(T, const utf8*)) {
-      return String::LongString<64>::hash(key);
+      return String::LongStringUnsafe<64>::hash(key);
     } else {
       static_assert(false, "Unsupported type used for hashmap key.");
     }

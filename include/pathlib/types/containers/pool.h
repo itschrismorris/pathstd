@@ -67,7 +67,7 @@ public:
   inline Containers::SafePtr<T> get_vacant(u32 pools_id = 0)
   {
     if (count >= CAPACITY) {
-      error.last_error = u8"Failed to alloc() from pool; it is already at capacity.";
+      error.set_last_error(u8"Failed to alloc() from pool; it is already at capacity.");
       error.to_log();
       return nullptr;
     }
@@ -95,7 +95,7 @@ public:
       object->pool_id = free_head | 0xFFFF0000;
       free_head = (object - data);
     } else {
-      error.last_error = u8"Attempt to free an invalid pool_id from Pool.";
+      error.set_last_error(u8"Attempt to free an invalid pool_id from Pool.");
       error.to_log();
       error.fatality();
     }
@@ -108,7 +108,7 @@ public:
       free(object->pool_id);
       object = nullptr;
     } else {
-      error.last_error = u8"Attempt to free a null SafePtr from Pool.";
+      error.set_last_error(u8"Attempt to free a null SafePtr from Pool.");
       error.to_log();
       error.fatality();
     }
