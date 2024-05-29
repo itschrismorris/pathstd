@@ -28,7 +28,7 @@ public:
   //---
   ShortString(const ShortString& string)
   {
-    Memory::memcpy<true, true>(str, string.str, string.size + 1);
+    Memory::memcpy_unsafe<true, true>(str, string.str, string.size + 1);
     size = string.size;
   }
 
@@ -37,7 +37,7 @@ public:
   ShortString(Args&&... args)
   {
     size = 0;
-    (ShortString::_append(*this, args), ...);
+    (_append(*this, args), ...);
   }
 
   //---
@@ -46,15 +46,20 @@ public:
   }
 
   //---
-  constexpr u64 capacity()
+  constexpr u64 get_capacity()
   {
     return CAPACITY;
   }
 
   //---
+  operator utf8*() const {
+    return str;
+  }
+
+  //---
   inline ShortString& operator =(const ShortString& string)
   {
-    Memory::memcpy<true, true>(str, string.str, string.size + 1);
+    Memory::memcpy_unsafe<true, true>(str, string.str, string.size + 1);
     size = string.size;
     return *this;
   }
@@ -103,14 +108,6 @@ public:
   {
     static_assert(!SAME_TYPE(T, const char*), "String literals must be prepended with u8 for utf-8 encoding: u8\"Hello world!\"");
     static_assert(!SAME_TYPE(T, char*), "Replace string usages of char with utf8, for utf-8 encoding.");
-    if constexpr (IS_POINTER(T)) {
-      if (!arg) {
-        error.set_last_error(u8"Attempt to append ShortString with a null pointer.");
-        error.to_log();
-        error.fatality();
-        return false;
-      }
-    }
     ShortString::_append(*this, arg);
     return *this;
   }
@@ -119,7 +116,7 @@ public:
   inline ShortString& operator +=(const ShortString& arg)
   {
     u64 copy_size = Math::min((CAPACITY - 1) - size, arg.size);
-    Memory::memcpy<false, true>(&str[size], arg.str, copy_size);
+    Memory::memcpy_unsafe<false, true>(&str[size], arg.str, copy_size);
     size += copy_size;
     return *this;
   }
@@ -145,7 +142,7 @@ public:
   inline void format(Args&&... args)
   {
     size = 0;
-    (ShortString::_append(this, args), ...);
+    (ShortString::_append(*this, args), ...);
   }
 
   //---
@@ -160,7 +157,7 @@ public:
                              const ShortString& arg)
   {
     u64 copy_size = Math::min((CAPACITY - 1) - string_out.size, arg.size);
-    Memory::memcpy<false, true>(&string_out.str[string_out.size], arg.str, copy_size + 1);
+    Memory::memcpy_unsafe<false, true>(&string_out.str[string_out.size], arg.str, copy_size + 1);
     string_out.size += copy_size;
   }
 
@@ -177,7 +174,7 @@ public:
         return;
       }
     }
-    String::_Internal::from_type_clip(arg, string_out.str, &string_out.size, string_out.capacity());
+    String::_Internal::from_type_clip(arg, string_out.str, &string_out.size, string_out.get_capacity());
   }
 
   //---
@@ -208,7 +205,7 @@ public:
   static inline ShortString format_copy(Args&&... args)
   {
     ShortString string;
-    (_append(&string, args), ...);
+    (_append(string, args), ...);
     return string;
   }
 

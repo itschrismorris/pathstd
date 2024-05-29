@@ -13,11 +13,13 @@ namespace Pathlib::String {
 template <u64 RESERVE_CAPACITY>
 struct LongString
 {
+private:
   //---
   utf8* str;
   u64 capacity;
   u64 size;
   
+public:
   //---
   LongString()
   {
@@ -39,7 +41,7 @@ struct LongString
   {
     str = (utf8*)MALLOC(string.capacity + 1);
     capacity = string.capacity;
-    Memory::memcpy<true, true>(str, string.str, string.size + 1);
+    Memory::memcpy_unsafe<true, true>(str, string.str, string.size + 1);
     size = string.size;
   }
   
@@ -61,7 +63,7 @@ struct LongString
       capacity = size * 1.5;
       str = (utf8*)REALLOC(str, capacity + 1);
     }
-    Memory::memcpy<true, true>(str, string.str, string.size + 1);
+    Memory::memcpy_unsafe<true, true>(str, string.str, string.size + 1);
     size = string.size;
     return *this;
   }
@@ -70,6 +72,14 @@ struct LongString
   template <typename T>
   inline LongString& operator =(const T arg)
   {
+    if constexpr (IS_POINTER(T)) {
+      if (!arg) {
+        error.set_last_error(u8"Attempt to set LongString to a null pointer.");
+        error.to_log();
+        error.fatality();
+        return false;
+      }
+    }
     u64 arg_size = String::size_of(arg);
     if (arg_size > capacity) {
       capacity = arg_size * 1.5;
@@ -82,7 +92,14 @@ struct LongString
   //---
   inline bool operator ==(const utf8* string) const
   {
-    return String::compare<true, false>(str, string, size);
+    if (EXPECT(string != nullptr)) {
+      return String::compare<true, false>(str, string, size);
+    } else {
+      error.set_last_error(u8"Attempt to compare LongString equality with a null pointer.");
+      error.to_log();
+      error.fatality();
+      return false;
+    }
   }
 
   //---
@@ -109,7 +126,7 @@ struct LongString
       capacity = size * 1.5;
       str = (utf8*)REALLOC(str, capacity + 1);
     }
-    Memory::memcpy<false, true>(&str[size], arg.str, arg.size + 1);
+    Memory::memcpy_unsafe<false, true>(&str[size], arg.str, arg.size + 1);
     size = new_size;
     return *this;
   }
@@ -123,7 +140,7 @@ struct LongString
       capacity = size * 1.5;
       str = (utf8*)REALLOC(str, capacity + 1);
     }
-    Memory::memcpy<false, true>(&str[size], arg.str, arg.size + 1);
+    Memory::memcpy_unsafe<false, true>(&str[size], arg.str, arg.size + 1);
     size = new_size;
     return *this;
   }
@@ -132,6 +149,14 @@ struct LongString
   template <typename T>
   inline LongString& operator +=(const T arg)
   {
+    if constexpr (IS_POINTER(T)) {
+      if (!arg) {
+        error.set_last_error(u8"Attempt to append LongString with a null pointer.");
+        error.to_log();
+        error.fatality();
+        return *this;
+      }
+    }
     String::_Internal::from_type_grow(arg, &str, &size, &capacity);
     return *this;
   }
@@ -141,7 +166,7 @@ struct LongString
   inline void format(Args&&... args)
   {
     size = 0;
-    (LongString::_append(this, args), ...);
+    (LongString::_append(*this, args), ...);
   }
 
   //---
@@ -161,7 +186,7 @@ struct LongString
       string_out.capacity = new_size * 1.5;
       string_out.str = (utf8*)REALLOC(string_out.str, string_out.capacity + 1);
     }
-    Memory::memcpy<false, true>(&string_out.str[string_out.size], arg.str, arg.size + 1);
+    Memory::memcpy_unsafe<false, true>(&string_out.str[string_out.size], arg.str, arg.size + 1);
     string_out.size = new_size;
   }
 
@@ -175,7 +200,7 @@ struct LongString
       string_out.capacity = new_size * 1.5;
       string_out.str = (utf8*)REALLOC(string_out.str, string_out.capacity + 1);
     }
-    Memory::memcpy<false, true>(&string_out.str[string_out.size], arg.str, arg.size + 1);
+    Memory::memcpy_unsafe<false, true>(&string_out.str[string_out.size], arg.str, arg.size + 1);
     string_out.size = new_size;
   }
 

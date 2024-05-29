@@ -65,7 +65,7 @@ struct VectorUnsafe
   {
     Memory::call_destructor<T>(&data[index]);
     --count;
-    Memory::memcpy(index, data + count, sizeof(T));
+    Memory::memcpy_unsafe(index, data + count, sizeof(T));
   }
 
   //---
@@ -78,7 +78,7 @@ struct VectorUnsafe
     T* start = (data + index);
     T* end = (data + count - _count);
     count -= _count;
-    Memory::memcpy(start, end, sizeof(T) * _count);
+    Memory::memcpy_unsafe(start, end, sizeof(T) * _count);
   }
 
   //---

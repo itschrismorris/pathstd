@@ -177,9 +177,6 @@
     <ClInclude Include="..\..\src\third_party\mimalloc\mimalloc.h">
       <Filter>src\third_party\mimalloc</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\third_party\mimalloc\mimalloc-new-delete.h">
-      <Filter>src\third_party\mimalloc</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\src\third_party\mimalloc\mimalloc-override.h">
       <Filter>src\third_party\mimalloc</Filter>
     </ClInclude>

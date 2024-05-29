@@ -321,9 +321,9 @@ static inline void memset_256(void* dst,
 
 //---
 template <bool DST_ALIGNED_32 = false>
-static inline void memset(void* dst,
-                          const u8 value,
-                          u64 size)
+static inline void memset_unsafe(void* dst,
+                                 const u8 value,
+                                 u64 size)
 {
   if (size <= 256) {
     _Internal::memset_256(dst, value, size);
@@ -363,5 +363,24 @@ static inline void memset(void* dst,
   }
   dst = (u8*)dst_v;
   _Internal::memset_256(dst, value, size);
+}
+
+//---
+template <bool DST_ALIGNED_32 = false,
+          bool SRC_ALIGNED_32 = false,
+          typename T>
+static inline void memset(Containers::SafePtr<T> dst,
+                          const u8 value,
+                          u64 count)
+{
+  T* dst_ptr = dst;
+  if (EXPECT(((dst_ptr + count) >= dst_ptr) &&
+             ((dst_ptr + count) <= (dst_ptr + dst.get_count())))) {
+    memset_unsafe(dst_ptr, value, count * sizeof(T));
+  } else {
+    error.set_last_error(u8"Out of bounds memset().");
+    error.to_log();
+    error.fatality();
+  }
 }
 }

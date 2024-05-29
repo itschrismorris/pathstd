@@ -7,6 +7,7 @@
 #include "pathlib/memory/memory.h"
 #include "pathlib/math/math.h"
 #include "pathlib/math/simd_math.h"
+#include "pathlib/types/containers/safe_ptr.h"
 
 namespace Pathlib::Memory {
 namespace _Internal {
@@ -307,9 +308,9 @@ static inline void memcpy_256(void* dst,
 //---
 template <bool DST_ALIGNED_32 = false,
           bool SRC_ALIGNED_32 = false>
-static inline void memcpy(void* dst,
-                          const void* src,
-                          u64 size)
+static inline void memcpy_unsafe(void* dst,
+                                 const void* src,
+                                 u64 size)
 {
   if (size <= 256) {
     _Internal::memcpy_256(dst, src, size);
@@ -368,5 +369,27 @@ static inline void memcpy(void* dst,
     FENCE();
   }
   _Internal::memcpy_256((u8*)dst_v, (u8*)src_v, size);
+}
+
+//---
+template <bool DST_ALIGNED_32 = false,
+          bool SRC_ALIGNED_32 = false,
+          typename T>
+static inline void memcpy(Containers::SafePtr<T> dst,
+                          Containers::SafePtr<T> src,
+                          u64 count)
+{
+  T* dst_ptr = dst;
+  T* src_ptr = src;
+  if (EXPECT(((dst_ptr + count) >= dst_ptr) &&
+             ((src_ptr + count) >= src_ptr) &&
+             ((src_ptr + count) <= (src_ptr + src.get_count())) &&
+             ((dst_ptr + count) <= (dst_ptr + dst.get_count())))) {
+    memcpy_unsafe(dst_ptr, src_ptr, count * sizeof(T));
+  } else {
+    error.set_last_error(u8"Out of bounds memcpy().");
+    error.to_log();
+    error.fatality();
+  }
 }
 }

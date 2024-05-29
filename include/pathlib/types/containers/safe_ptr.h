@@ -5,6 +5,8 @@
 #pragma once
 #include "pathlib/types/types.h"
 #include "pathlib/error/error.h"
+#include "pathlib/memory/memcpy.h"
+#include "pathlib/memory/malloc_unsafe.h"
 
 namespace Pathlib::Containers {
 
@@ -17,6 +19,7 @@ private:
   T* ptr;
   T* offset_ptr;
   u64 count;
+  bool allocated_memory;
 
 public:
   //---
@@ -24,6 +27,7 @@ public:
   {
     ptr = offset_ptr = nullptr;
     count = 0;
+    allocated_memory = false;
   }
 
   //---
@@ -37,17 +41,7 @@ public:
     } else {
       count = _count;
     }
-  }
-
-  //---
-  SafePtr(T* _ptr)
-  {
-    ptr = offset_ptr = _ptr;
-    if (_ptr == nullptr) {
-      count = 0;
-    } else {
-      count = 1;
-    }
+    allocated_memory = false;
   }
 
   //---
@@ -60,19 +54,21 @@ public:
     else {
       count = 1;
     }
+    allocated_memory = false;
   }
 
   //---
-  ~SafePtr() {}
-
-  //---
-  operator void*() const {
-    return (void*)offset_ptr;
+  ~SafePtr() 
+  {
+    if (allocated_memory && is_valid()) {
+      FREE(ptr);
+    }
   }
 
   //---
-  operator utf8*() const {
-    return (utf8*)offset_ptr;
+  template <typename U>
+  operator U*() const {
+    return (U*)offset_ptr;
   }
 
   //---
@@ -195,9 +191,27 @@ public:
   }
 
   //---
-  inline bool is_null()
+  inline void set_allocated_memory(bool _allocated_memory)
+  {
+    allocated_memory = _allocated_memory;
+  }
+
+  //---
+  inline u64 get_count()
+  {
+    return count;
+  }
+
+  //---
+  inline bool is_null() const
   {
     return ((ptr == nullptr) || (count == 0));
+  }
+
+  //---
+  inline bool is_valid() const
+  {
+    return ((ptr != nullptr) && (count > 0));
   }
 };
 }

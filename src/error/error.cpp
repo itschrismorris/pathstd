@@ -13,7 +13,7 @@ namespace Pathlib::_Internal {
 void Error::set_last_error(const utf8* string)
 {
   u64 size = Math::min(MAX_ERROR_LENGTH - 1, String::size_of(string));
-  Memory::memcpy(last_error, string, size);
+  Memory::memcpy_unsafe(last_error, string, size);
   last_error[size] = u8'\0';
 }
 

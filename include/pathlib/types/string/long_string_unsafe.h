@@ -41,7 +41,7 @@ struct LongStringUnsafe
   {
     str = (utf8*)MALLOC(string.capacity + 1);
     capacity = string.capacity;
-    Memory::memcpy<true, true>(str, string.str, string.size + 1);
+    Memory::memcpy_unsafe<true, true>(str, string.str, string.size + 1);
     size = string.size;
   }
   
@@ -63,7 +63,7 @@ struct LongStringUnsafe
       capacity = size * 1.5;
       str = (utf8*)REALLOC(str, capacity + 1);
     }
-    Memory::memcpy<true, true>(str, string.str, string.size + 1);
+    Memory::memcpy_unsafe<true, true>(str, string.str, string.size + 1);
     size = string.size;
     return *this;
   }
@@ -111,7 +111,7 @@ struct LongStringUnsafe
       capacity = size * 1.5;
       str = (utf8*)REALLOC(str, capacity + 1);
     }
-    Memory::memcpy<false, true>(&str[size], arg.str, arg.size + 1);
+    Memory::memcpy_unsafe<false, true>(&str[size], arg.str, arg.size + 1);
     size = new_size;
     return *this;
   }
@@ -124,7 +124,7 @@ struct LongStringUnsafe
       capacity = size * 1.5;
       str = (utf8*)REALLOC(str, capacity + 1);
     }
-    Memory::memcpy<false, true>(&str[size], arg.str, arg.size + 1);
+    Memory::memcpy_unsafe<false, true>(&str[size], arg.str, arg.size + 1);
     size = new_size;
     return *this;
   }
@@ -138,7 +138,7 @@ struct LongStringUnsafe
       capacity = size * 1.5;
       str = (utf8*)REALLOC(str, capacity + 1);
     }
-    Memory::memcpy<false, true>(&str[size], arg.str, arg.size + 1);
+    Memory::memcpy_unsafe<false, true>(&str[size], arg.str, arg.size + 1);
     size = new_size;
     return *this;
   }
@@ -152,7 +152,7 @@ struct LongStringUnsafe
       capacity = size * 1.5;
       str = (utf8*)REALLOC(str, capacity + 1);
     }
-    Memory::memcpy<false, true>(&str[size], arg.str, arg.size + 1);
+    Memory::memcpy_unsafe<false, true>(&str[size], arg.str, arg.size + 1);
     size = new_size;
     return *this;
   }
@@ -191,7 +191,7 @@ struct LongStringUnsafe
       string_out.capacity = new_size * 1.5;
       string_out.str = (utf8*)REALLOC(string_out.str, string_out.capacity + 1);
     }
-    Memory::memcpy<false, true>(&string_out.str[string_out.size], arg.str, arg.size + 1);
+    Memory::memcpy_unsafe<false, true>(&string_out.str[string_out.size], arg.str, arg.size + 1);
     string_out.size = new_size;
   }
 
@@ -205,7 +205,7 @@ struct LongStringUnsafe
       string_out.capacity = new_size * 1.5;
       string_out.str = (utf8*)REALLOC(string_out.str, string_out.capacity + 1);
     }
-    Memory::memcpy<false, true>(&string_out.str[string_out.size], arg.str, arg.size + 1);
+    Memory::memcpy_unsafe<false, true>(&string_out.str[string_out.size], arg.str, arg.size + 1);
     string_out.size = new_size;
   }
 
@@ -219,7 +219,7 @@ struct LongStringUnsafe
       string_out.capacity = new_size * 1.5;
       string_out.str = (utf8*)REALLOC(string_out.str, string_out.capacity + 1);
     }
-    Memory::memcpy<false, true>(&string_out.str[string_out.size], arg.str, arg.size + 1);
+    Memory::memcpy_unsafe<false, true>(&string_out.str[string_out.size], arg.str, arg.size + 1);
     string_out.size = new_size;
   }
 
@@ -233,7 +233,7 @@ struct LongStringUnsafe
       string_out.capacity = new_size * 1.5;
       string_out.str = (utf8*)REALLOC(string_out.str, string_out.capacity + 1);
     }
-    Memory::memcpy<false, true>(&string_out.str[string_out.size], arg.str, arg.size + 1);
+    Memory::memcpy_unsafe<false, true>(&string_out.str[string_out.size], arg.str, arg.size + 1);
     string_out.size = new_size;
   }
 

@@ -35,7 +35,7 @@ struct PoolUnsafe
     free_count = 1;
     free_head = 0;
     data = (T*)MALLOC(sizeof(T) * CAPACITY);
-    Memory::memset(data, 0xFF, sizeof(T) * CAPACITY);
+    Memory::memset_unsafe(data, 0xFF, sizeof(T) * CAPACITY);
   }
 
   //---

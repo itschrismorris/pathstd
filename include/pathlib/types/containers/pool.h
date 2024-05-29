@@ -35,7 +35,7 @@ public:
     free_count = 1;
     free_head = 0;
     data = (T*)MALLOC(sizeof(T) * CAPACITY);
-    Memory::memset(data, 0xFF, sizeof(T) * CAPACITY);
+    Memory::memset_unsafe(data, 0xFF, sizeof(T) * CAPACITY);
   }
 
   //---
@@ -104,7 +104,7 @@ public:
   //---
   inline void free(Containers::SafePtr<T>& object)
   {
-    if (EXPECT(!object.is_null())) {
+    if (EXPECT(object.is_valid())) {
       free(object->pool_id);
       object = nullptr;
     } else {
