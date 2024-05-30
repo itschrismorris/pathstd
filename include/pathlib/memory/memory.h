@@ -35,8 +35,6 @@ static inline void call_destructor(T* obj)
   obj->~T();
 }
 
-namespace _Internal {
-
-  extern bool scripting_mode;
-}
+//---
+namespace _Internal { extern bool scripting_mode; }
 }

@@ -27,9 +27,29 @@ public:
   ~Array() {}
 
   //---
+  void initializer_list(u64 index) { }
+  template <typename... Args>
+  void initializer_list(u64 index, 
+                        T value, 
+                        Args... args)
+  {
+    count = index + 1;
+    data[index] = value;
+    initializer_list(index + 1, args...);
+  }
+
+  //---
+  template <typename... Args>
+  Array(Args... args)
+  {
+    static_assert(sizeof...(Args) <= CAPACITY, "Initializer list exceeds Array capacity.");
+    initializer_list(0, args...);
+  }
+
+  //---
   inline T& operator[](u64 index)
   {
-    if (EXPECT(index < count)) {
+    if (EXPECT(index < CAPACITY)) {
       return data[index];
     } else {
       error.set_last_error(u8"Out of bounds access to Array.");
@@ -42,7 +62,7 @@ public:
   //---
   inline const T& operator[](u64 index) const
   {
-    if (EXPECT(index < count)) {
+    if (EXPECT(index < CAPACITY)) {
       return data[index];
     } else {
       error.set_last_error(u8"Out of bounds access to Array.");
@@ -73,7 +93,7 @@ public:
   {
     if (EXPECT(index < count)) {
       --count;
-      Memory::memcpy_unsafe(index, data + count, sizeof(T));
+      Memory::memcpy_unsafe(data + index, data + count, sizeof(T));
     } else {
       error.set_last_error(u8"Failed to remove() from Array; invalid index.");
       error.to_log();
@@ -92,7 +112,7 @@ public:
       count -= _count;
       Memory::memcpy_unsafe(start, end, sizeof(T) * _count);
     } else {
-      error.set_last_error(u8"Failed to remove() from Array; invalid index.");
+      error.set_last_error(u8"Failed to remove() from Array; invalid region.");
       error.to_log();
       error.fatality();
     }
@@ -102,6 +122,12 @@ public:
   inline void clear()
   {
     count = 0;
+  }
+
+  //---
+  inline u64 get_count()
+  {
+    return count;
   }
 };
 }

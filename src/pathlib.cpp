@@ -8,7 +8,7 @@ bool pathlib_initiate(const utf8* log_path)
 {
   SetConsoleOutputCP(CP_UTF8);
   console.set_text_attributes(_Internal::Console::FOREGROUND_GREEN);
-  console.write(u8"========================\nInitiating Pathlib Core.\n========================");
+  console.write(u8"========================\nInitiating Pathlib.\n========================");
   console.set_text_attributes(_Internal::Console::FOREGROUND_WHITE);
   if (!log.initiate(log_path)) {
     return false;
@@ -16,7 +16,7 @@ bool pathlib_initiate(const utf8* log_path)
   SystemTime time;
   Win32::get_local_time(&time);
   String::ShortStringUnsafe<128> time_str(time.wMonth, u8"/", time.wDay, u8"/", time.wYear);
-  LOG(time_str);
+  log.log(time_str);
   if (!profile.initiate() ||
       !timer.initiate()) {
     error.to_log();
@@ -33,7 +33,7 @@ void pathlib_shutdown()
   profile.shutdown();
   log.shutdown();
   console.set_text_attributes(_Internal::Console::FOREGROUND_GREEN);
-  console.write(u8"========================\nPathlib Core shutdown.\n========================\n");
+  console.write(u8"========================\nPathlib shutdown.\n========================\n");
   console.set_text_attributes(_Internal::Console::FOREGROUND_WHITE);
 }
 }

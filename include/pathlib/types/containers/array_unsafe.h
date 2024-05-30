@@ -25,6 +25,28 @@ struct ArrayUnsafe
   ~ArrayUnsafe() {}
 
   //---
+  template <typename... Args>
+  void initializer_list(u64 index, 
+                        T value, 
+                        Args... args)
+  {
+    count = index + 1;
+    data[index] = value;
+    initializer_list(index + 1, args...);
+  }
+
+  //---
+  void initializer_list(u64 index) {}
+
+  //---
+  template <typename... Args>
+  ArrayUnsafe(Args... args)
+  {
+    static_assert(sizeof...(Args) <= CAPACITY, "Initializer list exceeds Array capacity.");
+    initializer_list(0, args...);
+  }
+
+  //---
   inline T& operator[](u64 index)
   {
     return data[index];

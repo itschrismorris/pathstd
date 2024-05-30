@@ -12,7 +12,7 @@ Timer timer;
 //---
 bool Timer::initiate(void)
 {
-  LOGT(u8"Initiating timer.");
+  log.logt(u8"Initiating timer.");
   LARGE_INTEGER ticks;
   if (!QueryPerformanceFrequency(&ticks)) {
     error.last_error_from_win32();
@@ -33,7 +33,7 @@ bool Timer::initiate(void)
 //---
 void Timer::shutdown(void)
 {
-  LOGT(u8"Shutting down timer.");
+  log.logt(u8"Shutting down timer.");
 }
 
 //---

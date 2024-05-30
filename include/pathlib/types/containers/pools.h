@@ -23,7 +23,7 @@ struct Pools
 private:
   //---
   VectorUnsafe<PoolUnsafe<T, POOL_CAPACITY>, POOLS_RESERVE_CAPACITY> pools;
-  u32 count;
+  u64 count;
   
 public:
   //---
@@ -65,6 +65,12 @@ public:
   inline void free(T* object)
   {
     free(object->pool_id);
+  }
+
+  //---
+  inline u64 get_count()
+  {
+    return count;
   }
 
   //---

@@ -1,5 +1,5 @@
 /*
-  Documentation: https://www.path.blog/docs/errors.html
+  Documentation: https://www.path.blog/docs/error.html
 */
 
 #pragma once

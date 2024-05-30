@@ -8,10 +8,6 @@
 #include "pathlib/win32/safe_win32.h"
 #include "pathlib/types/string/long_string_unsafe.h"
 
-//---
-#define LOG(A) ::Pathlib::log.log(A)
-#define LOGT(A) ::Pathlib::log.logt(A)
-
 namespace Pathlib::_Internal {
 
 //---

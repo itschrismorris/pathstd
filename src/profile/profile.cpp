@@ -9,7 +9,7 @@ namespace Pathlib::_Internal {
 //---
 bool Profile::initiate()
 {
-  LOGT(u8"Initiating profiling.");
+  log.logt(u8"Initiating profiling.");
   #ifdef _DEBUG
     mi_option_enable(mi_option_verbose);
   #endif
@@ -19,6 +19,6 @@ bool Profile::initiate()
 //---
 void Profile::shutdown()
 {
-  LOGT(u8"Shutting down profiling.");
+  log.logt(u8"Shutting down profiling.");
 }
 }

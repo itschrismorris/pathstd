@@ -124,5 +124,11 @@ public:
   {
     count = 0;
   }
+
+  //---
+  inline u64 get_count()
+  {
+    return count;
+  }
 };
 }

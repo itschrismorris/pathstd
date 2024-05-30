@@ -123,6 +123,12 @@ public:
   }
 
   //---
+  inline u64 get_count()
+  {
+    return count;
+  }
+
+  //---
   template<typename Callable>
   inline bool iterate(Callable&& function)
   {

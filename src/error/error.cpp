@@ -35,13 +35,13 @@ bool Error::to_log(bool use_color)
   String::LongStringUnsafe<512> string(u8"\n************\n", last_error, u8"\n\n", _buffer, u8"************");
   if (use_color) {
     if  (!console.set_text_attributes(Console::FOREGROUND_RED) ||
-         !LOGT(string.str) ||
+         !log.logt(string.str) ||
          !console.set_text_attributes(Console::FOREGROUND_RED | Console::FOREGROUND_GREEN | Console::FOREGROUND_BLUE)) {
       return false;
     }
     return true;
   } else {
-    return LOGT(string.str);
+    return log.logt(string.str);
   }
 }
 
