@@ -5,8 +5,8 @@ terms of the MIT license. A copy of the license can be found in the file
 "LICENSE" at the root of this distribution.
 -----------------------------------------------------------------------------*/
 #pragma once
-#ifndef MIMALLOC_ATOMIC_H
-#define MIMALLOC_ATOMIC_H
+#ifndef MImalloc_unsafe_ATOMIC_H
+#define MImalloc_unsafe_ATOMIC_H
 
 // --------------------------------------------------------------------------------------------
 // Atomics
@@ -390,4 +390,4 @@ static inline void mi_atomic_yield(void) {
 #endif
 
 
-#endif // __MIMALLOC_ATOMIC_H
+#endif // __MImalloc_unsafe_ATOMIC_H

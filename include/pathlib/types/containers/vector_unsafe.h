@@ -6,7 +6,7 @@
 #include "pathlib/types/types.h"
 #include "pathlib/memory/memcpy.h"
 
-namespace Pathlib::Containers {
+namespace Pathlib {
 
 //---
 template <typename T, 
@@ -22,7 +22,7 @@ struct VectorUnsafe
   VectorUnsafe()
   {
     capacity = RESERVE_CAPACITY;
-    data = (T*)MALLOC(sizeof(T) * RESERVE_CAPACITY);
+    data = (T*)malloc_unsafe(sizeof(T) * RESERVE_CAPACITY);
     clear();
   }
 
@@ -32,7 +32,7 @@ struct VectorUnsafe
     for (u64 c = 0; c < count; ++c) {
       Memory::call_destructor<T>(&data[c]);
     }
-    FREE(data);
+    free_unsafe((void**)&data);
   }
 
   //---
@@ -54,7 +54,7 @@ struct VectorUnsafe
     count += _count;
     if (count > capacity) {
       capacity = count * 1.5;
-      data = (T*)REALLOC(data, sizeof(T) * capacity);
+      data = (T*)realloc_unsafe(data, sizeof(T) * capacity);
     }
     Memory::call_constructor<T>(data + original_count);
     return (data + original_count);
@@ -65,7 +65,7 @@ struct VectorUnsafe
   {
     Memory::call_destructor<T>(&data[index]);
     --count;
-    Memory::memcpy_unsafe(index, data + count, sizeof(T));
+    memcpy_unsafe(index, data + count, sizeof(T));
   }
 
   //---
@@ -78,7 +78,7 @@ struct VectorUnsafe
     T* start = (data + index);
     T* end = (data + count - _count);
     count -= _count;
-    Memory::memcpy_unsafe(start, end, sizeof(T) * _count);
+    memcpy_unsafe(start, end, sizeof(T) * _count);
   }
 
   //---

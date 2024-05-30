@@ -5,10 +5,9 @@
 #pragma once
 #include "pathlib/types/types.h"
 #include "pathlib/error/error.h"
-#include "pathlib/memory/memcpy.h"
 #include "pathlib/memory/malloc_unsafe.h"
 
-namespace Pathlib::Containers {
+namespace Pathlib {
 
 //---
 template <typename T>
@@ -61,7 +60,7 @@ public:
   ~SafePtr() 
   {
     if (allocated_memory && is_valid()) {
-      FREE(ptr);
+      free_unsafe((void**)&ptr);
     }
   }
 
@@ -79,7 +78,7 @@ public:
     } else {
       error.set_last_error(u8"Attempt to access an object through a null SafePtr.");
       error.to_log();
-      error.fatality();
+      error.kill_script();
       return &ptr[0];
     }
   }
@@ -92,7 +91,7 @@ public:
     } else {
       error.set_last_error(u8"Attempt to access a null SafePtr.");
       error.to_log();
-      error.fatality();
+      error.kill_script();
       return ptr[0];
     }
   }
@@ -109,7 +108,7 @@ public:
         error.set_last_error(u8"Out of bounds access to SafePtr.");
       }
       error.to_log();
-      error.fatality();
+      error.kill_script();
       return ptr[0];
     }
   }
@@ -161,7 +160,7 @@ public:
     } else {
       error.set_last_error(u8"Out of bounds pointer arithmetic; pointer must remain at, or after, original address.");
       error.to_log();
-      error.fatality();
+      error.kill_script();
       return SafePtr(nullptr, 0);
     }
   }
@@ -179,7 +178,7 @@ public:
     } else {
       error.set_last_error(u8"Out of bounds pointer arithmetic.");
       error.to_log();
-      error.fatality();
+      error.kill_script();
       return SafePtr(nullptr, 0);
     }
   }

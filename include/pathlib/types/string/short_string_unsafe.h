@@ -7,7 +7,7 @@
 #include "pathlib/types/string/compare.h"
 #include "pathlib/types/string/short_string.h"
 
-namespace Pathlib::String {
+namespace Pathlib {
 
 //---
 template <u64 CAPACITY>
@@ -26,7 +26,7 @@ struct ShortStringUnsafe
   //---
   ShortStringUnsafe(const ShortStringUnsafe& string)
   {
-    Memory::memcpy_unsafe<true, true>(str, string.str, string.size + 1);
+    memcpy_unsafe<true, true>(str, string.str, string.size + 1);
     size = string.size;
   }
 
@@ -52,7 +52,7 @@ struct ShortStringUnsafe
   //---
   inline ShortStringUnsafe& operator =(const ShortStringUnsafe& string)
   {
-    Memory::memcpy_unsafe<true, true>(str, string.str, string.size + 1);
+    memcpy_unsafe<true, true>(str, string.str, string.size + 1);
     size = string.size;
     return *this;
   }
@@ -95,7 +95,7 @@ struct ShortStringUnsafe
   inline ShortStringUnsafe& operator +=(const ShortString<CAPACITY>& arg)
   {
     u64 copy_size = Math::min((CAPACITY - 1) - size, arg.size);
-    Memory::memcpy_unsafe<false, true>(&str[size], arg.str, copy_size);
+    memcpy_unsafe<false, true>(&str[size], arg.str, copy_size);
     size += copy_size;
     return *this;
   }
@@ -104,7 +104,7 @@ struct ShortStringUnsafe
   inline ShortStringUnsafe& operator +=(const ShortStringUnsafe& arg)
   {
     u64 copy_size = Math::min((CAPACITY - 1) - size, arg.size);
-    Memory::memcpy_unsafe<false, true>(&str[size], arg.str, copy_size);
+    memcpy_unsafe<false, true>(&str[size], arg.str, copy_size);
     size += copy_size;
     return *this;
   }
@@ -137,7 +137,7 @@ struct ShortStringUnsafe
                              const ShortString<CAPACITY>& arg)
   {
     u64 copy_size = Math::min((CAPACITY - 1) - string_out.size, arg.size);
-    Memory::memcpy_unsafe<false, true>(&string_out.str[string_out.size], arg.str, copy_size + 1);
+    memcpy_unsafe<false, true>(&string_out.str[string_out.size], arg.str, copy_size + 1);
     string_out.size += copy_size;
   }
 
@@ -146,7 +146,7 @@ struct ShortStringUnsafe
                              const ShortStringUnsafe& arg)
   {
     u64 copy_size = Math::min((CAPACITY - 1) - string_out.size, arg.size);
-    Memory::memcpy_unsafe<false, true>(&string_out.str[string_out.size], arg.str, copy_size + 1);
+    memcpy_unsafe<false, true>(&string_out.str[string_out.size], arg.str, copy_size + 1);
     string_out.size += copy_size;
   }
 
@@ -211,5 +211,5 @@ struct ShortStringUnsafe
 
 //---
 template <typename T> struct _is_short_string : false_type {};
-template <u64 CAPACITY> struct _is_short_string<Pathlib::String::ShortString<CAPACITY>> : true_type {};
-template <u64 CAPACITY> struct _is_short_string<Pathlib::String::ShortStringUnsafe<CAPACITY>> : true_type {};
+template <u64 CAPACITY> struct _is_short_string<Pathlib::ShortString<CAPACITY>> : true_type {};
+template <u64 CAPACITY> struct _is_short_string<Pathlib::ShortStringUnsafe<CAPACITY>> : true_type {};

@@ -7,7 +7,7 @@
 #include "pathlib/types/string/compare.h"
 #include "pathlib/error/error.h"
 
-namespace Pathlib::String {
+namespace Pathlib {
 
 //---
 template <u64 CAPACITY>
@@ -28,7 +28,7 @@ public:
   //---
   ShortString(const ShortString& string)
   {
-    Memory::memcpy_unsafe<true, true>(str, string.str, string.size + 1);
+    memcpy_unsafe<true, true>(str, string.str, string.size + 1);
     size = string.size;
   }
 
@@ -59,7 +59,7 @@ public:
   //---
   inline ShortString& operator =(const ShortString& string)
   {
-    Memory::memcpy_unsafe<true, true>(str, string.str, string.size + 1);
+    memcpy_unsafe<true, true>(str, string.str, string.size + 1);
     size = string.size;
     return *this;
   }
@@ -72,7 +72,7 @@ public:
       if (!arg) {
         error.set_last_error(u8"Attempt to set ShortString to a null pointer.");
         error.to_log();
-        error.fatality();
+        error.kill_script();
         return false;
       }
     }
@@ -88,7 +88,7 @@ public:
     } else {
       error.set_last_error(u8"Attempt to compare ShortString equality with a null pointer.");
       error.to_log();
-      error.fatality();
+      error.kill_script();
       return false;
     }
   }
@@ -116,7 +116,7 @@ public:
   inline ShortString& operator +=(const ShortString& arg)
   {
     u64 copy_size = Math::min((CAPACITY - 1) - size, arg.size);
-    Memory::memcpy_unsafe<false, true>(&str[size], arg.str, copy_size);
+    memcpy_unsafe<false, true>(&str[size], arg.str, copy_size);
     size += copy_size;
     return *this;
   }
@@ -129,7 +129,7 @@ public:
       if (!arg) {
         error.set_last_error(u8"Attempt to append ShortString with a null pointer.");
         error.to_log();
-        error.fatality();
+        error.kill_script();
         return *this;
       }
     }
@@ -157,7 +157,7 @@ public:
                              const ShortString& arg)
   {
     u64 copy_size = Math::min((CAPACITY - 1) - string_out.size, arg.size);
-    Memory::memcpy_unsafe<false, true>(&string_out.str[string_out.size], arg.str, copy_size + 1);
+    memcpy_unsafe<false, true>(&string_out.str[string_out.size], arg.str, copy_size + 1);
     string_out.size += copy_size;
   }
 
@@ -170,7 +170,7 @@ public:
       if (!arg) {
         error.set_last_error(u8"Attempt to append ShortString with a null pointer.");
         error.to_log();
-        error.fatality();
+        error.kill_script();
         return;
       }
     }

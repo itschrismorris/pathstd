@@ -5,10 +5,10 @@ terms of the MIT license. A copy of the license can be found in the file
 "LICENSE" at the root of this distribution.
 -----------------------------------------------------------------------------*/
 #pragma once
-#ifndef MIMALLOC_H
-#define MIMALLOC_H
+#ifndef MImalloc_unsafe_H
+#define MImalloc_unsafe_H
 
-#define MI_MALLOC_VERSION 187   // major + 2 digits minor
+#define MI_malloc_unsafe_VERSION 187   // major + 2 digits minor
 
 // ------------------------------------------------------
 // Compiler specific attributes
@@ -280,7 +280,7 @@ mi_decl_export int   mi_reserve_huge_os_pages_at_ex(size_t pages, int numa_node,
 mi_decl_export int   mi_reserve_os_memory_ex(size_t size, bool commit, bool allow_large, bool exclusive, mi_arena_id_t* arena_id) mi_attr_noexcept;
 mi_decl_export bool  mi_manage_os_memory_ex(void* start, size_t size, bool is_committed, bool is_large, bool is_zero, int numa_node, bool exclusive, mi_arena_id_t* arena_id) mi_attr_noexcept;
 
-#if MI_MALLOC_VERSION >= 182
+#if MI_malloc_unsafe_VERSION >= 182
 // Create a heap that only allocates in the specified arena
 mi_decl_nodiscard mi_decl_export mi_heap_t* mi_heap_new_in_arena(mi_arena_id_t arena_id);
 #endif

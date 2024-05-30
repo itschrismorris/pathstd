@@ -5,8 +5,8 @@ terms of the MIT license. A copy of the license can be found in the file
 "LICENSE" at the root of this distribution.
 -----------------------------------------------------------------------------*/
 #pragma once
-#ifndef MIMALLOC_TRACK_H
-#define MIMALLOC_TRACK_H
+#ifndef MImalloc_unsafe_TRACK_H
+#define MImalloc_unsafe_TRACK_H
 
 /* ------------------------------------------------------------------------------------------------------
 Track memory ranges with macros for tools like Valgrind address sanitizer, or other memory checkers.
@@ -53,7 +53,7 @@ defined, undefined, or not accessible at all:
 #include <valgrind/valgrind.h>
 #include <valgrind/memcheck.h>
 
-#define mi_track_malloc_size(p,reqsize,size,zero) VALGRIND_MALLOCLIKE_BLOCK(p,size,MI_PADDING_SIZE /*red zone*/,zero)
+#define mi_track_malloc_size(p,reqsize,size,zero) VALGRIND_malloc_unsafeLIKE_BLOCK(p,size,MI_PADDING_SIZE /*red zone*/,zero)
 #define mi_track_free_size(p,_size)               VALGRIND_FREELIKE_BLOCK(p,MI_PADDING_SIZE /*red zone*/)
 #define mi_track_resize(p,oldsize,newsize)        VALGRIND_RESIZEINPLACE_BLOCK(p,oldsize,newsize,MI_PADDING_SIZE /*red zone*/)
 #define mi_track_mem_defined(p,size)              VALGRIND_MAKE_MEM_DEFINED(p,size)

@@ -6,7 +6,7 @@
 #include "pathlib/types/types.h"
 #include "pathlib/memory/memcpy.h"
 
-namespace Pathlib::Containers {
+namespace Pathlib {
 
 //---
 template <typename T, 
@@ -54,7 +54,7 @@ public:
     } else {
       error.set_last_error(u8"Out of bounds access to Array.");
       error.to_log();
-      error.fatality();
+      error.kill_script();
       return data[0];
     }
   }
@@ -67,7 +67,7 @@ public:
     } else {
       error.set_last_error(u8"Out of bounds access to Array.");
       error.to_log();
-      error.fatality();
+      error.kill_script();
       return data[0];
     }
   }
@@ -83,7 +83,7 @@ public:
     } else {
       error.set_last_error(u8"Failed to emplace_back() Array; it is already at capacity.");
       error.to_log();
-      error.fatality();
+      error.kill_script();
       return nullptr;
     }
   }
@@ -93,11 +93,11 @@ public:
   {
     if (EXPECT(index < count)) {
       --count;
-      Memory::memcpy_unsafe(data + index, data + count, sizeof(T));
+      memcpy_unsafe(data + index, data + count, sizeof(T));
     } else {
       error.set_last_error(u8"Failed to remove() from Array; invalid index.");
       error.to_log();
-      error.fatality();
+      error.kill_script();
     }
   }
 
@@ -110,11 +110,11 @@ public:
       T* start = (data + index);
       T* end = (data + count - _count);
       count -= _count;
-      Memory::memcpy_unsafe(start, end, sizeof(T) * _count);
+      memcpy_unsafe(start, end, sizeof(T) * _count);
     } else {
       error.set_last_error(u8"Failed to remove() from Array; invalid region.");
       error.to_log();
-      error.fatality();
+      error.kill_script();
     }
   }
 

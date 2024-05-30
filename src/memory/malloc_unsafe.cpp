@@ -1,7 +1,7 @@
 #include "pathlib/memory/malloc_unsafe.h"
 #include "../src/third_party/mimalloc/mimalloc.h"
 
-namespace Pathlib::Memory {
+namespace Pathlib {
 
 //---
 void* malloc_unsafe(u64 size,

@@ -6,7 +6,7 @@
 #include "pathlib/types/types.h"
 #include "pathlib/memory/memcpy.h"
 
-namespace Pathlib::Containers {
+namespace Pathlib {
 
 //---
 template <typename T, 
@@ -24,7 +24,7 @@ public:
   Vector()
   {
     capacity = RESERVE_CAPACITY;
-    data = (T*)MALLOC(sizeof(T) * RESERVE_CAPACITY);
+    data = (T*)malloc_unsafe(sizeof(T) * RESERVE_CAPACITY);
     clear();
   }
 
@@ -35,7 +35,7 @@ public:
       for (u64 c = 0; c < count; ++c) {
         Memory::call_destructor<T>(&data[c]);
       }
-      FREE(data);
+      free_unsafe((void**)&data);
     }
   }
 
@@ -47,7 +47,7 @@ public:
     } else {
       error.set_last_error(u8"Out of bounds access to Vector.");
       error.to_log();
-      error.fatality();
+      error.kill_script();
       return data[0];
     }
   }
@@ -60,7 +60,7 @@ public:
     } else {
       error.set_last_error(u8"Out of bounds access to Vector.");
       error.to_log();
-      error.fatality();
+      error.kill_script();
       return data[0];
     }
   }
@@ -73,14 +73,14 @@ public:
       count += _count;
       if (count > capacity) {
         capacity = count * 1.5;
-        data = (T*)REALLOC(data, sizeof(T) * capacity);
+        data = (T*)realloc_unsafe(data, sizeof(T) * capacity);
       }
       Memory::call_constructor<T>(data + original_count);
       return SafePtr<T>(data + original_count, 1);
     } else {
       error.set_last_error(u8"Failed to emplace_back() Vector; it is already at capacity.");
       error.to_log();
-      error.fatality();
+      error.kill_script();
       return SafePtr<T>(nullptr, 0);
     }
   }
@@ -91,11 +91,11 @@ public:
     if (EXPECT(index < count)) {
       Memory::call_destructor<T>(&data[index]);
       --count;
-      Memory::memcpy_unsafe(index, data + count, sizeof(T));
+      memcpy_unsafe(index, data + count, sizeof(T));
     } else {
       error.set_last_error(u8"Failed to remove() from Vector; index is out of bounds.");
       error.to_log();
-      error.fatality();
+      error.kill_script();
     }
   }
 
@@ -111,11 +111,11 @@ public:
       T* start = (data + index);
       T* end = (data + count - _count);
       count -= _count;
-      Memory::memcpy_unsafe(start, end, sizeof(T) * _count);
+      memcpy_unsafe(start, end, sizeof(T) * _count);
     } else {
       error.set_last_error(u8"Failed to remove() from Vector; removal is out of bounds.");
       error.to_log();
-      error.fatality();
+      error.kill_script();
     }
   }
 

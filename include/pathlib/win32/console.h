@@ -17,19 +17,7 @@ namespace Pathlib::_Internal {
 struct Console
 {
   //---
-  static constexpr u16 FOREGROUND_BLUE = 0x0001;
-  static constexpr u16 FOREGROUND_GREEN = 0x0002;
-  static constexpr u16 FOREGROUND_RED = 0x0004;
-  static constexpr u16 FOREGROUND_INTENSITY = 0x0008;
-  static constexpr u16 FOREGROUND_WHITE = (FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
-  static constexpr u16 BACKGROUND_BLUE = 0x0010;
-  static constexpr u16 BACKGROUND_GREEN = 0x0020;
-  static constexpr u16 BACKGROUND_RED = 0x0040;
-  static constexpr u16 BACKGROUND_INTENSITY = 0x0080;
-  static constexpr u16 BACKGROUND_WHITE = (BACKGROUND_RED | BACKGROUND_GREEN | BACKGROUND_BLUE);
-
-  //---
-  String::LongStringUnsafe<256> _buffer;
+  LongStringUnsafe<256> _buffer;
 
   //---
   inline bool set_text_attributes(u16 attributes)
@@ -39,7 +27,7 @@ struct Console
 
   //---
   template <u64 CAPACITY>
-  inline bool write(const String::ShortString<CAPACITY>& string)
+  inline bool write(const ShortString<CAPACITY>& string)
   {
     return Win32::write_console(string.str, string.size) && 
            Win32::write_console(u8"\n", 1);
@@ -47,14 +35,14 @@ struct Console
 
   //---
   template <u64 CAPACITY>
-  inline bool write(const String::ShortStringUnsafe<CAPACITY>& string)
+  inline bool write(const ShortStringUnsafe<CAPACITY>& string)
   {
     return Win32::write_console(string.str, string.size) && Win32::write_console(u8"\n", 1);
   }
 
   //---
   template <u64 RESERVE_CAPACITY>
-  inline bool write(const String::LongString<RESERVE_CAPACITY>& string)
+  inline bool write(const LongString<RESERVE_CAPACITY>& string)
   {
     return Win32::write_console(string.str, string.size) &&
            Win32::write_console(u8"\n", 1);
@@ -62,7 +50,7 @@ struct Console
 
   //---
   template <u64 RESERVE_CAPACITY>
-  inline bool write(const String::LongStringUnsafe<RESERVE_CAPACITY>& string)
+  inline bool write(const LongStringUnsafe<RESERVE_CAPACITY>& string)
   {
     return Win32::write_console(string.str, string.size) && Win32::write_console(u8"\n", 1);
   }

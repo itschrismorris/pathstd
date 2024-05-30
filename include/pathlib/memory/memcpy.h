@@ -9,7 +9,7 @@
 #include "pathlib/math/simd_math.h"
 #include "pathlib/types/containers/safe_ptr.h"
 
-namespace Pathlib::Memory {
+namespace Pathlib {
 namespace _Internal {
 
 //---
@@ -316,7 +316,7 @@ static inline void memcpy_unsafe(void* dst,
     _Internal::memcpy_256(dst, src, size);
     return;
   }
-  const I8* src_v = (const I8*)src;
+  I8* src_v = (I8*)src;
   I8* dst_v = (I8*)dst;
   if (!(DST_ALIGNED_32 || Math::is_aligned<32>(dst))) {
     u64 padding = (32 - (((u64)dst) & 31)) & 31;
@@ -326,7 +326,7 @@ static inline void memcpy_unsafe(void* dst,
     size -= padding;
   }
   u32 loop_count = (size >> 6);
-  if (size <= MEGABYTE) {
+  if (size <= Memory::MEGABYTE) {
     if (SRC_ALIGNED_32 || Math::is_aligned<32>(src_v)) {
       for (u32 r = 0; r < loop_count; ++r) {
         I8 m[2] = { I8_LOAD(src_v), I8_LOAD(src_v + 1) };
@@ -372,11 +372,11 @@ static inline void memcpy_unsafe(void* dst,
 }
 
 //---
-template <bool DST_ALIGNED_32 = false,
-          bool SRC_ALIGNED_32 = false,
-          typename T>
-static inline void memcpy(Containers::SafePtr<T> dst,
-                          Containers::SafePtr<T> src,
+template <typename T,
+          bool DST_ALIGNED_32 = false,
+          bool SRC_ALIGNED_32 = false>
+static inline void memcpy(SafePtr<T> dst,
+                          SafePtr<T> src,
                           u64 count)
 {
   T* dst_ptr = dst;
@@ -389,7 +389,7 @@ static inline void memcpy(Containers::SafePtr<T> dst,
   } else {
     error.set_last_error(u8"Out of bounds memcpy().");
     error.to_log();
-    error.fatality();
+    error.kill_script();
   }
 }
 }

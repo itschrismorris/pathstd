@@ -6,7 +6,7 @@
 #include "pathlib/types/types.h"
 #include "pathlib/error/error.h"
 
-namespace Pathlib::Containers {
+namespace Pathlib {
 
 /**/
 template <typename T, 

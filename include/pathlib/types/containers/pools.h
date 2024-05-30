@@ -6,7 +6,7 @@
 #include "pathlib/types/types.h"
 #include "pathlib/error/error.h"
 
-namespace Pathlib::Containers {
+namespace Pathlib {
 
 /**/
 template <typename T, 
@@ -41,7 +41,7 @@ public:
   }
 
   //---
-  inline Containers::SafePtr<T> get_vacant()
+  inline SafePtr<T> get_vacant()
   {
     for (u32 p = 0; p < pools.count; ++p) {
       if (pools[p].count < pools[p].capacity()) {
@@ -51,7 +51,7 @@ public:
     }
     pools.emplace_back(1);
     ++count;
-    return Containers::SafePtr<T>(pools[pools.count - 1].get_vacant(pools.count - 1));
+    return SafePtr<T>(pools[pools.count - 1].get_vacant(pools.count - 1));
   }
   
   //---

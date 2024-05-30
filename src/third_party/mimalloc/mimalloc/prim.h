@@ -5,8 +5,8 @@ terms of the MIT license. A copy of the license can be found in the file
 "LICENSE" at the root of this distribution.
 -----------------------------------------------------------------------------*/
 #pragma once
-#ifndef MIMALLOC_PRIM_H
-#define MIMALLOC_PRIM_H
+#ifndef MImalloc_unsafe_PRIM_H
+#define MImalloc_unsafe_PRIM_H
 
 
 // --------------------------------------------------------------------------
@@ -296,7 +296,7 @@ We try to circumvent this in an efficient way:
 
 static inline mi_heap_t* mi_prim_get_default_heap(void);
 
-#if defined(MI_MALLOC_OVERRIDE)
+#if defined(MI_malloc_unsafe_OVERRIDE)
 #if defined(__APPLE__) // macOS
   #define MI_TLS_SLOT               89  // seems unused?
   // other possible unused ones are 9, 29, __PTK_FRAMEWORK_JAVASCRIPTCORE_KEY4 (94), __PTK_FRAMEWORK_GC_KEY9 (112) and __PTK_FRAMEWORK_OLDGC_KEY9 (89)
@@ -370,4 +370,4 @@ static inline mi_heap_t* mi_prim_get_default_heap(void) {
 
 
 
-#endif  // MIMALLOC_PRIM_H
+#endif  // MImalloc_unsafe_PRIM_H

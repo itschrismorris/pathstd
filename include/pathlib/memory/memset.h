@@ -6,8 +6,10 @@
 #include "pathlib/types/types.h"
 #include "pathlib/math/math.h"
 #include "pathlib/math/simd_math.h"
+#include "pathlib/memory/memory.h"
+#include "pathlib/types/containers/safe_ptr.h"
 
-namespace Pathlib::Memory {
+namespace Pathlib {
 namespace _Internal {
 
 //---
@@ -337,7 +339,7 @@ static inline void memset_unsafe(void* dst,
     dst_v = (I8*)((u8*)dst + padding);
     size -= padding;
   }
-  if (size <= (MEGABYTE << 4)) {
+  if (size <= (Memory::MEGABYTE << 4)) {
     u32 loop_count = (size >> 6);
     for (u32 r = 0; r < loop_count; ++r) {
       I8_STORE(dst_v, v);
@@ -366,10 +368,10 @@ static inline void memset_unsafe(void* dst,
 }
 
 //---
-template <bool DST_ALIGNED_32 = false,
-          bool SRC_ALIGNED_32 = false,
-          typename T>
-static inline void memset(Containers::SafePtr<T> dst,
+template <typename T,
+          bool DST_ALIGNED_32 = false,
+          bool SRC_ALIGNED_32 = false>
+static inline void memset(SafePtr<T> dst,
                           const u8 value,
                           u64 count)
 {
@@ -380,7 +382,7 @@ static inline void memset(Containers::SafePtr<T> dst,
   } else {
     error.set_last_error(u8"Out of bounds memset().");
     error.to_log();
-    error.fatality();
+    error.kill_script();
   }
 }
 }

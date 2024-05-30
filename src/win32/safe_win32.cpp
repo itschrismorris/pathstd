@@ -41,7 +41,7 @@ bool get_callstack(utf8* string_out,
       error.to_log();
       return false;
     }
-    Memory::memcpy_unsafe(string_out + string_size, symbol->Name, Math::min((u64)symbol->NameLen, string_capacity - 2 - string_size));
+    memcpy_unsafe(string_out + string_size, symbol->Name, Math::min((u64)symbol->NameLen, string_capacity - 2 - string_size));
     string_size += symbol->NameLen + 1;
     string_out[string_size - 1] = u8'\n';
     string_out[string_size] = u8'\0';

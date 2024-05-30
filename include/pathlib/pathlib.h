@@ -33,8 +33,8 @@
 #include "pathlib/profile/profile.h"
 #include "pathlib/timer/timer.h"
 
+using namespace Pathlib;
 using namespace Pathlib::Memory;
-using namespace Pathlib::Containers;
 using namespace Pathlib::String;
 
 namespace Pathlib {

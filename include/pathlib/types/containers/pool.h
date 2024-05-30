@@ -7,7 +7,7 @@
 #include "pathlib/error/error.h"
 #include "pathlib/types/containers/pool_unsafe.h"
 
-namespace Pathlib::Containers {
+namespace Pathlib {
 
 //---
 template <typename T, 
@@ -34,8 +34,8 @@ public:
     count = 0;
     free_count = 1;
     free_head = 0;
-    data = (T*)MALLOC(sizeof(T) * CAPACITY);
-    Memory::memset_unsafe(data, 0xFF, sizeof(T) * CAPACITY);
+    data = (T*)malloc_unsafe(sizeof(T) * CAPACITY);
+    memset_unsafe(data, 0xFF, sizeof(T) * CAPACITY);
   }
 
   //---
@@ -47,7 +47,7 @@ public:
         return true;
       });
     if (data) {
-      FREE(data);
+      free_unsafe((void**)&data);
     }
   }
 
@@ -64,7 +64,7 @@ public:
   }
 
   //---
-  inline Containers::SafePtr<T> get_vacant(u32 pools_id = 0)
+  inline SafePtr<T> get_vacant(u32 pools_id = 0)
   {
     if (count >= CAPACITY) {
       error.set_last_error(u8"Failed to alloc() from pool; it is already at capacity.");
@@ -81,7 +81,7 @@ public:
     }
     Memory::call_constructor<T>(new_object);
     new_object->pool_id = (new_object - data) | (pools_id << 16);
-    return Containers::SafePtr<T>(new_object);
+    return SafePtr<T>(new_object);
   }
 
   //---
@@ -97,12 +97,12 @@ public:
     } else {
       error.set_last_error(u8"Attempt to free an invalid pool_id from Pool.");
       error.to_log();
-      error.fatality();
+      error.kill_script();
     }
   }
 
   //---
-  inline void free(Containers::SafePtr<T>& object)
+  inline void free(SafePtr<T>& object)
   {
     if (EXPECT(object.is_valid())) {
       free(object->pool_id);
@@ -110,7 +110,7 @@ public:
     } else {
       error.set_last_error(u8"Attempt to free a null SafePtr from Pool.");
       error.to_log();
-      error.fatality();
+      error.kill_script();
     }
   }
 

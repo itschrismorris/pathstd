@@ -21,6 +21,20 @@ struct SystemTime
 };
 
 namespace Pathlib::Win32 {
+namespace ConsoleColors {
+
+//---
+static constexpr u16 FOREGROUND_BLUE = 0x0001;
+static constexpr u16 FOREGROUND_GREEN = 0x0002;
+static constexpr u16 FOREGROUND_RED = 0x0004;
+static constexpr u16 FOREGROUND_INTENSITY = 0x0008;
+static constexpr u16 FOREGROUND_WHITE = (FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
+static constexpr u16 BACKGROUND_BLUE = 0x0010;
+static constexpr u16 BACKGROUND_GREEN = 0x0020;
+static constexpr u16 BACKGROUND_RED = 0x0040;
+static constexpr u16 BACKGROUND_INTENSITY = 0x0080;
+static constexpr u16 BACKGROUND_WHITE = (BACKGROUND_RED | BACKGROUND_GREEN | BACKGROUND_BLUE);
+}
 
 //---
 static constexpr u32 MAX_PATH_LENGTH = 260;

@@ -13,7 +13,7 @@ namespace Pathlib::_Internal {
 void Error::set_last_error(const utf8* string)
 {
   u64 size = Math::min(MAX_ERROR_LENGTH - 1, String::size_of(string));
-  Memory::memcpy_unsafe(last_error, string, size);
+  memcpy_unsafe(last_error, string, size);
   last_error[size] = u8'\0';
 }
 
@@ -32,11 +32,11 @@ bool Error::to_log(bool use_color)
   if (!Win32::get_callstack(_buffer, MAX_ERROR_LENGTH)) {
     return false;
   }
-  String::LongStringUnsafe<512> string(u8"\n************\n", last_error, u8"\n\n", _buffer, u8"************");
+  LongStringUnsafe<512> string(u8"\n************\n", last_error, u8"\n\n", _buffer, u8"************");
   if (use_color) {
-    if  (!console.set_text_attributes(Console::FOREGROUND_RED) ||
+    if  (!console.set_text_attributes(Win32::ConsoleColors::FOREGROUND_RED) ||
          !log.logt(string.str) ||
-         !console.set_text_attributes(Console::FOREGROUND_RED | Console::FOREGROUND_GREEN | Console::FOREGROUND_BLUE)) {
+         !console.set_text_attributes(Win32::ConsoleColors::FOREGROUND_RED | Win32::ConsoleColors::FOREGROUND_GREEN | Win32::ConsoleColors::FOREGROUND_BLUE)) {
       return false;
     }
     return true;
@@ -52,7 +52,7 @@ bool Error::to_popup()
 }
 
 //
-void Error::fatality()
+void Error::kill_script()
 {
   if (Memory::_Internal::scripting_mode) {
     ExitProcess(0);

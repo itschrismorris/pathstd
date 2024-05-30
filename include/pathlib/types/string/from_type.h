@@ -46,10 +46,10 @@ static inline utf8* from_number(T value,
       u64 const old = v;
       output -= 2;
       v /= 100;
-      Memory::memcpy_unsafe(output, &two_digits[old - (v * 100)], sizeof(u16));
+      memcpy_unsafe(output, &two_digits[old - (v * 100)], sizeof(u16));
     }
     output -= 2;
-    Memory::memcpy_unsafe(output, &two_digits[v], sizeof(u16));
+    memcpy_unsafe(output, &two_digits[v], sizeof(u16));
     bool is_single_digit = (v < 10);
     output += is_single_digit;
     if (value < 0) {
@@ -94,7 +94,7 @@ static inline utf8* from_number(T value,
     utf8* fraction_string = fractional_start;
     u64 fraction_size;
     fraction_string = from_number(fractional_number, fraction_string, &fraction_size);
-    Memory::memcpy_unsafe(fractional_start, fraction_string, sizeof(utf8) * fraction_size);
+    memcpy_unsafe(fractional_start, fraction_string, sizeof(utf8) * fraction_size);
     if (size_out) {
       *size_out = whole_number_size + 1 + 6;
     }
@@ -107,7 +107,7 @@ static inline utf8* from_number(T value,
 #define __PATHLIB_DECORATE_CLIP(DECORATE, DECORATE_SIZE) \
   { \
     u64 copy_size = Math::min(string_capacity - 1 - size_added, DECORATE_SIZE); \
-    Memory::memcpy_unsafe(&string[*string_size + size_added], &decorate[DECORATE], copy_size); \
+    memcpy_unsafe(&string[*string_size + size_added], &decorate[DECORATE], copy_size); \
     size_added += copy_size; \
   }
 
@@ -115,11 +115,11 @@ static inline utf8* from_number(T value,
 #define __PATHLIB_DECORATE_NUMBER_CLIP(ARG, DECORATE, DECORATE_SIZE) \
   { \
     u64 copy_size = Math::min(string_capacity - 1 - size_added, DECORATE_SIZE); \
-    Memory::memcpy_unsafe(&string[*string_size + size_added], &decorate[DECORATE], copy_size); \
+    memcpy_unsafe(&string[*string_size + size_added], &decorate[DECORATE], copy_size); \
     size_added += copy_size; \
     utf8* buffer_str = from_number(ARG, buffer, &conversion_size); \
     copy_size = Math::min(string_capacity - 1 - size_added, conversion_size); \
-    Memory::memcpy_unsafe(&string[*string_size + size_added], buffer_str, copy_size); \
+    memcpy_unsafe(&string[*string_size + size_added], buffer_str, copy_size); \
     size_added += copy_size; \
   }
 
@@ -129,9 +129,9 @@ static inline utf8* from_number(T value,
     u64 new_size = *string_size + DECORATE_SIZE; \
     if (new_size > *string_capacity) { \
       *string_capacity = new_size * 1.5; \
-      *string = (utf8*)REALLOC(*string, *string_capacity + 1); \
+      *string = (utf8*)realloc_unsafe(*string, *string_capacity + 1); \
     } \
-    Memory::memcpy_unsafe(&(*string)[*string_size], &decorate[DECORATE], DECORATE_SIZE); \
+    memcpy_unsafe(&(*string)[*string_size], &decorate[DECORATE], DECORATE_SIZE); \
     *string_size = new_size; \
   }
 
@@ -142,10 +142,10 @@ static inline utf8* from_number(T value,
     u64 new_size = *string_size + DECORATE_SIZE + conversion_size; \
     if (new_size > *string_capacity) { \
       *string_capacity = new_size * 1.5; \
-      *string = (utf8*)REALLOC(*string, *string_capacity + 1); \
+      *string = (utf8*)realloc_unsafe(*string, *string_capacity + 1); \
     } \
-    Memory::memcpy_unsafe(&(*string)[*string_size], &decorate[DECORATE], DECORATE_SIZE); \
-    Memory::memcpy_unsafe(&(*string)[*string_size + DECORATE_SIZE], buffer_str, conversion_size); \
+    memcpy_unsafe(&(*string)[*string_size], &decorate[DECORATE], DECORATE_SIZE); \
+    memcpy_unsafe(&(*string)[*string_size + DECORATE_SIZE], buffer_str, conversion_size); \
     *string_size = new_size; \
   }
 
@@ -166,7 +166,7 @@ static inline void from_type_clip(const T arg,
     }
   } else if constexpr (SAME_TYPE(T, const utf8*) || SAME_TYPE(T, utf8*)) {
     u64 copy_size = Math::min(string_capacity - *string_size - 1, String::size_of(arg));
-    Memory::memcpy_unsafe(&string[*string_size], arg, copy_size);
+    memcpy_unsafe(&string[*string_size], arg, copy_size);
     *string_size += copy_size;
     string[*string_size] = u8'\0';
   } else if constexpr (IS_INTEGRAL(T) || IS_FLOAT(T)) {
@@ -174,7 +174,7 @@ static inline void from_type_clip(const T arg,
     u64 conversion_size;
     utf8* buffer_str = from_number(arg, buffer, &conversion_size);
     u64 copy_size = Math::min(string_capacity - 1, conversion_size);
-    Memory::memcpy_unsafe(&string[*string_size], buffer_str, copy_size);
+    memcpy_unsafe(&string[*string_size], buffer_str, copy_size);
     *string_size += copy_size;
     string[*string_size] = u8'\0';
   } else if constexpr (IS_VEC2(T))  {
@@ -245,7 +245,7 @@ static inline void from_type_grow(const T arg,
     u64 new_size = *string_size + 1;
     if (new_size > *string_capacity) {
       *string_capacity = new_size * 1.5;
-      *string = (utf8*)REALLOC(*string, *string_capacity + 1);
+      *string = (utf8*)realloc_unsafe(*string, *string_capacity + 1);
     }
     (*string)[*string_size] = arg;
     (*string)[new_size] = u8'\0';
@@ -255,9 +255,9 @@ static inline void from_type_grow(const T arg,
     u64 new_size = *string_size + arg_size;
     if (new_size > *string_capacity) {
       *string_capacity = new_size * 1.5;
-      *string = (utf8*)REALLOC(*string, *string_capacity + 1);
+      *string = (utf8*)realloc_unsafe(*string, *string_capacity + 1);
     }
-    Memory::memcpy_unsafe(&(*string)[*string_size], arg, arg_size);
+    memcpy_unsafe(&(*string)[*string_size], arg, arg_size);
     (*string)[new_size] = u8'\0';
     *string_size = new_size;
   } else if constexpr (IS_INTEGRAL(T) || IS_FLOAT(T)) {
@@ -267,9 +267,9 @@ static inline void from_type_grow(const T arg,
     u64 new_size = *string_size + conversion_size;
     if (new_size >= *string_capacity) {
       *string_capacity = new_size * 1.5;
-      *string = (utf8*)REALLOC(*string, *string_capacity + 1);
+      *string = (utf8*)realloc_unsafe(*string, *string_capacity + 1);
     }
-    Memory::memcpy_unsafe(&(*string)[*string_size], buffer_str, conversion_size);
+    memcpy_unsafe(&(*string)[*string_size], buffer_str, conversion_size);
     (*string)[new_size] = u8'\0';
     *string_size = new_size;
   } else if constexpr (IS_VEC2(T))  {

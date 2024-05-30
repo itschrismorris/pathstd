@@ -9,7 +9,7 @@
 //---
 CHECK_HAS_MEMBER(has_pool_id, pool_id);
 
-namespace Pathlib::Containers {
+namespace Pathlib {
 
 //---
 template <typename T, 
@@ -34,8 +34,8 @@ struct PoolUnsafe
     count = 0;
     free_count = 1;
     free_head = 0;
-    data = (T*)MALLOC(sizeof(T) * CAPACITY);
-    Memory::memset_unsafe(data, 0xFF, sizeof(T) * CAPACITY);
+    data = (T*)malloc_unsafe(sizeof(T) * CAPACITY);
+    memset_unsafe(data, 0xFF, sizeof(T) * CAPACITY);
   }
 
   //---
@@ -47,7 +47,7 @@ struct PoolUnsafe
         return true;
       });
     if (data) {
-      FREE(data);
+      free_unsafe((void**)&data);
     }
   }
 

@@ -6,7 +6,7 @@
 #include "pathlib/types/types.h"
 #include "pathlib/memory/memcpy.h"
 
-namespace Pathlib::Containers {
+namespace Pathlib {
 
 //---
 template <typename T, 
@@ -70,7 +70,7 @@ struct ArrayUnsafe
   inline void remove(u64 index)
   {
     --count;
-    Memory::memcpy_unsafe(index, data + count, sizeof(T));
+    memcpy_unsafe(index, data + count, sizeof(T));
   }
 
   //---
@@ -80,7 +80,7 @@ struct ArrayUnsafe
     T* start = (data + index);
     T* end = (data + count - _count);
     count -= _count;
-    Memory::memcpy_unsafe(start, end, sizeof(T) * _count);
+    memcpy_unsafe(start, end, sizeof(T) * _count);
   }
 
   //---

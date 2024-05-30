@@ -8,7 +8,7 @@
 #include "pathlib/types/string/size_of.h"
 #include "pathlib/types/string/long_string_unsafe.h"
 
-namespace Pathlib::Containers {
+namespace Pathlib {
 
 //---
 template <typename K, 
@@ -33,17 +33,17 @@ struct HashmapUnsafe
   u32 max_probe_length;
   u32* slot_kv_index;
   u32* slot_distance_digest;
-  Containers::VectorUnsafe<K, RESERVE_CAPACITY> keys;
-  Containers::VectorUnsafe<V, RESERVE_CAPACITY> values;
-  Containers::VectorUnsafe<u32, RESERVE_CAPACITY> kv_slot_lookup;
+  VectorUnsafe<K, RESERVE_CAPACITY> keys;
+  VectorUnsafe<V, RESERVE_CAPACITY> values;
+  VectorUnsafe<u32, RESERVE_CAPACITY> kv_slot_lookup;
 
   //---
   HashmapUnsafe()
   {
     capacity = RESERVE_CAPACITY;
     max_probe_length = 1 + (Math::log2(capacity) >> 2);
-    slot_kv_index = (u32*)MALLOC(sizeof(u32) * capacity);
-    slot_distance_digest = (u32*)MALLOC(sizeof(u32) * capacity);
+    slot_kv_index = (u32*)malloc_unsafe(sizeof(u32) * capacity);
+    slot_distance_digest = (u32*)malloc_unsafe(sizeof(u32) * capacity);
     I8 empty_slot = I8_SET1(EMPTY_SLOT);
     for (u32 r = 0; r < (capacity >> 3); ++r) {
       I8_STORE(&((I8*)slot_distance_digest)[r], empty_slot);
@@ -54,10 +54,10 @@ struct HashmapUnsafe
   ~HashmapUnsafe()
   {
     if (slot_kv_index) {
-      FREE(slot_kv_index);
+      free_unsafe((void**)&slot_kv_index);
     }
     if (slot_distance_digest) {
-      FREE(slot_distance_digest);
+      free_unsafe((void**)&slot_distance_digest);
     }
   }
   
@@ -72,7 +72,7 @@ struct HashmapUnsafe
     } else if constexpr (IS_LONG_STRING(T)) {
       return key.hash();
     } else if constexpr (SAME_TYPE(T, const utf8*)) {
-      return String::LongStringUnsafe<64>::hash(key);
+      return LongStringUnsafe<64>::hash(key);
     } else {
       static_assert(false, "Unsupported type used for hashmap key.");
     }
@@ -217,8 +217,8 @@ struct HashmapUnsafe
     console.write(load_factor());
     capacity <<= 1;
     max_probe_length = 1 + (Math::log2(capacity) >> 2);
-    slot_kv_index = (u32*)REALLOC(slot_kv_index, sizeof(u32) * capacity);
-    slot_distance_digest = (u32*)REALLOC(slot_distance_digest, sizeof(u32) * capacity);
+    slot_kv_index = (u32*)realloc_unsafe(slot_kv_index, sizeof(u32) * capacity);
+    slot_distance_digest = (u32*)realloc_unsafe(slot_distance_digest, sizeof(u32) * capacity);
     I8 empty_slot = I8_SET1(EMPTY_SLOT);
     for (u32 r = 0; r < (capacity >> 3); ++r) {
       I8_STORE(&((I8*)slot_distance_digest)[r], empty_slot);

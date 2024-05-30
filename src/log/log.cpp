@@ -17,10 +17,10 @@ bool Log::initiate(const utf8* log_path)
       if ((file == INVALID_HANDLE_VALUE) || (file == nullptr)) {
         file = nullptr;
         error.last_error_from_win32();
-        console.set_text_attributes(Console::FOREGROUND_RED);
+        console.set_text_attributes(Win32::ConsoleColors::FOREGROUND_RED);
         console.write(u8"** Failed to create log file.");
         console.write(error.last_error);
-        console.set_text_attributes(Console::FOREGROUND_WHITE);
+        console.set_text_attributes(Win32::ConsoleColors::FOREGROUND_WHITE);
         return false;
       }
     } else {
