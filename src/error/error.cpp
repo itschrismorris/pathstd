@@ -34,9 +34,9 @@ bool Error::to_log(bool use_color)
   }
   LongStringUnsafe<512> string(u8"\n************\n", last_error, u8"\n\n", _buffer, u8"************");
   if (use_color) {
-    if  (!console.set_text_attributes(Win32::ConsoleColors::FOREGROUND_RED) ||
+    if  (!console.set_text_attributes(Win32::ConsoleColors::RED) ||
          !log.logt(string.str) ||
-         !console.set_text_attributes(Win32::ConsoleColors::FOREGROUND_WHITE)) {
+         !console.set_text_attributes(Win32::ConsoleColors::WHITE)) {
       return false;
     }
     return true;

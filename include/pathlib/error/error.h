@@ -8,8 +8,8 @@
 namespace Pathlib::_Internal {
 
 //---
-struct Error {
-
+struct Error 
+{
   //---
   static constexpr u64 MAX_ERROR_LENGTH = 512;
 
