@@ -36,7 +36,7 @@ bool Error::to_log(bool use_color)
   if (use_color) {
     if  (!console.set_text_attributes(Win32::ConsoleColors::FOREGROUND_RED) ||
          !log.logt(string.str) ||
-         !console.set_text_attributes(Win32::ConsoleColors::FOREGROUND_RED | Win32::ConsoleColors::FOREGROUND_GREEN | Win32::ConsoleColors::FOREGROUND_BLUE)) {
+         !console.set_text_attributes(Win32::ConsoleColors::FOREGROUND_WHITE)) {
       return false;
     }
     return true;

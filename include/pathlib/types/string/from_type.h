@@ -173,7 +173,7 @@ static inline void from_type_clip(const T arg,
     utf8 buffer[32];
     u64 conversion_size;
     utf8* buffer_str = from_number(arg, buffer, &conversion_size);
-    u64 copy_size = Math::min(string_capacity - 1, conversion_size);
+    u64 copy_size = Math::min(string_capacity - *string_size - 1, conversion_size);
     memcpy_unsafe(&string[*string_size], buffer_str, copy_size);
     *string_size += copy_size;
     string[*string_size] = u8'\0';
