@@ -70,7 +70,7 @@ struct ArrayUnsafe
   inline void remove(u64 index)
   {
     --count;
-    memcpy_unsafe(index, data + count, sizeof(T));
+    memcpy_unsafe(data + index, data + count, sizeof(T));
   }
 
   //---

@@ -27,6 +27,14 @@ struct VectorUnsafe
   }
 
   //---
+  VectorUnsafe(u64 reserve_capacity)
+  {
+    capacity = reserve_capacity;
+    data = (T*)malloc_unsafe(sizeof(T) * reserve_capacity);
+    clear();
+  }
+
+  //---
   ~VectorUnsafe()
   {
     for (u64 c = 0; c < count; ++c) {

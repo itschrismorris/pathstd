@@ -54,6 +54,7 @@ typedef HANDLE HLOCAL;
 typedef wchar_t TCHAR;
 typedef unsigned __int64 DWORD64;
 typedef DWORD64* PDWORD64;
+typedef BOOL(__stdcall* PHANDLER_ROUTINE)(DWORD dwCtrlType);
 
 extern "C" {
 
@@ -167,5 +168,7 @@ __declspec(dllimport) void __stdcall LocalFree(HLOCAL hMem);
 __declspec(dllimport) void __stdcall GetLocalTime(LPSYSTEMTIME lpSystemTime);
 __declspec(dllimport) BOOL __stdcall SetConsoleTextAttribute(HANDLE hConsoleOutput,
                                                              WORD wAttributes);
+__declspec(dllimport) BOOL __stdcall SetConsoleCtrlHandler(PHANDLER_ROUTINE HandlerRoutine,
+                                                           BOOL Add);
 __declspec(dllimport) void __stdcall ExitProcess(UINT uExitCode);
 }

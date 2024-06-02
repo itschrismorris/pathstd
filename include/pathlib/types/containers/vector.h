@@ -29,6 +29,14 @@ public:
   }
 
   //---
+  Vector(u64 reserve_capacity)
+  {
+    capacity = reserve_capacity;
+    data = (T*)malloc_unsafe(sizeof(T) * reserve_capacity);
+    clear();
+  }
+
+  //---
   ~Vector()
   {
     if (data) {
