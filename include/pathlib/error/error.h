@@ -20,7 +20,7 @@ struct Error
   //---
   void set_last_error(const utf8* string);
   bool last_error_from_win32();
-  bool to_log(bool use_color = true);
+  bool to_log(bool show_callstack = true);
   bool to_popup();
   void kill_script();
 };

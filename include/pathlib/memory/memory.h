@@ -25,14 +25,20 @@ template <typename T,
 static inline T* call_constructor(void* obj,
                                   Args&&... args)
 {
-  return new (obj) T(args...);
+  if constexpr (has_constructor<T>::value) {
+    return new (obj) T(args...);
+  } else {
+    return nullptr;
+  }
 }
 
 //---
 template <typename T>
 static inline void call_destructor(T* obj)
 {
-  obj->~T();
+  if constexpr (has_destructor<T>::value) {
+    obj->~T();
+  }
 }
 
 //---

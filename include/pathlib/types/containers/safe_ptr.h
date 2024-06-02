@@ -66,7 +66,8 @@ public:
 
   //---
   template <typename U>
-  operator U*() const {
+  operator U*() const 
+  {
     return (U*)offset_ptr;
   }
 
@@ -97,7 +98,7 @@ public:
   }
 
   //---
-  inline T& operator[](u64 index)
+  T& operator[](u64 index)
   {
     if (EXPECT(((offset_ptr - ptr + index) < count))) {
       return offset_ptr[index];
@@ -114,7 +115,7 @@ public:
   }
 
   //---
-  inline SafePtr& operator =(const SafePtr& _ptr)
+  SafePtr& operator =(const SafePtr& _ptr)
   {
     ptr = _ptr.ptr;
     offset_ptr = _ptr.offset_ptr;
@@ -123,7 +124,7 @@ public:
   }
 
   //---
-  inline SafePtr& operator =(T* _ptr)
+  SafePtr& operator =(T* _ptr)
   {
     ptr = offset_ptr = _ptr;
     if (_ptr == nullptr) {
@@ -135,7 +136,7 @@ public:
   }
 
   //---
-  inline SafePtr& operator =(const T* _ptr)
+  SafePtr& operator =(const T* _ptr)
   {
     ptr = offset_ptr = _ptr;
     if (_ptr == nullptr) {
@@ -148,7 +149,7 @@ public:
   }
 
   //---
-  inline const SafePtr operator-(u64 offset)
+  const SafePtr operator-(u64 offset)
   {
     if (EXPECT(((offset_ptr - offset) < offset_ptr) &&
                ((offset_ptr - offset) >= ptr))) {
@@ -166,7 +167,7 @@ public:
   }
 
   //---
-  inline const SafePtr operator+(u64 offset)
+  const SafePtr operator+(u64 offset)
   {
     if (EXPECT(((offset_ptr + offset) > offset_ptr) &&
                ((offset_ptr + offset) < (ptr + count)))) {
@@ -184,31 +185,37 @@ public:
   }
 
   //---
-  inline void set_count(u64 _count)
+  void set_count(u64 _count)
   {
     count = _count;
   }
 
   //---
-  inline void set_allocated_memory(bool _allocated_memory)
+  void set_allocated_memory(bool _allocated_memory)
   {
     allocated_memory = _allocated_memory;
   }
 
   //---
-  inline u64 get_count()
+  u64 get_count() const
   {
     return count;
   }
 
   //---
-  inline bool is_null() const
+  const T* get_ptr() const
+  {
+    return ptr;
+  }
+
+  //---
+  bool is_null() const
   {
     return ((ptr == nullptr) || (count == 0));
   }
 
   //---
-  inline bool is_valid() const
+  bool is_valid() const
   {
     return ((ptr != nullptr) && (count > 0));
   }

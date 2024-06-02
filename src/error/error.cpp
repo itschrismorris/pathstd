@@ -27,22 +27,27 @@ bool Error::last_error_from_win32()
 }
 
 //---
-bool Error::to_log(bool use_color)
+bool Error::to_log(bool show_callstack)
 {
-  if (!Win32::get_callstack(_buffer, MAX_ERROR_LENGTH)) {
-    return false;
-  }
-  LongStringUnsafe<512> string(u8"\n************\n", last_error, u8"\n\n", _buffer, u8"************");
-  if (use_color) {
-    if  (!console.set_text_attributes(Win32::ConsoleColors::RED) ||
-         !log.logt(string.str) ||
-         !console.set_text_attributes(Win32::ConsoleColors::WHITE)) {
+  if (show_callstack) {
+    if (!Win32::get_callstack(_buffer, MAX_ERROR_LENGTH)) {
       return false;
     }
-    return true;
+    LongStringUnsafe<512> string(u8"\n************\n", last_error, u8"\n\n", _buffer, u8"************");
+    if (!console.set_text_attributes(Win32::ConsoleColors::RED) ||
+      !log.logt(string.str) ||
+      !console.set_text_attributes(Win32::ConsoleColors::WHITE)) {
+      return false;
+    }
   } else {
-    return log.logt(string.str);
+    LongStringUnsafe<512> string(u8"\n************\n", last_error, u8"\n", u8"************");
+    if (!console.set_text_attributes(Win32::ConsoleColors::RED) ||
+      !log.logt(string.str) ||
+      !console.set_text_attributes(Win32::ConsoleColors::WHITE)) {
+      return false;
+    }
   }
+  return true;
 }
 
 //---

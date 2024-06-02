@@ -5,6 +5,7 @@
 #pragma once
 #include "pathlib/types/types.h"
 #include "pathlib/error/error.h"
+#include "pathlib/types/containers/pool_unsafe.h"
 
 namespace Pathlib {
 
@@ -62,9 +63,9 @@ public:
   }
 
   //---
-  inline void free(T* object)
+  inline void free(T& object)
   {
-    free(object->pool_id);
+    free(object.pool_id);
   }
 
   //---

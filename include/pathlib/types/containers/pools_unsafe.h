@@ -5,6 +5,7 @@
 #pragma once
 #include "pathlib/types/types.h"
 #include "pathlib/error/error.h"
+#include "pathlib/types/containers/pool_unsafe.h"
 
 namespace Pathlib {
 
@@ -39,17 +40,17 @@ struct PoolsUnsafe
   }
 
   //---
-  inline T* alloc()
+  inline T* get_vacant()
   {
     for (u32 p = 0; p < pools.count; ++p) {
       if (pools[p].count < pools[p].capacity()) {
         ++count;
-        return pools[p].alloc(p);
+        return pools[p].get_vacant(p);
       }
     }
     pools.emplace_back(1);
     ++count;
-    return pools[pools.count - 1].alloc(pools.count - 1);
+    return pools[pools.count - 1].get_vacant(pools.count - 1);
   }
   
   //---
@@ -60,9 +61,9 @@ struct PoolsUnsafe
   }
 
   //---
-  inline void free(T* object)
+  inline void free(T& object)
   {
-    free(object->pool_id);
+    free(object.pool_id);
   }
 
   //---

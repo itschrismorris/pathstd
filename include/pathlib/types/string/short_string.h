@@ -46,13 +46,8 @@ public:
   }
 
   //---
-  constexpr u64 get_capacity()
+  operator utf8*() const
   {
-    return CAPACITY;
-  }
-
-  //---
-  operator utf8*() const {
     return str;
   }
 
@@ -138,26 +133,12 @@ public:
   }
 
   //---
-  template <typename... Args>
-  inline void format(Args&&... args)
-  {
-    size = 0;
-    (ShortString::_append(*this, args), ...);
-  }
-
-  //---
-  inline void clear()
-  {
-    str[0] = u8'\0';
-    size = 0;
-  }
-
-  //---
+  template <u64 ARG_CAPACITY>
   static inline void _append(ShortString& string_out, 
-                             const ShortString& arg)
+                             const ShortString<ARG_CAPACITY>& arg)
   {
-    u64 copy_size = Math::min((CAPACITY - 1) - string_out.size, arg.size);
-    memcpy_unsafe<false, true>(&string_out.str[string_out.size], arg.str, copy_size + 1);
+    u64 copy_size = Math::min((CAPACITY - 1) - string_out.size, arg.get_size());
+    memcpy_unsafe<false, true>(&string_out.str[string_out.size], arg.get_str(), copy_size + 1);
     string_out.size += copy_size;
   }
 
@@ -194,6 +175,15 @@ public:
 
   //---
   template <typename... Args>
+  inline ShortString& format(Args&&... args)
+  {
+    size = 0;
+    (ShortString::_append(*this, args), ...);
+    return *this;
+  }
+
+  //---
+  template <typename... Args>
   static inline ShortString format(ShortString& string_out,
                                    Args&&... args)
   {
@@ -201,12 +191,30 @@ public:
   }
 
   //---
-  template <typename... Args>
-  static inline ShortString format_copy(Args&&... args)
+  inline void clear()
   {
-    ShortString string;
-    (_append(string, args), ...);
-    return string;
+    str[0] = u8'\0';
+    size = 0;
+  }
+
+  //---
+  constexpr u64 get_capacity()
+  {
+    return CAPACITY;
+  }
+
+  //---
+  u64 get_size() const
+  {
+    return size;
+  }
+
+  //---
+  const SafePtr<utf8> get_str() const
+  {
+    SafePtr<utf8> ptr = str;
+    ptr.set_count(size);
+    return ptr;
   }
 
   //---
@@ -216,15 +224,22 @@ public:
   }
 
   //---
-  template<u64 _CAPACITY>
-  friend struct ShortStringUnsafe;
-
-  //---
-  template<u64 _RESERVE_CAPACITY>
-  friend struct LongStringUnsafe;
-
-  //---
-  template<u64 _RESERVE_CAPACITY>
-  friend struct LongString;
+  template <typename T>
+  ShortString& from_value_hex(T value)
+  {
+    utf8 chars[] = u8"0123456789ABCDEF";
+    constexpr u32 digit_count = sizeof(T) * 2;
+    constexpr u32 new_size = digit_count + 2;
+    static_assert(new_size < CAPACITY, "ShortString does not have the capacity to hold result of 'from_value_hex()'.");
+    str[0] = u8'0';
+    str[1] = u8'x';
+    for (i32 d = digit_count - 1; d >= 0; --d) {
+      str[d + 2] = chars[value & 0xF];
+      value >>= 4;
+    }
+    str[new_size] = u8'\0';
+    size = new_size;
+    return *this;
+  }
 };
 }

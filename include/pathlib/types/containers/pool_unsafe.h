@@ -41,9 +41,9 @@ struct PoolUnsafe
   //---
   ~PoolUnsafe()
   {
-    iterate([&](T* object)
+    iterate([&](T& object)
       {
-        Memory::call_destructor<T>(object);
+        Memory::call_destructor<T>(&object);
         return true;
       });
     if (data) {
@@ -96,9 +96,9 @@ struct PoolUnsafe
   }
 
   //---
-  inline void free(T* object)
+  inline void free(T& object)
   {
-    free(object->pool_id);
+    free(object.pool_id);
   }
 
   //---
@@ -113,14 +113,15 @@ struct PoolUnsafe
   template<typename Callable>
   inline bool iterate(Callable&& function)
   {
+    static_assert(SAME_TYPE(result_of<Callable(T&)>::type, bool), "Pool iteration callback must return a bool for continuing or breaking from the iteration.");
     u32 objects_visited = 0;
     u32 original_count = count;
     for (u32 m = 0; m < CAPACITY; ++m) {
       if (objects_visited++ >= original_count) {
         break;
       }
-      T* pool_object = &data[m];
-      if (!is_occupied(pool_object->pool_id)) {
+      T& pool_object = data[m];
+      if (!is_occupied(pool_object.pool_id)) {
         continue;
       }
       if (!function(pool_object)) {

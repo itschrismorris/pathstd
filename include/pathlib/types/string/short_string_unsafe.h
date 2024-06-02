@@ -44,12 +44,6 @@ struct ShortStringUnsafe
   }
 
   //---
-  constexpr u64 capacity()
-  {
-    return CAPACITY;
-  }
-
-  //---
   inline ShortStringUnsafe& operator =(const ShortStringUnsafe& string)
   {
     memcpy_unsafe<true, true>(str, string.str, string.size + 1);
@@ -118,23 +112,9 @@ struct ShortStringUnsafe
   }
 
   //---
-  template <typename... Args>
-  inline void format(Args&&... args)
-  {
-    size = 0;
-    (ShortStringUnsafe::_append(this, args), ...);
-  }
-
-  //---
-  inline void clear()
-  {
-    str[0] = u8'\0';
-    size = 0;
-  }
-
-  //---
+  template <u64 ARG_CAPACITY>
   static inline void _append(ShortStringUnsafe& string_out, 
-                             const ShortString<CAPACITY>& arg)
+                             const ShortString<ARG_CAPACITY>& arg)
   {
     u64 copy_size = Math::min((CAPACITY - 1) - string_out.size, arg.size);
     memcpy_unsafe<false, true>(&string_out.str[string_out.size], arg.str, copy_size + 1);
@@ -142,8 +122,9 @@ struct ShortStringUnsafe
   }
 
   //---
+  template <u64 ARG_CAPACITY>
   static inline void _append(ShortStringUnsafe& string_out, 
-                             const ShortStringUnsafe& arg)
+                             const ShortStringUnsafe<ARG_CAPACITY>& arg)
   {
     u64 copy_size = Math::min((CAPACITY - 1) - string_out.size, arg.size);
     memcpy_unsafe<false, true>(&string_out.str[string_out.size], arg.str, copy_size + 1);
@@ -160,7 +141,7 @@ struct ShortStringUnsafe
         return;
       }
     }
-    String::_Internal::from_type_clip(arg, string_out.str, &string_out.size, string_out.capacity());
+    String::_Internal::from_type_clip(arg, string_out.str, &string_out.size, string_out.get_capacity());
   }
 
   //---
@@ -177,6 +158,15 @@ struct ShortStringUnsafe
   {
     (_append(string_out, args), ...);
   }
+  
+  //---
+  template <typename... Args>
+  inline ShortStringUnsafe& format(Args&&... args)
+  {
+    size = 0;
+    (ShortStringUnsafe::_append(*this, args), ...);
+    return *this;
+  }
 
   //---
   template <typename... Args>
@@ -187,12 +177,16 @@ struct ShortStringUnsafe
   }
 
   //---
-  template <typename... Args>
-  static inline ShortStringUnsafe format_copy(Args&&... args)
+  inline void clear()
   {
-    ShortStringUnsafe string;
-    (_append(&string, args), ...);
-    return string;
+    str[0] = u8'\0';
+    size = 0;
+  }
+
+  //---
+  constexpr u64 get_capacity()
+  {
+    return CAPACITY;
   }
 
   //---
@@ -205,6 +199,26 @@ struct ShortStringUnsafe
   inline u32 hash() const 
   {
     return Math::hash(str, size);
+  }
+
+  //---
+  template <typename T>
+  ShortStringUnsafe& from_value_hex(T value)
+  {
+    utf8 chars[] = u8"0123456789ABCDEF";
+    constexpr u32 digit_count = sizeof(T) * 2;
+    constexpr u32 new_size = digit_count + 2;
+    static_assert(new_size < CAPACITY, "ShortString does not have the capacity to hold result of 'from_value_hex()'.");
+    str[0] = u8'0';
+    str[1] = u8'x';
+    #pragma unroll
+    for (i32 d = digit_count - 1; d >= 0; --d) {
+      str[d + 2] = chars[value & 0xF];
+      value >>= 4;
+    }
+    str[new_size] = u8'\0';
+    size = new_size;
+    return *this;
   }
 };
 }

@@ -103,13 +103,9 @@ bool set_console_text_attributes(u16 attributes)
   void* out = GetStdHandle(STD_OUTPUT_HANDLE);
   if (out) {
     if (!SetConsoleTextAttribute(out, attributes)) {
-      error.last_error_from_win32();
-      error.to_log();
       return false;
     }
   } else {
-    error.last_error_from_win32();
-    error.to_log();
     return false;
   }
   return true;

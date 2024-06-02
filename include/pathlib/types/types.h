@@ -67,6 +67,38 @@ template <typename T>
 T declval() noexcept {}
 
 //---
+template <typename>
+struct result_of;
+template <typename F, 
+          typename... Args>
+struct result_of<F(Args...)> 
+{
+  using type = decltype(declval<F>()(declval<Args>()...));
+};
+
+//---
+template <typename T, 
+          typename... Args>
+struct has_constructor 
+{
+  template <typename U, typename... UArgs>
+  static auto test(U* u) -> decltype(new U(declval<UArgs>()...), true_type{});
+  template <typename, typename...>
+  static false_type test(...);
+  static constexpr bool value = decltype(test<T, Args...>(nullptr))::value;
+};
+
+//---
+template <typename T>
+struct has_destructor {
+  template <typename U>
+  static auto test(U* u) -> decltype(u->~U(), true_type{});
+  template <typename>
+  static false_type test(...);
+  static constexpr bool value = decltype(test<T>(nullptr))::value;
+};
+
+//---
 #define CHECK_HAS_MEMBER(CALL_NAME, MEMBER_NAME) \
   template <typename T, typename = void> \
   struct CALL_NAME : false_type {}; \

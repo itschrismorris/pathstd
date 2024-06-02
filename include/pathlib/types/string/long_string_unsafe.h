@@ -166,39 +166,24 @@ struct LongStringUnsafe
   }
 
   //---
-  template <typename... Args>
-  inline void format(Args&&... args)
-  {
-    size = 0;
-    (LongStringUnsafe::_append(this, args), ...);
-  }
-
-  //---
-  inline void clear()
-  {
-    str[0] = u8'\0';
-    size = 0;
-  }
-
-  //---
-  template <u64 CAPACITY>
+  template <u64 ARG_CAPACITY>
   static inline void _append(LongStringUnsafe& string_out, 
-                             const ShortString<CAPACITY>& arg)
+                             const ShortString<ARG_CAPACITY>& arg)
   {
 
-    u64 new_size = string_out.size + arg.size;
+    u64 new_size = string_out.size + arg.get_size();
     if (new_size > string_out.capacity) {
       string_out.capacity = new_size * 1.5;
       string_out.str = (utf8*)realloc_unsafe(string_out.str, string_out.capacity + 1);
     }
-    memcpy_unsafe<false, true>(&string_out.str[string_out.size], arg.str, arg.size + 1);
+    memcpy_unsafe<false, true>(&string_out.str[string_out.size], arg.get_str(), arg.get_size() + 1);
     string_out.size = new_size;
   }
 
   //---
-  template <u64 CAPACITY>
+  template <u64 ARG_CAPACITY>
   static inline void _append(LongStringUnsafe& string_out, 
-                             const ShortStringUnsafe<CAPACITY>& arg)
+                             const ShortStringUnsafe<ARG_CAPACITY>& arg)
   {
     u64 new_size = string_out.size + arg.size;
     if (new_size > string_out.capacity) {
@@ -210,23 +195,23 @@ struct LongStringUnsafe
   }
 
   //---
-  template <u64 CAPACITY>
+  template <u64 ARG_CAPACITY>
   static inline void _append(LongStringUnsafe& string_out,
-                             const LongString<CAPACITY>& arg)
+                             const LongString<ARG_CAPACITY>& arg)
   {
-    u64 new_size = string_out.size + arg.size;
+    u64 new_size = string_out.size + arg.get_size();
     if (new_size > string_out.capacity) {
       string_out.capacity = new_size * 1.5;
       string_out.str = (utf8*)realloc_unsafe(string_out.str, string_out.capacity + 1);
     }
-    memcpy_unsafe<false, true>(&string_out.str[string_out.size], arg.str, arg.size + 1);
+    memcpy_unsafe<false, true>(&string_out.str[string_out.size], arg.get_str(), arg.get_size() + 1);
     string_out.size = new_size;
   }
 
   //---
-  template <u64 CAPACITY>
+  template <u64 ARG_CAPACITY>
   static inline void _append(LongStringUnsafe& string_out,
-                             const LongStringUnsafe<CAPACITY>& arg)
+                             const LongStringUnsafe<ARG_CAPACITY>& arg)
   {
     u64 new_size = string_out.size + arg.size;
     if (new_size > string_out.capacity) {
@@ -267,6 +252,15 @@ struct LongStringUnsafe
 
   //---
   template <typename... Args>
+  inline LongStringUnsafe& format(Args&&... args)
+  {
+    size = 0;
+    (LongStringUnsafe::_append(*this, args), ...);
+    return *this;
+  }
+
+  //---
+  template <typename... Args>
   static inline LongStringUnsafe format(LongStringUnsafe& string_out,
                                         Args&&... args)
   {
@@ -274,12 +268,10 @@ struct LongStringUnsafe
   }
 
   //---
-  template <typename... Args>
-  static inline LongStringUnsafe format_copy(Args&&... args)
+  inline void clear()
   {
-    LongStringUnsafe string;
-    (_append(&string, args), ...);
-    return string;
+    str[0] = u8'\0';
+    size = 0;
   }
 
   //---
@@ -292,6 +284,29 @@ struct LongStringUnsafe
   inline u32 hash() const
   {
     return Math::hash(str, size);
+  }
+
+  //---
+  template <typename T>
+  LongStringUnsafe& from_value_hex(T value)
+  {
+    utf8 chars[] = u8"0123456789ABCDEF";
+    constexpr u32 digit_count = sizeof(T) * 2;
+    constexpr u32 new_size = digit_count + 2;
+    if (new_size > capacity) {
+      capacity = new_size * 1.5;
+      str = (utf8*)realloc_unsafe(str, capacity + 1);
+    }
+    str[0] = u8'0';
+    str[1] = u8'x';
+    #pragma unroll
+    for (i32 d = digit_count - 1; d >= 0; --d) {
+      str[d + 2] = chars[value & 0xF];
+      value >>= 4;
+    }
+    str[new_size] = u8'\0';
+    size = new_size;
+    return *this;
   }
 };
 }
