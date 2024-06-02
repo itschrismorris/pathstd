@@ -22,6 +22,7 @@ struct Pool
 
 private:
   //---
+  bool named;
   u32 count;
   u32 free_count;
   u32 free_head;
@@ -29,7 +30,7 @@ private:
 
 public:
   //---
-  Pool() 
+  Pool(const utf8* name) 
   {
     count = 0;
     free_count = 1;

@@ -6,6 +6,7 @@
 #include "pathlib/types/types.h"
 #include "pathlib/error/error.h"
 #include "pathlib/types/containers/pool_unsafe.h"
+#include "pathlib/types/containers/vector_unsafe.h"
 
 namespace Pathlib {
 
@@ -32,6 +33,17 @@ struct PoolsUnsafe
     count = 0;
   }
   ~PoolsUnsafe() {}
+
+  /**/
+  inline T* operator[](u32 id)
+  {
+    if (EXPECT(is_occupied(id))) {
+      u32 pools_id = (id >> 16);
+      return &pools[pools_id].data[id & 0xFFFF];
+    } else {
+      return nullptr;
+    }
+  }
 
   //---
   static inline bool is_occupied(u32 id)

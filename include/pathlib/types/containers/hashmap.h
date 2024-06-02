@@ -17,7 +17,8 @@ template <typename K,
 struct Hashmap
 {
   //---
-  static_assert(Math::is_pot(RESERVE_CAPACITY) && (RESERVE_CAPACITY >= 8), "Hashmap RESERVE_CAPACITY must be a power of two, greater or equal to 8.");
+  static_assert(Math::is_pot(RESERVE_CAPACITY) && (RESERVE_CAPACITY >= 8), 
+                "Hashmap RESERVE_CAPACITY must be a power of two, greater or equal to 8.");
 
   //---
   static u32 constexpr MAX_REHASHES = 2;
@@ -30,6 +31,7 @@ struct Hashmap
 
 private:
   //---
+  bool named;
   u32 capacity;
   u32 max_probe_length;
   u32* slot_kv_index;
@@ -40,12 +42,15 @@ private:
 
 public:
   //---
-  Hashmap()
+  Hashmap(const utf8* name)
   {
+    named = (name != nullptr);
     capacity = RESERVE_CAPACITY;
     max_probe_length = 1 + (Math::log2(capacity) >> 2);
-    slot_kv_index = (u32*)malloc_unsafe(sizeof(u32) * capacity);
-    slot_distance_digest = (u32*)malloc_unsafe(sizeof(u32) * capacity);
+    slot_kv_index = (u32*)malloc_unsafe(sizeof(u32) * capacity, 
+                                        ShortStringUnsafe<64>(name, u8"::slot_kv_index").str);
+    slot_distance_digest = (u32*)malloc_unsafe(sizeof(u32) * capacity, 
+                                               ShortStringUnsafe<64>(name, u8"::slot_distance_digest").str);
     I8 empty_slot = I8_SET1(EMPTY_SLOT);
     for (u32 r = 0; r < (capacity >> 3); ++r) {
       I8_STORE(&((I8*)slot_distance_digest)[r], empty_slot);
@@ -56,10 +61,10 @@ public:
   ~Hashmap()
   {
     if (slot_kv_index) {
-      free_unsafe((void**)&slot_kv_index);
+      free_unsafe((void**)&slot_kv_index, named);
     }
     if (slot_distance_digest) {
-      free_unsafe((void**)&slot_distance_digest);
+      free_unsafe((void**)&slot_distance_digest, named);
     }
   }
   
@@ -82,15 +87,16 @@ public:
 
   //---
   inline SafePtr<V> find(const K& key,
-                                     u32 existing_hash = NEW_HASH,
-                                     u32 hash_count = 0)
+                         u32 existing_hash = NEW_HASH,
+                         u32 hash_count = 0)
   {
     u32 key_hash = (existing_hash == NEW_HASH) ? hash(key) : existing_hash;
     u32 slot_index = (key_hash & (capacity - 1));
     for (u32 i = 0; i < max_probe_length; ++i) {
       slot_index = Math::min((u32)capacity - 8, slot_index);
       I8 key_digest = I8_SET1(hash(key_hash) & DIGEST_MASK);
-      I8 digests = I8_AND(I8_LOADU(&slot_distance_digest[slot_index]), I8_SET1(OCCUPIED_AND_DIGEST_MASK));
+      I8 digests = I8_AND(I8_LOADU(&slot_distance_digest[slot_index]), 
+                          I8_SET1(OCCUPIED_AND_DIGEST_MASK));
       u32 digest_mask = I8_MOVEMASK(I8_CMP_EQ(key_digest, digests));
       while (digest_mask) {
         u32 distance = Math::lsb_set(digest_mask) >> 2;
@@ -143,7 +149,8 @@ public:
             kv_index = values.count - 1;
           }
           slot_kv_index[insert_index] = kv_index;
-          slot_distance_digest[insert_index] = (empty_distance << DISTANCE_SHIFT) | (hash(key_hash) & DIGEST_MASK);
+          slot_distance_digest[insert_index] = (empty_distance << DISTANCE_SHIFT) | 
+                                               (hash(key_hash) & DIGEST_MASK);
           kv_slot_lookup[kv_index] = insert_index;
           return true;
         } else {
@@ -158,7 +165,8 @@ public:
           K& swap_key = keys[swap_kv_index];
           V& swap_value = values[swap_kv_index];
           slot_kv_index[insert_index] = kv_index;
-          slot_distance_digest[insert_index] = (swap_distance << DISTANCE_SHIFT) | (hash(key_hash) & DIGEST_MASK);
+          slot_distance_digest[insert_index] = (swap_distance << DISTANCE_SHIFT) | 
+                                               (hash(key_hash) & DIGEST_MASK);
           kv_slot_lookup[kv_index] = insert_index;
           return insert(swap_key, swap_value, swap_kv_index);
         }
@@ -169,7 +177,8 @@ public:
       if (kv_index == NEW_KV) {
         return insert(key, value, kv_index, hash(key_hash), hash_count + 1);
       } else {
-        return insert(keys[kv_index], values[kv_index], kv_index, hash(key_hash), hash_count + 1);
+        return insert(keys[kv_index], values[kv_index], 
+                      kv_index, hash(key_hash), hash_count + 1);
       }
     }
     if (kv_index == NEW_KV) {
@@ -190,7 +199,8 @@ public:
     for (u32 i = 0; i < max_probe_length; ++i) {
       slot_index = Math::min((u32)capacity - 8, slot_index);
       I8 key_digest = I8_SET1(hash(key_hash) & DIGEST_MASK);
-      I8 digests = I8_AND(I8_LOADU(&slot_distance_digest[slot_index]), I8_SET1(OCCUPIED_AND_DIGEST_MASK));
+      I8 digests = I8_AND(I8_LOADU(&slot_distance_digest[slot_index]), 
+                          I8_SET1(OCCUPIED_AND_DIGEST_MASK));
       u32 digest_mask = I8_MOVEMASK(I8_CMP_EQ(key_digest, digests));
       while (digest_mask) {
         u32 distance = Math::lsb_set(digest_mask) >> 2;
@@ -219,8 +229,10 @@ public:
     console.write(load_factor());
     capacity <<= 1;
     max_probe_length = 1 + (Math::log2(capacity) >> 2);
-    slot_kv_index = (u32*)realloc_unsafe(slot_kv_index, sizeof(u32) * capacity);
-    slot_distance_digest = (u32*)realloc_unsafe(slot_distance_digest, sizeof(u32) * capacity);
+    slot_kv_index = (u32*)realloc_unsafe(slot_kv_index, 
+                                         sizeof(u32) * capacity, named);
+    slot_distance_digest = (u32*)realloc_unsafe(slot_distance_digest, 
+                                                sizeof(u32) * capacity, named);
     I8 empty_slot = I8_SET1(EMPTY_SLOT);
     for (u32 r = 0; r < (capacity >> 3); ++r) {
       I8_STORE(&((I8*)slot_distance_digest)[r], empty_slot);

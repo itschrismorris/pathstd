@@ -5,6 +5,8 @@
 #pragma once
 #include "pathlib/types/types.h"
 #include "pathlib/error/error.h"
+#include "pathlib/memory/memory.h"
+#include "pathlib/memory/memset.h"
 
 //---
 CHECK_HAS_MEMBER(has_pool_id, pool_id);
