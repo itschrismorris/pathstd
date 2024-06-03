@@ -1,39 +1,39 @@
 #include "pathlib/pathlib.h"
 #include "../src/win32/mindows.h"
 
+namespace Pathlib {
+
 //---
-namespace Pathlib { _Internal::Timer timer; }
+_Internal::Timer& get_timer()
+{
+  static _Internal::Timer timer;
+  return timer;
+}
+}
 
 namespace Pathlib::_Internal {
 
 //---
-Timer timer;
-
-//---
-bool Timer::initiate(void)
+Timer::Timer()
 {
-  log.logt(u8"Initiating timer.");
+  get_log().logt(u8"Initiating timer.");
   LARGE_INTEGER ticks;
   if (!QueryPerformanceFrequency(&ticks)) {
-    error.last_error_from_win32();
-    error.to_log();
-    return false;
+    get_errors().last_error_from_win32();
+    get_errors().to_log();
   }
   ticks_per_second = ticks.QuadPart;
   LARGE_INTEGER now_ticks;
   if (!QueryPerformanceCounter(&now_ticks)) {
-    error.last_error_from_win32();
-    error.to_log();
-    return false;
+    get_errors().last_error_from_win32();
+    get_errors().to_log();
   }
   start_time = (now_ticks.QuadPart * 1000) / ticks_per_second;
-  return true;
 }
 
 //---
-void Timer::shutdown(void)
+Timer::~Timer()
 {
-  log.logt(u8"Shutting down timer.");
 }
 
 //---
@@ -41,8 +41,8 @@ u64 Timer::now_ms(void)
 {
   LARGE_INTEGER now_ticks;
   if (!QueryPerformanceCounter(&now_ticks)) {
-    error.last_error_from_win32();
-    error.to_log();
+    get_errors().last_error_from_win32();
+    get_errors().to_log();
     return 0;
   }
   u64 now_ms = (now_ticks.QuadPart * 1000) / ticks_per_second;
@@ -54,8 +54,8 @@ u64 Timer::now_us(void)
 {
   LARGE_INTEGER now_ticks;
   if (!QueryPerformanceCounter(&now_ticks)) {
-    error.last_error_from_win32();
-    error.to_log();
+    get_errors().last_error_from_win32();
+    get_errors().to_log();
     return 0;
   }
   u64 now_us = (now_ticks.QuadPart * 1000000) / ticks_per_second;

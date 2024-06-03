@@ -19,7 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\include\pathlib\error\error.h" />
+    <ClInclude Include="..\..\include\pathlib\errors\errors.h" />
     <ClInclude Include="..\..\include\pathlib\log\log.h" />
     <ClInclude Include="..\..\include\pathlib\math\intrinsics\avx2intrin.h" />
     <ClInclude Include="..\..\include\pathlib\math\intrinsics\avxintrin.h" />
@@ -36,7 +36,7 @@
     <ClInclude Include="..\..\include\pathlib\memory\memory.h" />
     <ClInclude Include="..\..\include\pathlib\memory\memset.h" />
     <ClInclude Include="..\..\include\pathlib\pathlib.h" />
-    <ClInclude Include="..\..\include\pathlib\profile\profile.h" />
+    <ClInclude Include="..\..\include\pathlib\profiler\profiler.h" />
     <ClInclude Include="..\..\include\pathlib\timer\timer.h" />
     <ClInclude Include="..\..\include\pathlib\types\containers\hashmap.h" />
     <ClInclude Include="..\..\include\pathlib\types\containers\array_unsafe.h" />
@@ -69,12 +69,11 @@
     <ClInclude Include="..\..\src\win32\mindows.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\src\error\error.cpp" />
+    <ClCompile Include="..\..\src\errors\errors.cpp" />
     <ClCompile Include="..\..\src\log\log.cpp" />
     <ClCompile Include="..\..\src\memory\malloc_unsafe.cpp" />
     <ClCompile Include="..\..\src\memory\memory.cpp" />
-    <ClCompile Include="..\..\src\pathlib.cpp" />
-    <ClCompile Include="..\..\src\profile\profile.cpp" />
+    <ClCompile Include="..\..\src\profiler\profiler.cpp" />
     <ClCompile Include="..\..\src\timer\timer.cpp" />
     <ClCompile Include="..\..\src\win32\console.cpp" />
     <ClCompile Include="..\..\src\win32\safe_win32.cpp" />

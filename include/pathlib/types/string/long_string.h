@@ -6,6 +6,7 @@
 #include "pathlib/memory/malloc_unsafe.h"
 #include "pathlib/types/string/from_type.h"
 #include "pathlib/types/string/short_string.h"
+#include "pathlib/profiler/profiler.h"
 
 namespace Pathlib {
 
@@ -21,10 +22,10 @@ private:
   
 public:
   //---
-  LongString()
+  LongString(const utf8* name)
   {
     capacity = RESERVE_CAPACITY;
-    str = (utf8*)malloc_unsafe(RESERVE_CAPACITY + 1);
+    str = (utf8*)malloc_unsafe(RESERVE_CAPACITY + 1, ShortStringUnsafe<96>(name, u8"::str").str);
     clear();
   }
 
@@ -39,7 +40,8 @@ public:
   //---
   LongString(const LongString& string)
   {
-    str = (utf8*)malloc_unsafe(string.capacity + 1);
+    str = (utf8*)malloc_unsafe(string.capacity + 1, 
+                               ShortStringUnsafe<96>(_Internal::Profiler::get_memory_item_name(string.str), u8"(copy)::str").str);
     capacity = string.capacity;
     memcpy_unsafe<true, true>(str, string.str, string.size + 1);
     size = string.size;
@@ -47,9 +49,10 @@ public:
   
   //---
   template <typename... Args>
-  LongString(Args&&... args)
+  LongString(const utf8* name,
+             Args&&... args)
   {
-    str = (utf8*)malloc_unsafe(RESERVE_CAPACITY + 1);
+    str = (utf8*)malloc_unsafe(RESERVE_CAPACITY + 1, ShortStringUnsafe<96>(name, u8"::str").str);
     capacity = RESERVE_CAPACITY;
     size = 0;
     (LongString::_append(*this, args), ...);
@@ -74,9 +77,9 @@ public:
   {
     if constexpr (IS_POINTER(T)) {
       if (!arg) {
-        error.set_last_error(u8"Attempt to set LongString to a null pointer.");
-        error.to_log();
-        error.kill_script();
+        get_errors().set_last_error(u8"Attempt to set LongString to a null pointer.");
+        get_errors().to_log();
+        get_errors().kill_script();
         return false;
       }
     }
@@ -95,9 +98,9 @@ public:
     if (EXPECT(string != nullptr)) {
       return String::compare<true, false>(str, string, size);
     } else {
-      error.set_last_error(u8"Attempt to compare LongString equality with a null pointer.");
-      error.to_log();
-      error.kill_script();
+      get_errors().set_last_error(u8"Attempt to compare LongString equality with a null pointer.");
+      get_errors().to_log();
+      get_errors().kill_script();
       return false;
     }
   }
@@ -151,9 +154,9 @@ public:
   {
     if constexpr (IS_POINTER(T)) {
       if (!arg) {
-        error.set_last_error(u8"Attempt to append LongString with a null pointer.");
-        error.to_log();
-        error.kill_script();
+        get_errors().set_last_error(u8"Attempt to append LongString with a null pointer.");
+        get_errors().to_log();
+        get_errors().kill_script();
         return *this;
       }
     }
@@ -196,9 +199,9 @@ public:
   {
     if constexpr (IS_POINTER(T)) {
       if (!arg) {
-        error.set_last_error(u8"Attempt to append LongString with a null pointer.");
-        error.to_log();
-        error.kill_script();
+        get_errors().set_last_error(u8"Attempt to append LongString with a null pointer.");
+        get_errors().to_log();
+        get_errors().kill_script();
         return;
       }
     }

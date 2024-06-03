@@ -18,15 +18,8 @@ struct Log
   LongStringUnsafe<256> _buffer;
 
   //---
-  Log()
-  {
-    file = nullptr;
-  }
-  ~Log() {}
-
-  //---
-  bool initiate(const utf8* log_path);
-  void shutdown();
+  Log(const utf8* log_path);
+  ~Log();
 
   //---
   template <u64 CAPACITY>
@@ -78,8 +71,8 @@ struct Log
                Win32::write_log(string, size) && 
                Win32::write_log(u8"\n", 1));
     } else {
-      error.set_last_error(u8"Attempt to log() with a null pointer.");
-      error.to_log();
+      get_errors().set_last_error(u8"Attempt to log() with a null pointer.");
+      get_errors().to_log();
       return false;
     }
   }
@@ -119,4 +112,4 @@ struct Log
 }
 
 //---
-namespace Pathlib { extern _Internal::Log log; }
+namespace Pathlib { _Internal::Log& get_log(); }

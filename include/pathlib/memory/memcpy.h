@@ -387,9 +387,9 @@ static inline void memcpy(SafePtr<T> dst,
              ((dst_ptr + count) <= (dst_ptr + dst.get_count())))) {
     memcpy_unsafe(dst_ptr, src_ptr, count * sizeof(T));
   } else {
-    error.set_last_error(u8"Out of bounds memcpy().");
-    error.to_log();
-    error.kill_script();
+    get_errors().set_last_error(u8"Out of bounds memcpy().");
+    get_errors().to_log();
+    get_errors().kill_script();
   }
 }
 }

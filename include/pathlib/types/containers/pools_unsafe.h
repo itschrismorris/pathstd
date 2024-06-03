@@ -4,9 +4,10 @@
 
 #pragma once
 #include "pathlib/types/types.h"
-#include "pathlib/error/error.h"
+#include "pathlib/errors/errors.h"
 #include "pathlib/types/containers/pool_unsafe.h"
 #include "pathlib/types/containers/vector_unsafe.h"
+#include "pathlib/types/string/short_string_unsafe.h"
 
 namespace Pathlib {
 
@@ -25,14 +26,16 @@ struct PoolsUnsafe
   //---
   VectorUnsafe<PoolUnsafe<T, POOL_CAPACITY>, POOLS_RESERVE_CAPACITY> pools;
   u32 count;
+  ShortStringUnsafe<96> name;
   
   //---
-  PoolsUnsafe()
+  PoolsUnsafe(const utf8* _name) : pools(_name ? ShortStringUnsafe<96>(u8"[Pools]'", _name, u8"'::[Vector]pools").str : nullptr)
   {
-    pools.emplace_back(1);
     count = 0;
+    pools.emplace_back(1, _name ? ShortStringUnsafe<96>(_name, u8"[", count, u8"]").str : nullptr, 
+                       pools.count);
+    name = _name;
   }
-  ~PoolsUnsafe() {}
 
   /**/
   inline T* operator[](u32 id)
@@ -45,6 +48,7 @@ struct PoolsUnsafe
     }
   }
 
+  ~PoolsUnsafe() {}
   //---
   static inline bool is_occupied(u32 id)
   {
@@ -55,14 +59,15 @@ struct PoolsUnsafe
   inline T* get_vacant()
   {
     for (u32 p = 0; p < pools.count; ++p) {
-      if (pools[p].count < pools[p].capacity()) {
+      if (pools[p].count < pools[p].get_capacity()) {
         ++count;
-        return pools[p].get_vacant(p);
+        return pools[p].get_vacant();
       }
     }
-    pools.emplace_back(1);
     ++count;
-    return pools[pools.count - 1].get_vacant(pools.count - 1);
+    pools.emplace_back(1, (name.size > 0) ? ShortStringUnsafe<96>(name, u8"[", count, u8"]").str : nullptr, 
+                       pools.count - 1);
+    return pools[pools.count - 1].get_vacant();
   }
   
   //---
@@ -79,6 +84,15 @@ struct PoolsUnsafe
   }
 
   //---
+  inline void clear()
+  {
+    for (u32 p = 0; p < pools.count; ++p) {
+      pools[p].clear();
+    }
+    count = 0;
+  }
+
+  //---
   template<typename Callable>
   inline bool iterate(Callable&& function)
   {
@@ -88,15 +102,6 @@ struct PoolsUnsafe
       }
     }
     return true;
-  }
-
-  //---
-  inline void clear()
-  {
-    for (u32 p = 0; p < pools.count; ++p) {
-      pools[p].clear();
-    }
-    count = 0;
   }
 };
 }

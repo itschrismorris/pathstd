@@ -30,7 +30,6 @@ struct HashmapUnsafe
   static u32 constexpr DISTANCE_SHIFT = 29;
 
   //---
-  bool named;
   u32 capacity;
   u32 max_probe_length;
   u32* slot_kv_index;
@@ -45,9 +44,9 @@ struct HashmapUnsafe
     capacity = RESERVE_CAPACITY;
     max_probe_length = 1 + (Math::log2(capacity) >> 2);
     slot_kv_index = (u32*)malloc_unsafe(sizeof(u32) * capacity, 
-                                        ShortStringUnsafe<64>(name, u8"::slot_kv_index").str);
+                                        ShortStringUnsafe<96>(name, u8"::slot_kv_index").str);
     slot_distance_digest = (u32*)malloc_unsafe(sizeof(u32) * capacity, 
-                                               ShortStringUnsafe<64>(name, u8"::slot_distance_digest").str);
+                                               ShortStringUnsafe<96>(name, u8"::slot_distance_digest").str);
     I8 empty_slot = I8_SET1(EMPTY_SLOT);
     for (u32 r = 0; r < (capacity >> 3); ++r) {
       I8_STORE(&((I8*)slot_distance_digest)[r], empty_slot);
@@ -58,10 +57,10 @@ struct HashmapUnsafe
   ~HashmapUnsafe()
   {
     if (slot_kv_index) {
-      free_unsafe((void**)&slot_kv_index, named);
+      free_unsafe((void**)&slot_kv_index);
     }
     if (slot_distance_digest) {
-      free_unsafe((void**)&slot_distance_digest, named);
+      free_unsafe((void**)&slot_distance_digest);
     }
   }
   
@@ -223,13 +222,12 @@ struct HashmapUnsafe
   //---
   inline bool rebuild_larger()
   {
-    console.write(load_factor());
     capacity <<= 1;
     max_probe_length = 1 + (Math::log2(capacity) >> 2);
     slot_kv_index = (u32*)realloc_unsafe(slot_kv_index, 
-                                         sizeof(u32) * capacity, named);
+                                         sizeof(u32) * capacity);
     slot_distance_digest = (u32*)realloc_unsafe(slot_distance_digest, 
-                                                sizeof(u32) * capacity, named);
+                                                sizeof(u32) * capacity);
     I8 empty_slot = I8_SET1(EMPTY_SLOT);
     for (u32 r = 0; r < (capacity >> 3); ++r) {
       I8_STORE(&((I8*)slot_distance_digest)[r], empty_slot);

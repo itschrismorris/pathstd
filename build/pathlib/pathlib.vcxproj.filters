@@ -7,9 +7,6 @@
     <Filter Include="src">
       <UniqueIdentifier>{aceaa235-9e66-4549-9136-f035e56a12d8}</UniqueIdentifier>
     </Filter>
-    <Filter Include="include\error">
-      <UniqueIdentifier>{5788b976-6db0-4b45-948d-fe9fd16fe5b1}</UniqueIdentifier>
-    </Filter>
     <Filter Include="include\log">
       <UniqueIdentifier>{3961ed13-c4de-4413-b7df-63828e85afc9}</UniqueIdentifier>
     </Filter>
@@ -21,9 +18,6 @@
     </Filter>
     <Filter Include="include\memory">
       <UniqueIdentifier>{6364dbb3-f06d-446b-a20e-068fdb0adc29}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="include\profile">
-      <UniqueIdentifier>{fe9c90cd-340e-490c-a2bc-29fcf6b3dc70}</UniqueIdentifier>
     </Filter>
     <Filter Include="include\timer">
       <UniqueIdentifier>{2b3b7103-ac64-4aab-9626-cf2968a3d7ef}</UniqueIdentifier>
@@ -40,17 +34,11 @@
     <Filter Include="include\win32">
       <UniqueIdentifier>{9cc8f082-5005-4d43-942d-bfa730da8cc5}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\error">
-      <UniqueIdentifier>{183fdfd9-c6e7-40e3-88e6-c833164048db}</UniqueIdentifier>
-    </Filter>
     <Filter Include="src\log">
       <UniqueIdentifier>{338e94cd-b7ab-4e99-af0c-d5c6cf1d2c5e}</UniqueIdentifier>
     </Filter>
     <Filter Include="src\memory">
       <UniqueIdentifier>{97291b7b-8a35-4e02-b3ac-e7372acdf444}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\profile">
-      <UniqueIdentifier>{b38a053e-57a0-4598-98ab-c6be87742d25}</UniqueIdentifier>
     </Filter>
     <Filter Include="src\timer">
       <UniqueIdentifier>{e3bc1941-8dcc-4048-aa05-1020530d9ca3}</UniqueIdentifier>
@@ -67,11 +55,20 @@
     <Filter Include="src\third_party\mimalloc\mimalloc">
       <UniqueIdentifier>{2ca391e9-914a-4d9f-95d5-f4bb8fcebc2e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="include\errors">
+      <UniqueIdentifier>{5788b976-6db0-4b45-948d-fe9fd16fe5b1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\profiler">
+      <UniqueIdentifier>{fe9c90cd-340e-490c-a2bc-29fcf6b3dc70}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\errors">
+      <UniqueIdentifier>{183fdfd9-c6e7-40e3-88e6-c833164048db}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\profiler">
+      <UniqueIdentifier>{b38a053e-57a0-4598-98ab-c6be87742d25}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\include\pathlib\error\error.h">
-      <Filter>include\error</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\include\pathlib\log\log.h">
       <Filter>include\log</Filter>
     </ClInclude>
@@ -107,9 +104,6 @@
     </ClInclude>
     <ClInclude Include="..\..\include\pathlib\memory\memset.h">
       <Filter>include\memory</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\pathlib\profile\profile.h">
-      <Filter>include\profile</Filter>
     </ClInclude>
     <ClInclude Include="..\..\include\pathlib\timer\timer.h">
       <Filter>include\timer</Filter>
@@ -213,14 +207,14 @@
     <ClInclude Include="..\..\include\pathlib\types\string\long_string_unsafe.h">
       <Filter>include\types\string</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\include\pathlib\errors\errors.h">
+      <Filter>include\errors</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\pathlib\profiler\profiler.h">
+      <Filter>include\profiler</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\src\pathlib.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\error\error.cpp">
-      <Filter>src\error</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src\log\log.cpp">
       <Filter>src\log</Filter>
     </ClCompile>
@@ -233,14 +227,17 @@
     <ClCompile Include="..\..\src\timer\timer.cpp">
       <Filter>src\timer</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\profile\profile.cpp">
-      <Filter>src\profile</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src\memory\memory.cpp">
       <Filter>src\memory</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\memory\malloc_unsafe.cpp">
       <Filter>src\memory</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\profiler\profiler.cpp">
+      <Filter>src\profiler</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\errors\errors.cpp">
+      <Filter>src\errors</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

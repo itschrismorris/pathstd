@@ -8,7 +8,7 @@
 namespace Pathlib::_Internal {
 
 //---
-struct Error 
+struct Errors 
 {
   //---
   static constexpr u64 MAX_ERROR_LENGTH = 512;
@@ -27,4 +27,4 @@ struct Error
 }
 
 //---
-namespace Pathlib { extern _Internal::Error error; }
+namespace Pathlib { _Internal::Errors& get_errors(); }

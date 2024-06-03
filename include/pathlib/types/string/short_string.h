@@ -5,7 +5,7 @@
 #pragma once
 #include "pathlib/types/string/from_type.h"
 #include "pathlib/types/string/compare.h"
-#include "pathlib/error/error.h"
+#include "pathlib/errors/errors.h"
 
 namespace Pathlib {
 
@@ -65,9 +65,9 @@ public:
   {
     if constexpr (IS_POINTER(T)) {
       if (!arg) {
-        error.set_last_error(u8"Attempt to set ShortString to a null pointer.");
-        error.to_log();
-        error.kill_script();
+        get_errors().set_last_error(u8"Attempt to set ShortString to a null pointer.");
+        get_errors().to_log();
+        get_errors().kill_script();
         return false;
       }
     }
@@ -81,9 +81,9 @@ public:
     if (EXPECT(string != nullptr)) {
       return String::compare<true, false>(str, string, size);
     } else {
-      error.set_last_error(u8"Attempt to compare ShortString equality with a null pointer.");
-      error.to_log();
-      error.kill_script();
+      get_errors().set_last_error(u8"Attempt to compare ShortString equality with a null pointer.");
+      get_errors().to_log();
+      get_errors().kill_script();
       return false;
     }
   }
@@ -122,9 +122,9 @@ public:
   {
     if constexpr (IS_POINTER(T)) {
       if (!arg) {
-        error.set_last_error(u8"Attempt to append ShortString with a null pointer.");
-        error.to_log();
-        error.kill_script();
+        get_errors().set_last_error(u8"Attempt to append ShortString with a null pointer.");
+        get_errors().to_log();
+        get_errors().kill_script();
         return *this;
       }
     }
@@ -149,9 +149,9 @@ public:
   {
     if constexpr (IS_POINTER(T)) {
       if (!arg) {
-        error.set_last_error(u8"Attempt to append ShortString with a null pointer.");
-        error.to_log();
-        error.kill_script();
+        get_errors().set_last_error(u8"Attempt to append ShortString with a null pointer.");
+        get_errors().to_log();
+        get_errors().kill_script();
         return;
       }
     }

@@ -8,6 +8,7 @@
 #include "pathlib/types/string/long_string.h"
 #include "pathlib/types/string/short_string.h"
 #include "pathlib/types/string/short_string_unsafe.h"
+#include "pathlib/profiler/profiler.h"
 
 namespace Pathlib {
 
@@ -19,12 +20,19 @@ struct LongStringUnsafe
   utf8* str;
   u64 capacity;
   u64 size;
+
+  //---
+  constexpr const utf8* type_name() const
+  {
+    return u8"LongString";
+  }
   
   //---
-  LongStringUnsafe()
+  LongStringUnsafe(const utf8* name)
   {
     capacity = RESERVE_CAPACITY;
-    str = (utf8*)malloc_unsafe(RESERVE_CAPACITY + 1);
+    str = (utf8*)malloc_unsafe(RESERVE_CAPACITY + 1, 
+                               ShortStringUnsafe<96>(u8"[LongString]'", name, u8"'::[utf8*]str").str);
     clear();
   }
 
@@ -39,7 +47,8 @@ struct LongStringUnsafe
   //---
   LongStringUnsafe(const LongStringUnsafe& string)
   {
-    str = (utf8*)malloc_unsafe(string.capacity + 1);
+    str = (utf8*)malloc_unsafe(string.capacity + 1, 
+                               ShortStringUnsafe<96>(_Internal::Profiler::get_memory_item_name(string.str), u8"(copy)::str").str);
     capacity = string.capacity;
     memcpy_unsafe<true, true>(str, string.str, string.size + 1);
     size = string.size;
@@ -47,9 +56,11 @@ struct LongStringUnsafe
   
   //---
   template <typename... Args>
-  LongStringUnsafe(Args&&... args)
+  LongStringUnsafe(const utf8* name,
+                   Args&&... args)
   {
-    str = (utf8*)malloc_unsafe(RESERVE_CAPACITY + 1);
+    str = (utf8*)malloc_unsafe(RESERVE_CAPACITY + 1, 
+                               ShortStringUnsafe<96>(u8"[LongString]'", name, u8"'::[utf8*]str").str);
     capacity = RESERVE_CAPACITY;
     size = 0;
     (LongStringUnsafe::_append(*this, args), ...);

@@ -1,6 +1,6 @@
 ﻿#include "../src/win32/mindows.h"
 #include "pathlib/win32/safe_win32.h"
-#include "pathlib/error/error.h"
+#include "pathlib/errors/errors.h"
 #include "pathlib/log/log.h"
 
 #pragma comment(lib, "Dbghelp.lib")
@@ -14,19 +14,19 @@ bool get_callstack(utf8* string_out,
   HANDLE callstack[10];
   HANDLE process = GetCurrentProcess();
   if (!process) {
-    error.last_error_from_win32();
-    error.to_log();
+    get_errors().last_error_from_win32();
+    get_errors().to_log();
     return false;
   }
   if (!SymInitialize(process, nullptr, true)) {
-    error.last_error_from_win32();
-    error.to_log();
+    get_errors().last_error_from_win32();
+    get_errors().to_log();
     return false;
   }
   WORD frames = RtlCaptureStackBackTrace(0, 10, callstack, nullptr);
   if (frames == 0) {
-    error.last_error_from_win32();
-    error.to_log();
+    get_errors().last_error_from_win32();
+    get_errors().to_log();
     return false;
   }
   u8 buffer[sizeof(SYMBOL_INFO) + MAX_SYM_NAME * sizeof(TCHAR)];
@@ -37,8 +37,8 @@ bool get_callstack(utf8* string_out,
   for (WORD i = 0; i < frames; ++i) {
     DWORD64 address = (DWORD64)(callstack[i]);
     if (!SymFromAddr(process, address, nullptr, symbol)) {
-      error.last_error_from_win32();
-      error.to_log();
+      get_errors().last_error_from_win32();
+      get_errors().to_log();
       return false;
     }
     memcpy_unsafe(string_out + string_size, symbol->Name, Math::min((u64)symbol->NameLen, string_capacity - 2 - string_size));
@@ -47,8 +47,8 @@ bool get_callstack(utf8* string_out,
     string_out[string_size] = u8'\0';
   }
   if (!SymCleanup(process)) {
-    error.last_error_from_win32();
-    error.to_log();
+    get_errors().last_error_from_win32();
+    get_errors().to_log();
     return false;
   }
   return true;
@@ -73,8 +73,8 @@ u64 get_last_error_string(utf8* string_out,
     string_out[utf8_size] = u8'\0';
     return utf8_size;
   } else {
-    error.last_error_from_win32();
-    error.to_log();
+    get_errors().last_error_from_win32();
+    get_errors().to_log();
     string_out[0] = u8'\0';
     return 0;
   }
@@ -84,11 +84,11 @@ u64 get_last_error_string(utf8* string_out,
 bool write_log(const utf8* string,
                u64 size)
 {
-  if (log.file) {
-    if (WriteFile((HANDLE)log.file, (HANDLE)string, size, nullptr, nullptr) == 0) {
+  if (get_log().file) {
+    if (WriteFile((HANDLE)get_log().file, (HANDLE)string, size, nullptr, nullptr) == 0) {
       if (get_last_error() != ERROR_IO_PENDING) {
-        error.last_error_from_win32();
-        error.to_log();
+        get_errors().last_error_from_win32();
+        get_errors().to_log();
         return false;
       }
     }
@@ -121,13 +121,13 @@ bool write_console(const utf8* string,
   void* out = GetStdHandle(STD_OUTPUT_HANDLE);
   if (out) {
     if (WriteConsoleA(out, string, size, nullptr, nullptr) == 0) {
-      error.last_error_from_win32();
-      error.to_log();
+      get_errors().last_error_from_win32();
+      get_errors().to_log();
       return false;
     }
   } else {
-    error.last_error_from_win32();
-    error.to_log();
+    get_errors().last_error_from_win32();
+    get_errors().to_log();
     return false;
   }
   return true;
@@ -147,8 +147,8 @@ u64 utf16_to_utf8(utf8* utf8_string_out,
       return (utf8_size - (utf16_size == -1));
     }
   }
-  error.last_error_from_win32();
-  error.to_log();
+  get_errors().last_error_from_win32();
+  get_errors().to_log();
   utf8_string_out[0] = u8'\0';
   return 0;
 }
@@ -167,8 +167,8 @@ u64 utf8_to_utf16(wchar_t* utf16_string_out,
       return (utf16_size - (utf8_size == -1));
     }
   }
-  error.last_error_from_win32();
-  error.to_log();
+  get_errors().last_error_from_win32();
+  get_errors().to_log();
   utf16_string_out[0] = u8'\0';
   return 0;
 }

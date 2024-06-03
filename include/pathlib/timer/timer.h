@@ -15,12 +15,12 @@ struct Timer
   u64 ticks_per_second;
 
   //---
-  bool initiate();
-  void shutdown();
+  Timer();
+  ~Timer();
   u64 now_ms();
   u64 now_us();
 };
 }
 
 //---
-namespace Pathlib { extern _Internal::Timer timer; }
+namespace Pathlib { _Internal::Timer& get_timer(); }

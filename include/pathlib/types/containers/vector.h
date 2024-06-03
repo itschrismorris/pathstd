@@ -21,18 +21,12 @@ private:
 
 public:
   //---
-  Vector()
-  {
-    capacity = RESERVE_CAPACITY;
-    data = (T*)malloc_unsafe(sizeof(T) * RESERVE_CAPACITY);
-    clear();
-  }
-
-  //---
-  Vector(u64 reserve_capacity)
+  Vector(const utf8* name,
+         u64 reserve_capacity = RESERVE_CAPACITY)
   {
     capacity = reserve_capacity;
-    data = (T*)malloc_unsafe(sizeof(T) * reserve_capacity);
+    data = (T*)malloc_unsafe(sizeof(T) * reserve_capacity,
+                             ShortStringUnsafe<96>(name, u8"::[T*]data").str);
     clear();
   }
 
@@ -53,9 +47,9 @@ public:
     if (EXPECT(index < count)) {
       return data[index];
     } else {
-      error.set_last_error(u8"Out of bounds access to Vector.");
-      error.to_log();
-      error.kill_script();
+      get_errors().set_last_error(u8"Out of bounds access to Vector.");
+      get_errors().to_log();
+      get_errors().kill_script();
       return data[0];
     }
   }
@@ -66,15 +60,17 @@ public:
     if (EXPECT(index < count)) {
       return data[index];
     } else {
-      error.set_last_error(u8"Out of bounds access to Vector.");
-      error.to_log();
-      error.kill_script();
+      get_errors().set_last_error(u8"Out of bounds access to Vector.");
+      get_errors().to_log();
+      get_errors().kill_script();
       return data[0];
     }
   }
 
   //---
-  inline SafePtr<T> emplace_back(u64 _count = 1)
+  template <typename... Args>
+  inline SafePtr<T> emplace_back(u64 _count = 1,
+                                 Args&&... constructor_args)
   {
     if (EXPECT((count + _count) > count)) {
       u64 original_count = count;
@@ -83,12 +79,12 @@ public:
         capacity = count * 1.5;
         data = (T*)realloc_unsafe(data, sizeof(T) * capacity);
       }
-      Memory::call_constructor<T>(data + original_count);
+      Memory::call_constructor<T>(data + original_count, constructor_args...);
       return SafePtr<T>(data + original_count, 1);
     } else {
-      error.set_last_error(u8"Failed to emplace_back() Vector; it is already at capacity.");
-      error.to_log();
-      error.kill_script();
+      get_errors().set_last_error(u8"Failed to emplace_back() Vector; it is already at capacity.");
+      get_errors().to_log();
+      get_errors().kill_script();
       return SafePtr<T>(nullptr, 0);
     }
   }
@@ -101,9 +97,9 @@ public:
       --count;
       memcpy_unsafe(index, data + count, sizeof(T));
     } else {
-      error.set_last_error(u8"Failed to remove() from Vector; index is out of bounds.");
-      error.to_log();
-      error.kill_script();
+      get_errors().set_last_error(u8"Failed to remove() from Vector; index is out of bounds.");
+      get_errors().to_log();
+      get_errors().kill_script();
     }
   }
 
@@ -121,9 +117,9 @@ public:
       count -= _count;
       memcpy_unsafe(start, end, sizeof(T) * _count);
     } else {
-      error.set_last_error(u8"Failed to remove() from Vector; removal is out of bounds.");
-      error.to_log();
-      error.kill_script();
+      get_errors().set_last_error(u8"Failed to remove() from Vector; removal is out of bounds.");
+      get_errors().to_log();
+      get_errors().kill_script();
     }
   }
 

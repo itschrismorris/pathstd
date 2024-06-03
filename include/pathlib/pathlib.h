@@ -4,7 +4,7 @@
 
 #pragma once
 #include "pathlib/win32/console.h"
-#include "pathlib/error/error.h"
+#include "pathlib/errors/errors.h"
 #include "pathlib/log/log.h"
 #include "pathlib/math/math.h"
 #include "pathlib/memory/malloc.h"
@@ -30,16 +30,9 @@
 #include "pathlib/types/string/short_string.h"
 #include "pathlib/types/string/short_string_unsafe.h"
 #include "pathlib/types/string/size_of.h"
-#include "pathlib/profile/profile.h"
+#include "pathlib/profiler/profiler.h"
 #include "pathlib/timer/timer.h"
 
 using namespace Pathlib;
-using namespace Pathlib::Memory;
-using namespace Pathlib::String;
 
-namespace Pathlib {
-
-//---
-bool pathlib_initiate(const utf8* log_path = nullptr);
-void pathlib_shutdown();
-}
+#define PATHLIB_LOG_PATH u8"pathlib_log.txt"

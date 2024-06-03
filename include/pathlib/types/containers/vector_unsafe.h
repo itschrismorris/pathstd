@@ -5,6 +5,7 @@
 #pragma once
 #include "pathlib/types/types.h"
 #include "pathlib/memory/memcpy.h"
+#include "pathlib/types/string/short_string_unsafe.h"
 
 namespace Pathlib {
 
@@ -19,18 +20,12 @@ struct VectorUnsafe
   u64 capacity;
 
   //---
-  VectorUnsafe()
-  {
-    capacity = RESERVE_CAPACITY;
-    data = (T*)malloc_unsafe(sizeof(T) * RESERVE_CAPACITY);
-    clear();
-  }
-
-  //---
-  VectorUnsafe(u64 reserve_capacity)
+  VectorUnsafe(const utf8* name,
+               u64 reserve_capacity = RESERVE_CAPACITY)
   {
     capacity = reserve_capacity;
-    data = (T*)malloc_unsafe(sizeof(T) * reserve_capacity);
+    data = (T*)malloc_unsafe(sizeof(T) * reserve_capacity,
+                             name ? ShortStringUnsafe<96>(name, u8"::[T*]data").str : nullptr);
     clear();
   }
 
@@ -56,7 +51,9 @@ struct VectorUnsafe
   }
 
   //---
-  inline T* emplace_back(u64 _count = 1)
+  template <typename... Args>
+  inline T* emplace_back(u64 _count = 1,
+                         Args&&... constructor_args)
   {
     u64 original_count = count;
     count += _count;
@@ -64,7 +61,7 @@ struct VectorUnsafe
       capacity = count * 1.5;
       data = (T*)realloc_unsafe(data, sizeof(T) * capacity);
     }
-    Memory::call_constructor<T>(data + original_count);
+    Memory::call_constructor<T>(data + original_count, constructor_args...);
     return (data + original_count);
   }
 

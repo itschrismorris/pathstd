@@ -25,7 +25,7 @@ template <typename T,
 static inline T* call_constructor(void* obj,
                                   Args&&... args)
 {
-  if constexpr (has_constructor<T>::value) {
+  if constexpr (has_constructor<T, Args...>::value) {
     return new (obj) T(args...);
   } else {
     return nullptr;

@@ -9,10 +9,8 @@ namespace Pathlib {
 
 //---
 void* malloc_unsafe(u64 size,
-                    const utf8* name = nullptr);
+                    const utf8* name);
 void* realloc_unsafe(void* ptr,
-                     u64 size,
-                     bool named = false);
-void free_unsafe(void** ptr,
-                 bool named = false);
+                     u64 size);
+void free_unsafe(void** ptr);
 }

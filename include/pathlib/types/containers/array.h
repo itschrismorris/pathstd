@@ -27,7 +27,7 @@ public:
   ~Array() {}
 
   //---
-  void initializer_list(u64 index) { }
+  void initializer_list(u64 index) {}
   template <typename... Args>
   void initializer_list(u64 index, 
                         T value, 
@@ -52,9 +52,9 @@ public:
     if (EXPECT(index < CAPACITY)) {
       return data[index];
     } else {
-      error.set_last_error(u8"Out of bounds access to Array.");
-      error.to_log();
-      error.kill_script();
+      get_errors().set_last_error(u8"Out of bounds access to Array.");
+      get_errors().to_log();
+      get_errors().kill_script();
       return data[0];
     }
   }
@@ -65,9 +65,9 @@ public:
     if (EXPECT(index < CAPACITY)) {
       return data[index];
     } else {
-      error.set_last_error(u8"Out of bounds access to Array.");
-      error.to_log();
-      error.kill_script();
+      get_errors().set_last_error(u8"Out of bounds access to Array.");
+      get_errors().to_log();
+      get_errors().kill_script();
       return data[0];
     }
   }
@@ -81,9 +81,9 @@ public:
       count += _count;
       return (data + original_count);
     } else {
-      error.set_last_error(u8"Failed to emplace_back() Array; it is already at capacity.");
-      error.to_log();
-      error.kill_script();
+      get_errors().set_last_error(u8"Failed to emplace_back() Array; it is already at capacity.");
+      get_errors().to_log();
+      get_errors().kill_script();
       return nullptr;
     }
   }
@@ -95,9 +95,9 @@ public:
       --count;
       memcpy_unsafe(data + index, data + count, sizeof(T));
     } else {
-      error.set_last_error(u8"Failed to remove() from Array; invalid index.");
-      error.to_log();
-      error.kill_script();
+      get_errors().set_last_error(u8"Failed to remove() from Array; invalid index.");
+      get_errors().to_log();
+      get_errors().kill_script();
     }
   }
 
@@ -112,9 +112,9 @@ public:
       count -= _count;
       memcpy_unsafe(start, end, sizeof(T) * _count);
     } else {
-      error.set_last_error(u8"Failed to remove() from Array; invalid region.");
-      error.to_log();
-      error.kill_script();
+      get_errors().set_last_error(u8"Failed to remove() from Array; invalid region.");
+      get_errors().to_log();
+      get_errors().kill_script();
     }
   }
 

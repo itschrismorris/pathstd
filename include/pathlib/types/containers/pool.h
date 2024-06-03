@@ -4,7 +4,7 @@
 
 #pragma once
 #include "pathlib/types/types.h"
-#include "pathlib/error/error.h"
+#include "pathlib/errors/errors.h"
 #include "pathlib/types/containers/pool_unsafe.h"
 
 namespace Pathlib {
@@ -22,20 +22,23 @@ struct Pool
 
 private:
   //---
-  bool named;
+  T* data;
   u32 count;
   u32 free_count;
   u32 free_head;
-  T* data;
+  u32 pools_id;
 
 public:
   //---
-  Pool(const utf8* name) 
+  Pool(const utf8* name,
+       u32 _pools_id = 0) 
   {
     count = 0;
     free_count = 1;
     free_head = 0;
-    data = (T*)malloc_unsafe(sizeof(T) * CAPACITY);
+    pools_id = _pools_id;
+    data = (T*)malloc_unsafe(sizeof(T) * CAPACITY, 
+                             name ? ShortStringUnsafe<96>(u8"[Pool]'", name, u8"'::[T*]data").str : nullptr);
     memset_unsafe(data, 0xFF, sizeof(T) * CAPACITY);
   }
 
@@ -53,23 +56,18 @@ public:
   }
 
   //---
-  static inline constexpr u64 capacity()
+  bool is_occupied(u32 id)
   {
-    return CAPACITY;
+    return (((id & 0xFFFF) < CAPACITY) && (id < 0xFFFF0000));
   }
 
   //---
-  static inline bool is_occupied(u32 id)
-  {
-    return (id < 0xFFFF0000);
-  }
-
-  //---
-  inline SafePtr<T> get_vacant(u32 pools_id = 0)
+  template <typename... Args>
+  T* get_vacant(Args&&... constructor_args)
   {
     if (count >= CAPACITY) {
-      error.set_last_error(u8"Failed to alloc() from pool; it is already at capacity.");
-      error.to_log();
+      get_errors().set_last_error(u8"Failed to alloc() from pool; it is already at capacity.");
+      get_errors().to_log();
       return nullptr;
     }
     ++count;
@@ -80,7 +78,7 @@ public:
     } else {
       free_head = new_object->pool_id;
     }
-    Memory::call_constructor<T>(new_object);
+    Memory::call_constructor<T>(new_object, constructor_args...);
     new_object->pool_id = (new_object - data) | (pools_id << 16);
     return SafePtr<T>(new_object);
   }
@@ -96,9 +94,9 @@ public:
       object->pool_id = free_head | 0xFFFF0000;
       free_head = (object - data);
     } else {
-      error.set_last_error(u8"Attempt to free an invalid pool_id from Pool.");
-      error.to_log();
-      error.kill_script();
+      get_errors().set_last_error(u8"Attempt to free an invalid pool_id from Pool.");
+      get_errors().to_log();
+      get_errors().kill_script();
     }
   }
 
@@ -109,9 +107,9 @@ public:
       free(object->pool_id);
       object = nullptr;
     } else {
-      error.set_last_error(u8"Attempt to free a null SafePtr from Pool.");
-      error.to_log();
-      error.kill_script();
+      get_errors().set_last_error(u8"Attempt to free a null SafePtr from Pool.");
+      get_errors().to_log();
+      get_errors().kill_script();
     }
   }
 
@@ -121,12 +119,6 @@ public:
     count = 0;
     free_head = 0;
     free_count = 1;
-  }
-
-  //---
-  inline u64 get_count()
-  {
-    return count;
   }
 
   //---
@@ -149,6 +141,18 @@ public:
       }
     }
     return true;
+  }
+
+  //---
+  static inline constexpr u64 get_capacity()
+  {
+    return CAPACITY;
+  }
+
+  //---
+  inline u64 get_count()
+  {
+    return count;
   }
 };
 }

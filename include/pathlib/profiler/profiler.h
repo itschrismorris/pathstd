@@ -10,24 +10,27 @@
 namespace Pathlib::_Internal {
 
 //---
-struct Profile
+struct Profiler
 {
   //---
   struct MemoryItem
   {
-    ShortStringUnsafe<32> name;
+    ShortStringUnsafe<96> name;
     u32 pool_id;
     u64 size;
   };
 
   //---
-  bool initiate();
-  void shutdown();
+  PoolsUnsafe<MemoryItem, 1024, 8> memory_items;
 
   //---
-  PoolsUnsafe<MemoryItem, 1024, 8> memory_items;
+  Profiler();
+  ~Profiler() {}
+
+  //---
+  static ShortStringUnsafe<96> get_memory_item_name(void* ptr);
 };
 }
 
 //---
-namespace Pathlib { extern _Internal::Profile profile; }
+namespace Pathlib { _Internal::Profiler& get_profiler(); }
