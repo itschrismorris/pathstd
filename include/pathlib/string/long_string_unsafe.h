@@ -4,33 +4,40 @@
 
 #pragma once
 #include "pathlib/memory/malloc_unsafe.h"
-#include "pathlib/types/string/from_type.h"
-#include "pathlib/types/string/short_string.h"
+#include "pathlib/string/from_type.h"
+#include "pathlib/string/long_string.h"
+#include "pathlib/string/short_string.h"
+#include "pathlib/string/short_string_unsafe.h"
 #include "pathlib/profiler/profiler.h"
 
 namespace Pathlib {
 
 //---
 template <u64 RESERVE_CAPACITY>
-struct LongString
+struct LongStringUnsafe
 {
-private:
   //---
   utf8* str;
   u64 capacity;
   u64 size;
-  
-public:
+
   //---
-  LongString(const utf8* name)
+  constexpr const utf8* type_name() const
+  {
+    return u8"LongString";
+  }
+  
+  //---
+  LongStringUnsafe(const utf8* name)
   {
     capacity = RESERVE_CAPACITY;
-    str = (utf8*)malloc_unsafe(RESERVE_CAPACITY + 1, ShortStringUnsafe<96>(name, u8"::str").str);
+    str = (utf8*)malloc_unsafe(RESERVE_CAPACITY + 1, 
+                               ShortStringUnsafe<96>(u8"[LongString]\"", name, u8"\"::[utf8*]str").str);
     clear();
   }
 
   //---
-  ~LongString() 
+  ~LongStringUnsafe()
   {
     if (str) {
       free_unsafe((void**)&str);
@@ -38,7 +45,7 @@ public:
   }
 
   //---
-  LongString(const LongString& string)
+  LongStringUnsafe(const LongStringUnsafe& string)
   {
     str = (utf8*)malloc_unsafe(string.capacity + 1, 
                                ShortStringUnsafe<96>(_Internal::Profiler::get_memory_item_name(string.str), u8"(copy)::str").str);
@@ -49,17 +56,18 @@ public:
   
   //---
   template <typename... Args>
-  LongString(const utf8* name,
-             Args&&... args)
+  LongStringUnsafe(const utf8* name,
+                   Args&&... args)
   {
-    str = (utf8*)malloc_unsafe(RESERVE_CAPACITY + 1, ShortStringUnsafe<96>(name, u8"::str").str);
+    str = (utf8*)malloc_unsafe(RESERVE_CAPACITY + 1, 
+                               ShortStringUnsafe<96>(u8"[LongString]\"", name, u8"\"::[utf8*]str").str);
     capacity = RESERVE_CAPACITY;
     size = 0;
-    (LongString::_append(*this, args), ...);
+    (LongStringUnsafe::_append(*this, args), ...);
   }
 
   //---
-  inline LongString& operator =(const LongString& string)
+  inline LongStringUnsafe& operator =(const LongStringUnsafe& string)
   {
     size = string.size;
     if (size > string.capacity) {
@@ -73,16 +81,8 @@ public:
 
   //---
   template <typename T>
-  inline LongString& operator =(const T arg)
+  inline LongStringUnsafe& operator =(const T arg)
   {
-    if constexpr (IS_POINTER(T)) {
-      if (!arg) {
-        get_errors().set_last_error(u8"Attempt to set LongString to a null pointer.");
-        get_errors().to_log();
-        get_errors().kill_script();
-        return false;
-      }
-    }
     u64 arg_size = String::size_of(arg);
     if (arg_size > capacity) {
       capacity = arg_size * 1.5;
@@ -95,34 +95,40 @@ public:
   //---
   inline bool operator ==(const utf8* string) const
   {
-    if (EXPECT(string != nullptr)) {
-      return String::compare<true, false>(str, string, size);
-    } else {
-      get_errors().set_last_error(u8"Attempt to compare LongString equality with a null pointer.");
-      get_errors().to_log();
-      get_errors().kill_script();
-      return false;
-    }
+    return String::compare<true, false>(str, string, size);
   }
 
   //---
-  inline bool operator ==(const LongString& string) const
+  inline bool operator ==(const LongStringUnsafe& string) const
   {
     return String::compare<true, true>(str, string.str, size, string.size);
   }
 
   //---
   template <typename T>
-  inline const LongString operator +(const T arg)
+  inline const LongStringUnsafe operator +(const T arg)
   {
-    static_assert(!SAME_TYPE(T, const char*), "LongString literals must be prepended with u8 for utf-8 encoding: u8\"Hello world!\"");
+    static_assert(!SAME_TYPE(T, const char*), "LongStringUnsafe literals must be prepended with u8 for utf-8 encoding: u8\"Hello world!\"");
     static_assert(!SAME_TYPE(T, char*), "Replace string usages of char with utf8, for utf-8 encoding.");
-    LongString::_append(*this, arg);
+    LongStringUnsafe::_append(*this, arg);
     return *this;
   }
 
   //---
-  inline LongString& operator +=(const LongString& arg)
+  inline LongStringUnsafe& operator +=(const LongString<RESERVE_CAPACITY>& arg)
+  {
+    u64 new_size = size + arg._size;
+    if (new_size > capacity) {
+      capacity = size * 1.5;
+      str = (utf8*)realloc_unsafe(str, capacity + 1);
+    }
+    memcpy_unsafe<false, true>(&str[size], arg._str, arg._size + 1);
+    size = new_size;
+    return *this;
+  }
+
+  //---
+  inline LongStringUnsafe& operator +=(const LongStringUnsafe& arg)
   {
     u64 new_size = size + arg.size;
     if (new_size > capacity) {
@@ -136,7 +142,21 @@ public:
 
   //---
   template <u64 CAPACITY>
-  inline LongString& operator +=(const ShortString<CAPACITY>& arg)
+  inline LongStringUnsafe& operator +=(const ShortString<CAPACITY>& arg)
+  {
+    u64 new_size = size + arg.size;
+    if (new_size > capacity) {
+      capacity = size * 1.5;
+      str = (utf8*)realloc_unsafe(str, capacity + 1);
+    }
+    memcpy_unsafe<false, true>(&str[size], arg.str, arg.size + 1);
+    size = new_size;
+    return *this;
+  }
+
+  //---
+  template <u64 CAPACITY>
+  inline LongStringUnsafe& operator +=(const ShortStringUnsafe<CAPACITY>& arg)
   {
     u64 new_size = size + arg.size;
     if (new_size > capacity) {
@@ -150,24 +170,45 @@ public:
 
   //---
   template <typename T>
-  inline LongString& operator +=(const T arg)
+  inline LongStringUnsafe& operator +=(const T arg)
   {
-    if constexpr (IS_POINTER(T)) {
-      if (!arg) {
-        get_errors().set_last_error(u8"Attempt to append LongString with a null pointer.");
-        get_errors().to_log();
-        get_errors().kill_script();
-        return *this;
-      }
-    }
     String::_Internal::from_type_grow(arg, &str, &size, &capacity);
     return *this;
   }
 
   //---
   template <u64 ARG_CAPACITY>
-  static inline void _append(LongString& string_out, 
+  static inline void _append(LongStringUnsafe& string_out, 
                              const ShortString<ARG_CAPACITY>& arg)
+  {
+
+    u64 new_size = string_out.size + arg.get_size();
+    if (new_size > string_out.capacity) {
+      string_out.capacity = new_size * 1.5;
+      string_out.str = (utf8*)realloc_unsafe(string_out.str, string_out.capacity + 1);
+    }
+    memcpy_unsafe<false, true>(&string_out.str[string_out.size], arg.get_str(), arg.get_size() + 1);
+    string_out.size = new_size;
+  }
+
+  //---
+  template <u64 ARG_CAPACITY>
+  static inline void _append(LongStringUnsafe& string_out, 
+                             const ShortStringUnsafe<ARG_CAPACITY>& arg)
+  {
+    u64 new_size = string_out.size + arg.size;
+    if (new_size > string_out.capacity) {
+      string_out.capacity = new_size * 1.5;
+      string_out.str = (utf8*)realloc_unsafe(string_out.str, string_out.capacity + 1);
+    }
+    memcpy_unsafe<false, true>(&string_out.str[string_out.size], arg.str, arg.size + 1);
+    string_out.size = new_size;
+  }
+
+  //---
+  template <u64 ARG_CAPACITY>
+  static inline void _append(LongStringUnsafe& string_out,
+                             const LongString<ARG_CAPACITY>& arg)
   {
     u64 new_size = string_out.size + arg.get_size();
     if (new_size > string_out.capacity) {
@@ -180,8 +221,8 @@ public:
 
   //---
   template <u64 ARG_CAPACITY>
-  static inline void _append(LongString& string_out,
-                             const LongString<ARG_CAPACITY>& arg)
+  static inline void _append(LongStringUnsafe& string_out,
+                             const LongStringUnsafe<ARG_CAPACITY>& arg)
   {
     u64 new_size = string_out.size + arg.size;
     if (new_size > string_out.capacity) {
@@ -194,14 +235,11 @@ public:
 
   //---
   template <typename T>
-  static inline void _append(LongString& string_out, 
+  static inline void _append(LongStringUnsafe& string_out, 
                              const T arg)
   {
     if constexpr (IS_POINTER(T)) {
       if (!arg) {
-        get_errors().set_last_error(u8"Attempt to append LongString with a null pointer.");
-        get_errors().to_log();
-        get_errors().kill_script();
         return;
       }
     }
@@ -217,7 +255,7 @@ public:
 
   //---
   template <typename... Args>
-  static inline void append(LongString& string_out,
+  static inline void append(LongStringUnsafe& string_out,
                             Args&&... args)
   {
     (_append(string_out, args), ...);
@@ -225,17 +263,17 @@ public:
 
   //---
   template <typename... Args>
-  inline LongString& format(Args&&... args)
+  inline LongStringUnsafe& format(Args&&... args)
   {
     size = 0;
-    (LongString::_append(*this, args), ...);
+    (LongStringUnsafe::_append(*this, args), ...);
     return *this;
   }
 
   //---
   template <typename... Args>
-  static inline LongString format(LongString& string_out,
-                                  Args&&... args)
+  static inline LongStringUnsafe format(LongStringUnsafe& string_out,
+                                        Args&&... args)
   {
     (_append(string_out, args), ...);
   }
@@ -245,20 +283,6 @@ public:
   {
     str[0] = u8'\0';
     size = 0;
-  }
-
-  //---
-  u64 get_size() const
-  {
-    return size;
-  }
-
-  //---
-  const SafePtr<utf8> get_str() const
-  {
-    SafePtr<utf8> ptr = str;
-    ptr.set_count(size);
-    return ptr;
   }
 
   //---
@@ -272,10 +296,10 @@ public:
   {
     return Math::hash(str, size);
   }
-  
+
   //---
   template <typename T>
-  LongString& from_value_hex(T value)
+  LongStringUnsafe& from_value_hex(T value)
   {
     utf8 chars[] = u8"0123456789ABCDEF";
     constexpr u32 digit_count = sizeof(T) * 2;
@@ -297,3 +321,8 @@ public:
   }
 };
 }
+
+//---
+template <typename T> struct _is_long_string : false_type {};
+template <u64 RESERVE_CAPACITY> struct _is_long_string<Pathlib::LongString<RESERVE_CAPACITY>> : true_type {};
+template <u64 RESERVE_CAPACITY> struct _is_long_string<Pathlib::LongStringUnsafe<RESERVE_CAPACITY>> : true_type {};

@@ -4,9 +4,9 @@
 
 #pragma once
 #include "pathlib/types/types.h"
-#include "pathlib/types/containers/vector_unsafe.h"
-#include "pathlib/types/string/size_of.h"
-#include "pathlib/types/string/long_string_unsafe.h"
+#include "pathlib/containers/vector_unsafe.h"
+#include "pathlib/string/size_of.h"
+#include "pathlib/string/long_string_unsafe.h"
 
 namespace Pathlib {
 
@@ -14,7 +14,7 @@ namespace Pathlib {
 template <typename K, 
           typename V, 
           u64 RESERVE_CAPACITY>
-struct Hashmap
+struct HashmapUnsafe
 {
   //---
   static_assert(Math::is_pot(RESERVE_CAPACITY) && (RESERVE_CAPACITY >= 8), 
@@ -29,7 +29,6 @@ struct Hashmap
   static u32 constexpr NEW_HASH = Types::U32_MAX;
   static u32 constexpr DISTANCE_SHIFT = 29;
 
-private:
   //---
   u32 capacity;
   u32 max_probe_length;
@@ -39,9 +38,8 @@ private:
   VectorUnsafe<V, RESERVE_CAPACITY> values;
   VectorUnsafe<u32, RESERVE_CAPACITY> kv_slot_lookup;
 
-public:
   //---
-  Hashmap(const utf8* name)
+  HashmapUnsafe(const utf8* name)
   {
     capacity = RESERVE_CAPACITY;
     max_probe_length = 1 + (Math::log2(capacity) >> 2);
@@ -56,7 +54,7 @@ public:
   }
 
   //---
-  ~Hashmap()
+  ~HashmapUnsafe()
   {
     if (slot_kv_index) {
       free_unsafe((void**)&slot_kv_index);
@@ -84,9 +82,9 @@ public:
   }
 
   //---
-  inline SafePtr<V> find(const K& key,
-                         u32 existing_hash = NEW_HASH,
-                         u32 hash_count = 0)
+  inline V* find(const K& key,
+                 u32 existing_hash = NEW_HASH,
+                 u32 hash_count = 0)
   {
     u32 key_hash = (existing_hash == NEW_HASH) ? hash(key) : existing_hash;
     u32 slot_index = (key_hash & (capacity - 1));
@@ -100,7 +98,7 @@ public:
         u32 distance = Math::lsb_set(digest_mask) >> 2;
         u32 kv_index = slot_kv_index[slot_index + distance];
         if (keys[kv_index] == key) {
-          return SafePtr<V>(&values[kv_index]);
+          return &values[kv_index];
         }
         digest_mask ^= (0xF << (distance << 2));
       }
@@ -113,7 +111,7 @@ public:
   }
 
   //---
-  SafePtr<V> operator [](const K& key)
+  V* operator [](const K& key)
   {
     return find(key);
   }

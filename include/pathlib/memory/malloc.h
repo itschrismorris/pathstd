@@ -4,7 +4,7 @@
 
 #pragma once
 #include "pathlib/types/types.h"
-#include "pathlib/types/containers/safe_ptr.h"
+#include "pathlib/containers/safe_ptr.h"
 #include "pathlib/memory/malloc_unsafe.h"
 #include "pathlib/errors/errors.h"
 

@@ -4,8 +4,8 @@
 
 #pragma once
 #include "pathlib/types/types.h"
-#include "pathlib/types/containers/pools_unsafe.h"
-#include "pathlib/types/string/short_string_unsafe.h"
+#include "pathlib/containers/pools_unsafe.h"
+#include "pathlib/string/short_string_unsafe.h"
 
 namespace Pathlib::_Internal {
 

@@ -6,7 +6,7 @@
 #include "pathlib/types/types.h"
 #include "pathlib/win32/console.h"
 #include "pathlib/win32/safe_win32.h"
-#include "pathlib/types/string/long_string_unsafe.h"
+#include "pathlib/string/long_string_unsafe.h"
 
 namespace Pathlib::_Internal {
 
@@ -45,9 +45,9 @@ struct Log
   template <u64 RESERVE_CAPACITY>
   inline bool log(const LongString<RESERVE_CAPACITY>& string)
   {
-    return (Win32::write_console(string.str, string.size) && 
+    return (Win32::write_console(string._str, string._size) && 
             Win32::write_console(u8"\n", 1) &&
-            Win32::write_log(string.str, string.size) &&
+            Win32::write_log(string._str, string._size) &&
             Win32::write_log(u8"\n", 1));
   }
 

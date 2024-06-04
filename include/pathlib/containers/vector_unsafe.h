@@ -5,7 +5,7 @@
 #pragma once
 #include "pathlib/types/types.h"
 #include "pathlib/memory/memcpy.h"
-#include "pathlib/types/string/short_string_unsafe.h"
+#include "pathlib/string/short_string_unsafe.h"
 
 namespace Pathlib {
 

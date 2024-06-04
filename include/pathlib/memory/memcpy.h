@@ -7,7 +7,7 @@
 #include "pathlib/memory/memory.h"
 #include "pathlib/math/math.h"
 #include "pathlib/math/simd_math.h"
-#include "pathlib/types/containers/safe_ptr.h"
+#include "pathlib/containers/safe_ptr.h"
 
 namespace Pathlib {
 namespace _Internal {

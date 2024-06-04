@@ -5,14 +5,19 @@
 #pragma once
 #include "pathlib/types/types.h"
 #include "pathlib/errors/errors.h"
-#include "pathlib/types/containers/pool_unsafe.h"
+#include "pathlib/memory/memory.h"
+#include "pathlib/memory/memset.h"
+#include "pathlib/string/short_string_unsafe.h"
+
+//---
+CHECK_HAS_MEMBER(has_pool_id, pool_id);
 
 namespace Pathlib {
 
 //---
 template <typename T, 
           u32 CAPACITY>
-struct Pool
+struct PoolUnsafe
 {
   //---
   static_assert(CAPACITY <= Types::U16_MAX, "Pool CAPACITY cannot exceed 65535 (16-bits used for pool_id).");
@@ -20,30 +25,31 @@ struct Pool
   using POOL_ID_TYPE = _member_type<T, decltype(&T::pool_id)>::type;
   static_assert(SAME_TYPE(POOL_ID_TYPE, u32), "Pool object member 'pool_id' must be of type u32.");
 
-private:
+  //---
+  static constexpr u64 EMPTY_SLOT = 0xFFFF0000;
+
   //---
   T* data;
   u32 count;
   u32 free_count;
   u32 free_head;
   u32 pools_id;
-
-public:
+  
   //---
-  Pool(const utf8* name,
-       u32 _pools_id = 0) 
+  PoolUnsafe(const utf8* name,
+             u32 _pools_id = 0)
   {
     count = 0;
     free_count = 1;
     free_head = 0;
     pools_id = _pools_id;
     data = (T*)malloc_unsafe(sizeof(T) * CAPACITY, 
-                             name ? ShortStringUnsafe<96>(u8"[Pool]'", name, u8"'::[T*]data").str : nullptr);
+                             name ? ShortStringUnsafe<96>(u8"[Pool]\"", name, u8"\"::[T*]data").str : nullptr);
     memset_unsafe(data, 0xFF, sizeof(T) * CAPACITY);
   }
 
   //---
-  ~Pool() 
+  ~PoolUnsafe()
   {
     iterate([&](T& object)
       {
@@ -80,41 +86,28 @@ public:
     }
     Memory::call_constructor<T>(new_object, constructor_args...);
     new_object->pool_id = (new_object - data) | (pools_id << 16);
-    return SafePtr<T>(new_object);
+    return new_object;
   }
 
   //---
-  inline void free(u32 id)
+  void free(u32 id)
   {
-    if (EXPECT(is_occupied(id) && (count > 0))) {
-      --count;
-      ++free_count;
-      T* object = &data[id & 0xFFFF];
-      Memory::call_destructor<T>(object);
-      object->pool_id = free_head | 0xFFFF0000;
-      free_head = (object - data);
-    } else {
-      get_errors().set_last_error(u8"Attempt to free an invalid pool_id from Pool.");
-      get_errors().to_log();
-      get_errors().kill_script();
-    }
+    --count;
+    ++free_count;
+    T* object = &data[id & 0xFFFF];
+    Memory::call_destructor<T>(object);
+    object->pool_id = free_head | 0xFFFF0000;
+    free_head = (object - data);
   }
 
   //---
-  inline void free(SafePtr<T>& object)
+  void free(T& object)
   {
-    if (EXPECT(object.is_valid())) {
-      free(object->pool_id);
-      object = nullptr;
-    } else {
-      get_errors().set_last_error(u8"Attempt to free a null SafePtr from Pool.");
-      get_errors().to_log();
-      get_errors().kill_script();
-    }
+    free(object.pool_id);
   }
 
   //---
-  inline void clear()
+  void clear()
   {
     count = 0;
     free_head = 0;
@@ -123,9 +116,10 @@ public:
 
   //---
   template<typename Callable>
-  inline bool iterate(Callable&& function)
+  bool iterate(Callable&& function)
   {
-    static_assert(SAME_TYPE(result_of<Callable(T&)>::type, bool), "Pool iteration callback must return a bool for continuing or breaking from the iteration.");
+    static_assert(SAME_TYPE(result_of<Callable(T&)>::type, bool), 
+                  "Pool iteration callback must return a bool for continuing or breaking from the iteration.");
     u32 objects_visited = 0;
     u32 original_count = count;
     for (u32 m = 0; m < CAPACITY; ++m) {
@@ -144,15 +138,9 @@ public:
   }
 
   //---
-  static inline constexpr u64 get_capacity()
+  static constexpr u64 get_capacity()
   {
     return CAPACITY;
-  }
-
-  //---
-  inline u64 get_count()
-  {
-    return count;
   }
 };
 }

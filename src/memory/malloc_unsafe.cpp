@@ -1,6 +1,6 @@
 #include "pathlib/memory/malloc_unsafe.h"
 #include "pathlib/profiler/profiler.h"
-#include "pathlib/types/containers/pool_unsafe.h"
+#include "pathlib/containers/pool_unsafe.h"
 #include "../src/third_party/mimalloc/mimalloc.h"
 
 #define NOT_TRACKED 0xFFFFFFFF

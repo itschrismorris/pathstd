@@ -22,15 +22,6 @@
     <Filter Include="include\timer">
       <UniqueIdentifier>{2b3b7103-ac64-4aab-9626-cf2968a3d7ef}</UniqueIdentifier>
     </Filter>
-    <Filter Include="include\types">
-      <UniqueIdentifier>{d05e2e79-c570-4826-9298-96f2925d1e05}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="include\types\string">
-      <UniqueIdentifier>{f3c40e4b-f1b6-438c-b2d9-88f9e3af97c4}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="include\types\containers">
-      <UniqueIdentifier>{d7e27849-648a-4632-a1c3-11a8d908637e}</UniqueIdentifier>
-    </Filter>
     <Filter Include="include\win32">
       <UniqueIdentifier>{9cc8f082-5005-4d43-942d-bfa730da8cc5}</UniqueIdentifier>
     </Filter>
@@ -66,6 +57,15 @@
     </Filter>
     <Filter Include="src\profiler">
       <UniqueIdentifier>{b38a053e-57a0-4598-98ab-c6be87742d25}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\containers">
+      <UniqueIdentifier>{120208f1-b6c3-4554-ae38-845f291f2fad}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\string">
+      <UniqueIdentifier>{b7a01d4c-7fe8-4105-a5c8-c8ddd356b78c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\types">
+      <UniqueIdentifier>{adda3b4a-971a-40bb-a9bc-dfd2a0ed30a4}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -108,33 +108,6 @@
     <ClInclude Include="..\..\include\pathlib\timer\timer.h">
       <Filter>include\timer</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\include\pathlib\types\types.h">
-      <Filter>include\types</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\pathlib\types\containers\hashmap.h">
-      <Filter>include\types\containers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\pathlib\types\containers\vector.h">
-      <Filter>include\types\containers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\pathlib\types\containers\array.h">
-      <Filter>include\types\containers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\pathlib\types\string\compare.h">
-      <Filter>include\types\string</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\pathlib\types\string\from_type.h">
-      <Filter>include\types\string</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\pathlib\types\string\long_string.h">
-      <Filter>include\types\string</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\pathlib\types\string\short_string.h">
-      <Filter>include\types\string</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\pathlib\types\string\size_of.h">
-      <Filter>include\types\string</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\include\pathlib\win32\console.h">
       <Filter>include\win32</Filter>
     </ClInclude>
@@ -146,12 +119,6 @@
     </ClInclude>
     <ClInclude Include="..\..\src\win32\mindows.h">
       <Filter>src\win32</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\pathlib\types\containers\pool.h">
-      <Filter>include\types\containers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\pathlib\types\containers\pools.h">
-      <Filter>include\types\containers</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\third_party\mimalloc\mimalloc\atomic.h">
       <Filter>src\third_party\mimalloc\mimalloc</Filter>
@@ -174,15 +141,6 @@
     <ClInclude Include="..\..\src\third_party\mimalloc\mimalloc-override.h">
       <Filter>src\third_party\mimalloc</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\include\pathlib\types\containers\array_unsafe.h">
-      <Filter>include\types\containers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\pathlib\types\containers\vector_unsafe.h">
-      <Filter>include\types\containers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\pathlib\types\containers\safe_ptr.h">
-      <Filter>include\types\containers</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\include\pathlib\memory\memory.h">
       <Filter>include\memory</Filter>
     </ClInclude>
@@ -192,26 +150,68 @@
     <ClInclude Include="..\..\include\pathlib\memory\malloc.h">
       <Filter>include\memory</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\include\pathlib\types\containers\hashmap_unsafe.h">
-      <Filter>include\types\containers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\pathlib\types\containers\pool_unsafe.h">
-      <Filter>include\types\containers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\pathlib\types\containers\pools_unsafe.h">
-      <Filter>include\types\containers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\pathlib\types\string\short_string_unsafe.h">
-      <Filter>include\types\string</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\pathlib\types\string\long_string_unsafe.h">
-      <Filter>include\types\string</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\include\pathlib\errors\errors.h">
       <Filter>include\errors</Filter>
     </ClInclude>
     <ClInclude Include="..\..\include\pathlib\profiler\profiler.h">
       <Filter>include\profiler</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\pathlib\containers\array.h">
+      <Filter>include\containers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\pathlib\containers\array_unsafe.h">
+      <Filter>include\containers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\pathlib\containers\hashmap.h">
+      <Filter>include\containers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\pathlib\containers\hashmap_unsafe.h">
+      <Filter>include\containers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\pathlib\containers\pool.h">
+      <Filter>include\containers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\pathlib\containers\pool_unsafe.h">
+      <Filter>include\containers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\pathlib\containers\pools.h">
+      <Filter>include\containers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\pathlib\containers\pools_unsafe.h">
+      <Filter>include\containers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\pathlib\containers\safe_ptr.h">
+      <Filter>include\containers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\pathlib\containers\vector.h">
+      <Filter>include\containers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\pathlib\containers\vector_unsafe.h">
+      <Filter>include\containers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\pathlib\string\compare.h">
+      <Filter>include\string</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\pathlib\string\from_type.h">
+      <Filter>include\string</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\pathlib\string\long_string.h">
+      <Filter>include\string</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\pathlib\string\long_string_unsafe.h">
+      <Filter>include\string</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\pathlib\string\short_string.h">
+      <Filter>include\string</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\pathlib\string\short_string_unsafe.h">
+      <Filter>include\string</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\pathlib\string\size_of.h">
+      <Filter>include\string</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\pathlib\types\types.h">
+      <Filter>include\types</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

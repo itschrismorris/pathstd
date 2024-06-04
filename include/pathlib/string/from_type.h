@@ -6,7 +6,7 @@
 #include "pathlib/memory/memcpy.h"
 #include "pathlib/memory/memset.h"
 #include "pathlib/memory/malloc_unsafe.h"
-#include "pathlib/types/string/size_of.h"
+#include "pathlib/string/size_of.h"
 #include "pathlib/types/types.h"
 
 namespace Pathlib::String::_Internal {

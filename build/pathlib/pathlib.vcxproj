@@ -19,6 +19,17 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\include\pathlib\containers\array.h" />
+    <ClInclude Include="..\..\include\pathlib\containers\array_unsafe.h" />
+    <ClInclude Include="..\..\include\pathlib\containers\hashmap.h" />
+    <ClInclude Include="..\..\include\pathlib\containers\hashmap_unsafe.h" />
+    <ClInclude Include="..\..\include\pathlib\containers\pool.h" />
+    <ClInclude Include="..\..\include\pathlib\containers\pools.h" />
+    <ClInclude Include="..\..\include\pathlib\containers\pools_unsafe.h" />
+    <ClInclude Include="..\..\include\pathlib\containers\pool_unsafe.h" />
+    <ClInclude Include="..\..\include\pathlib\containers\safe_ptr.h" />
+    <ClInclude Include="..\..\include\pathlib\containers\vector.h" />
+    <ClInclude Include="..\..\include\pathlib\containers\vector_unsafe.h" />
     <ClInclude Include="..\..\include\pathlib\errors\errors.h" />
     <ClInclude Include="..\..\include\pathlib\log\log.h" />
     <ClInclude Include="..\..\include\pathlib\math\intrinsics\avx2intrin.h" />
@@ -37,25 +48,14 @@
     <ClInclude Include="..\..\include\pathlib\memory\memset.h" />
     <ClInclude Include="..\..\include\pathlib\pathlib.h" />
     <ClInclude Include="..\..\include\pathlib\profiler\profiler.h" />
+    <ClInclude Include="..\..\include\pathlib\string\compare.h" />
+    <ClInclude Include="..\..\include\pathlib\string\from_type.h" />
+    <ClInclude Include="..\..\include\pathlib\string\long_string.h" />
+    <ClInclude Include="..\..\include\pathlib\string\long_string_unsafe.h" />
+    <ClInclude Include="..\..\include\pathlib\string\short_string.h" />
+    <ClInclude Include="..\..\include\pathlib\string\short_string_unsafe.h" />
+    <ClInclude Include="..\..\include\pathlib\string\size_of.h" />
     <ClInclude Include="..\..\include\pathlib\timer\timer.h" />
-    <ClInclude Include="..\..\include\pathlib\types\containers\hashmap.h" />
-    <ClInclude Include="..\..\include\pathlib\types\containers\array_unsafe.h" />
-    <ClInclude Include="..\..\include\pathlib\types\containers\hashmap_unsafe.h" />
-    <ClInclude Include="..\..\include\pathlib\types\containers\pools_unsafe.h" />
-    <ClInclude Include="..\..\include\pathlib\types\containers\pool_unsafe.h" />
-    <ClInclude Include="..\..\include\pathlib\types\containers\safe_ptr.h" />
-    <ClInclude Include="..\..\include\pathlib\types\containers\vector.h" />
-    <ClInclude Include="..\..\include\pathlib\types\containers\pool.h" />
-    <ClInclude Include="..\..\include\pathlib\types\containers\pools.h" />
-    <ClInclude Include="..\..\include\pathlib\types\containers\array.h" />
-    <ClInclude Include="..\..\include\pathlib\types\containers\vector_unsafe.h" />
-    <ClInclude Include="..\..\include\pathlib\types\string\compare.h" />
-    <ClInclude Include="..\..\include\pathlib\types\string\from_type.h" />
-    <ClInclude Include="..\..\include\pathlib\types\string\long_string.h" />
-    <ClInclude Include="..\..\include\pathlib\types\string\long_string_unsafe.h" />
-    <ClInclude Include="..\..\include\pathlib\types\string\short_string.h" />
-    <ClInclude Include="..\..\include\pathlib\types\string\short_string_unsafe.h" />
-    <ClInclude Include="..\..\include\pathlib\types\string\size_of.h" />
     <ClInclude Include="..\..\include\pathlib\types\types.h" />
     <ClInclude Include="..\..\include\pathlib\win32\console.h" />
     <ClInclude Include="..\..\include\pathlib\win32\safe_win32.h" />

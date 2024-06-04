@@ -5,7 +5,7 @@
 #pragma once
 #include "pathlib/types/types.h"
 #include "pathlib/errors/errors.h"
-#include "pathlib/types/containers/pool_unsafe.h"
+#include "pathlib/containers/pool_unsafe.h"
 
 namespace Pathlib {
 
@@ -29,7 +29,7 @@ private:
   ShortStringUnsafe<96> name;
 public:
   //---
-  Pools(const utf8* _name) : pools(_name ? ShortStringUnsafe<96>(u8"[Pools]'", _name, u8"'::[Vector]pools").str : nullptr)
+  Pools(const utf8* _name) : pools(_name ? ShortStringUnsafe<96>(u8"[Pools]\"", _name, u8"\"::[Vector]pools").str : nullptr)
   {
     count = 0;
     pools.emplace_back(1, _name ? ShortStringUnsafe<96>(_name, u8"[", count, u8"]").str : nullptr,

@@ -6,10 +6,10 @@
 #include "pathlib/win32/safe_win32.h"
 #include "pathlib/types/types.h"
 #include "pathlib/errors/errors.h"
-#include "pathlib/types/string/short_string.h"
-#include "pathlib/types/string/long_string.h"
-#include "pathlib/types/string/short_string_unsafe.h"
-#include "pathlib/types/string/long_string_unsafe.h"
+#include "pathlib/string/short_string.h"
+#include "pathlib/string/long_string.h"
+#include "pathlib/string/short_string_unsafe.h"
+#include "pathlib/string/long_string_unsafe.h"
 
 namespace Pathlib::_Internal {
   
@@ -53,7 +53,7 @@ struct Console
   template <u64 RESERVE_CAPACITY>
   inline bool write(const LongString<RESERVE_CAPACITY>& string)
   {
-    return Win32::write_console(string.str, string.size) &&
+    return Win32::write_console(string._str, string._size) &&
            Win32::write_console(u8"\n", 1);
   }
 
