@@ -111,6 +111,9 @@ typedef struct _SYMBOL_INFO {
 
 //---
 __declspec(dllimport) HANDLE __stdcall GetCurrentProcess();
+__declspec(dllimport) DWORD __stdcall GetCurrentThreadId();
+__declspec(dllimport) BOOL __stdcall SwitchToThread();
+__declspec(dllimport) void __stdcall Sleep(DWORD dwMilliseconds);
 __declspec(dllimport) BOOL __stdcall SymInitialize(HANDLE hProcess,
                                                    PCSTR UserSearchPath,
                                                    BOOL fInvadeProcess);

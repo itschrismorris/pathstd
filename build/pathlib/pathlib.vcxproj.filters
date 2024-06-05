@@ -231,6 +231,9 @@
     <ClInclude Include="..\..\include\pathlib\concurrency\threadpool.h">
       <Filter>include\concurrency</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\include\pathlib\concurrency\spsc_queue.h">
+      <Filter>include\concurrency</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\log\log.cpp">

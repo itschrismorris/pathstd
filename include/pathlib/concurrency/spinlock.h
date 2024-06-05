@@ -7,6 +7,7 @@
 #include "pathlib/concurrency/atomics.h"
 #include "pathlib/concurrency/mpsc_queue.h"
 #include "pathlib/concurrency/threadpool.h"
+#include "pathlib/errors/errors.h"
 
 namespace Pathlib {
 
@@ -14,34 +15,46 @@ namespace Pathlib {
 struct Spinlock
 {
   //---
-  MPSCQueue<u8*, _Internal::Threadpool::MAX_THREAD_COUNT> queue;
-  AtomicFlag _locked;
+  static constexpr u32 NO_OWNER = Types::U32_MAX;
+
+  //---
+  MPSCQueue<volatile u32*, _Internal::Threadpool::MAX_THREAD_COUNT> _queue;
+  Atomic<u32> _owner;
 
   //---
   Spinlock() 
   {
-    _locked.clear();
+    _owner.store(NO_OWNER);
   }
   ~Spinlock() {}
 
   //
   [[nodiscard]] inline bool try_acquire()
   {
-    return !_locked.test_and_set();
+    return _owner.compare_and_swap(NO_OWNER, Win32::get_current_thread_id());
   }
 
   //---
-  inline bool acquire()
+  [[nodiscard]] inline bool acquire()
   {
     if (try_acquire()) {
       return true;
     } else {
-      AtomicFlag wait;
-      wait.test_and_set();
-      // Place 'wait' pointer onto the queue so whoever currently
-      // has the lock can unlock it for us.
-      while (wait.test_and_set()) {
-
+      volatile u32 wait = 1;
+      if (_queue.push(&wait)) {
+        u32 spins = 0;
+        while (wait) {
+          if (++spins < 2000) {
+          } else {
+            Win32::yield_thread();
+          }
+        }
+        _owner.store(Win32::get_current_thread_id());
+        return true;
+      } else {
+        get_errors().set_last_error(u8"Spinlock _queue overflowed; could not acquire lock.");
+        get_errors().to_log(false);
+        return false;
       }
     }
   }
@@ -49,7 +62,14 @@ struct Spinlock
   //---
   inline void release()
   {
-
+    if (_owner.load() == Win32::get_current_thread_id()) {
+      volatile u32* next;
+      if (_queue.pop(next)) {
+        *next = 0;
+      } else {
+        _owner.store(NO_OWNER);
+      }
+    }
   }
 };
 }

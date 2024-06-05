@@ -20,6 +20,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\include\pathlib\concurrency\atomics.h" />
+    <ClInclude Include="..\..\include\pathlib\concurrency\spsc_queue.h" />
     <ClInclude Include="..\..\include\pathlib\concurrency\mpsc_queue.h" />
     <ClInclude Include="..\..\include\pathlib\concurrency\spinlock.h" />
     <ClInclude Include="..\..\include\pathlib\concurrency\thread.h" />

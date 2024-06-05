@@ -29,6 +29,9 @@ namespace Pathlib::Win32 {
 static constexpr u32 MAX_PATH_LENGTH = 260;
 
 //---
+u32 get_current_thread_id();
+void yield_thread();
+void sleep_thread(u32 milliseconds);
 bool get_callstack(utf8* string_out,
                    u64 string_capacity);
 u64 get_last_error_string(utf8* string_out,

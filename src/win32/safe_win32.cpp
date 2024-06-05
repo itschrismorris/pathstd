@@ -8,6 +8,24 @@
 namespace Pathlib::Win32 { 
 
 //---
+u32 get_current_thread_id()
+{
+  return GetCurrentThreadId();
+}
+
+//---
+void yield_thread()
+{
+  SwitchToThread();
+}
+
+//---
+void sleep_thread(u32 milliseconds)
+{
+  Sleep(milliseconds);
+}
+
+//---
 bool get_callstack(utf8* string_out,
                    u64 string_capacity)
 {

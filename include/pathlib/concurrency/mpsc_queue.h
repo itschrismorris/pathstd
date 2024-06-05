@@ -14,54 +14,50 @@ template <typename T,
 struct MPSCQueue
 {
   static_assert(Math::is_pot(CAPACITY), "MPSCQueue CAPACITY must be a power of two.");
-
-  //
-  struct LockedObject
-  {
-    AtomicFlag locked;
-    T object;
-  };
+  static_assert(IS_POINTER(T), "MPSCQueue type must be pointer, to objects stored elsewhere.");
 
   //---
   alignas(CACHE_LINE_SIZE) Atomic<u32> _head;
-  LockedObject _data[CAPACITY];
-  alignas(CACHE_LINE_SIZE) Atomic<u32> _tail;
+  Atomic<T> _data[CAPACITY];
+  alignas(CACHE_LINE_SIZE) u32 _tail;
 
   //---
   MPSCQueue() 
   {
-    _head = 0;
+    _head.store(0);
     _tail = 0;
     for (u32 o = 0; o < CAPACITY; ++o) {
-      _data[o].locked.clear();
+      _data[o].store(nullptr);
     }
   }
   ~MPSCQueue() {}
 
   //---
-  [[nodiscard]] bool push(const T& object)
+  [[nodiscard]] bool push(const T object)
   {
-    u32 index = _head.load();
-    LockedObject* head = &_data[index & (CAPACITY - 1)];
-    if (head->locked.test_and_set()) {
+    u32 index = _head.fetch_add(1, MemOrder::RELAXED) - 1;
+    Atomic<T>* head = &_data[index & (CAPACITY - 1)];
+    if (head->load(MemOrder::ACQUIRE)) {
       return false;
     }
-    head->object = object;
-    _head.fetch_add(1);
+    head->store(object, MemOrder::RELEASE);
     return true;
   }
 
   //---
   [[nodiscard]] bool pop(T& object)
   {
-    u32 index = _tail.load();
-    LockedObject* tail = &_data[index & (CAPACITY - 1)];
-    if (!tail->locked.test()) {
+    u32 index = _tail;
+    Atomic<T>* tail = &_data[index & (CAPACITY - 1)];
+    if (!tail->load(MemOrder::ACQUIRE)) {
       return false;
     }
-    object = tail->object;
-    tail->locked.clear();
-    _tail.fetch_add(1);
+    object = tail->swap(nullptr, MemOrder::ACQ_REL);
+    u32 head = _head.load(MemOrder::RELAXED);
+    if (head >= (index + CAPACITY)) {
+      _head.store(index + 1, MemOrder::RELEASE);
+    }
+    ++_tail;
     return true;
   }
 };
