@@ -18,7 +18,7 @@ struct SPSCQueue
 
   //---
   alignas(CACHE_LINE_SIZE) u32 _head;
-  Atomic<T*> _data[CAPACITY];
+  Atomic<T> _data[CAPACITY];
   alignas(CACHE_LINE_SIZE) u32 _tail;
 
   //---
@@ -33,9 +33,9 @@ struct SPSCQueue
   ~SPSCQueue() {}
 
   //---
-  [[nodiscard]] bool push(T* object)
+  [[nodiscard]] bool push(const T object)
   {
-    Atomic<T*>* head = &_data[_head & (CAPACITY - 1)];
+    Atomic<T>* head = &_data[_head & (CAPACITY - 1)];
     if (head->load(MemOrder::ACQUIRE)) {
       return false;
     }
@@ -45,9 +45,9 @@ struct SPSCQueue
   }
     
   //---
-  [[nodiscard]] bool pop(T*& object)
+  [[nodiscard]] bool pop(T& object)
   {
-    Atomic<T*>* tail = &_data[_tail & (CAPACITY - 1)];
+    Atomic<T>* tail = &_data[_tail & (CAPACITY - 1)];
     if (!tail->load(MemOrder::ACQUIRE)) {
       return false;
     }
