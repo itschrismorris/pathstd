@@ -24,17 +24,17 @@ struct Pools
 
 private:
   //---
-  VectorUnsafe<PoolUnsafe<T, POOL_CAPACITY>, POOLS_RESERVE_CAPACITY> pools;
-  u64 count;
-  ShortStringUnsafe<96> name;
+  VectorUnsafe<PoolUnsafe<T, POOL_CAPACITY>, POOLS_RESERVE_CAPACITY> _pools;
+  u64 _count;
+  ShortStringUnsafe<96> _name;
 public:
   //---
-  Pools(const utf8* _name) : pools(_name ? ShortStringUnsafe<96>(u8"[Pools]\"", _name, u8"\"::[Vector]pools").str : nullptr)
+  Pools(const utf8* name) : _pools(name ? ShortStringUnsafe<96>(u8"[Pools]\"", name, u8"\"::[Vector]pools")._str : nullptr)
   {
-    count = 0;
-    pools.emplace_back(1, _name ? ShortStringUnsafe<96>(_name, u8"[", count, u8"]").str : nullptr,
-                       pools.count);
-    name = _name;
+    _count = 0;
+    _pools.emplace_back(1, name ? ShortStringUnsafe<96>(name, u8"[", _count, u8"]")._str : nullptr,
+                        _pools._count);
+    _name = name;
   }
   ~Pools() {}
 
@@ -47,23 +47,23 @@ public:
   //---
   inline SafePtr<T> get_vacant()
   {
-    for (u32 p = 0; p < pools.count; ++p) {
-      if (pools[p].count < pools[p].capacity()) {
-        ++count;
-        return pools[p].get_vacant(p);
+    for (u32 p = 0; p < _pools._count; ++p) {
+      if (_pools[p].count < _pools[p].capacity()) {
+        ++_count;
+        return _pools[p].get_vacant(p);
       }
     }
-    ++count;
-    pools.emplace_back(1, (name.size > 0) ? ShortStringUnsafe<96>(name, u8"[", count, u8"]").str : nullptr,
-                       pools.count - 1);
-    return SafePtr<T>(pools[pools.count - 1].get_vacant(pools.count - 1));
+    ++_count;
+    _pools.emplace_back(1, (_name._size > 0) ? ShortStringUnsafe<96>(_name, u8"[", _count, u8"]")._str : nullptr,
+                       _pools._count - 1);
+    return SafePtr<T>(_pools[_pools._count - 1].get_vacant(_pools._count - 1));
   }
   
   //---
   inline void free(u32 id)
   {
-    pools[id >> 16].free(id);
-    --count;
+    _pools[id >> 16].free(id);
+    --_count;
   }
 
   //---
@@ -75,18 +75,18 @@ public:
   //---
   inline void clear()
   {
-    for (u32 p = 0; p < pools.count; ++p) {
-      pools[p].clear();
+    for (u32 p = 0; p < _pools._count; ++p) {
+      _pools[p].clear();
     }
-    count = 0;
+    _count = 0;
   }
 
   //---
   template<typename Callable>
   inline bool iterate(Callable&& function)
   {
-    for (u64 p = 0; p < pools.count; ++p) {
-      if (!pools[p].iterate(function)) {
+    for (u64 p = 0; p < _pools._count; ++p) {
+      if (!_pools[p].iterate(function)) {
         return false;
       }
     }
@@ -96,7 +96,7 @@ public:
   //---
   inline u64 get_count()
   {
-    return count;
+    return _count;
   }
 };
 }

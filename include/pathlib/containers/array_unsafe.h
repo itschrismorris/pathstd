@@ -14,8 +14,8 @@ template <typename T,
 struct ArrayUnsafe
 {
   //---
-  alignas(32) T data[CAPACITY];
-  u64 count;
+  alignas(32) T _data[CAPACITY];
+  u64 _count;
 
   //---
   ArrayUnsafe()
@@ -30,8 +30,8 @@ struct ArrayUnsafe
                         T value, 
                         Args... args)
   {
-    count = index + 1;
-    data[index] = value;
+    _count = index + 1;
+    _data[index] = value;
     initializer_list(index + 1, args...);
   }
 
@@ -49,44 +49,44 @@ struct ArrayUnsafe
   //---
   inline T& operator[](u64 index)
   {
-    return data[index];
+    return _data[index];
   }
 
   //---
   inline const T& operator[](u64 index) const
   {
-    return data[index];
+    return _data[index];
   }
 
   //---
-  inline T* emplace_back(u64 _count = 1)
+  inline T* emplace_back(u64 count = 1)
   {
-    u64 original_count = count;
-    count += _count;
-    return (data + original_count);
+    u64 original_count = _count;
+    _count += count;
+    return (_data + original_count);
   }
 
   //---
   inline void remove(u64 index)
   {
-    --count;
-    memcpy_unsafe(data + index, data + count, sizeof(T));
+    --_count;
+    memcpy_unsafe(_data + index, _data + _count, sizeof(T));
   }
 
   //---
   inline void remove(u64 index,
-                     u64 _count)
+                     u64 count)
   {
-    T* start = (data + index);
-    T* end = (data + count - _count);
-    count -= _count;
-    memcpy_unsafe(start, end, sizeof(T) * _count);
+    T* start = (_data + index);
+    T* end = (_data + _count - count);
+    _count -= count;
+    memcpy_unsafe(start, end, sizeof(T) * count);
   }
 
   //---
   inline void clear()
   {
-    count = 0;
+    _count = 0;
   }
 };
 }

@@ -19,6 +19,11 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\include\pathlib\concurrency\atomics.h" />
+    <ClInclude Include="..\..\include\pathlib\concurrency\mpsc_queue.h" />
+    <ClInclude Include="..\..\include\pathlib\concurrency\spinlock.h" />
+    <ClInclude Include="..\..\include\pathlib\concurrency\thread.h" />
+    <ClInclude Include="..\..\include\pathlib\concurrency\threadpool.h" />
     <ClInclude Include="..\..\include\pathlib\containers\array.h" />
     <ClInclude Include="..\..\include\pathlib\containers\array_unsafe.h" />
     <ClInclude Include="..\..\include\pathlib\containers\hashmap.h" />
@@ -185,7 +190,7 @@
       </PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(ProjectDir)..\..\include\mimalloc;$(ProjectDir)..\..\include</AdditionalIncludeDirectories>
-      <LanguageStandard>stdcpplatest</LanguageStandard>
+      <LanguageStandard>stdcpp20</LanguageStandard>
       <AdditionalOptions>/Fa"$(IntDir)/" </AdditionalOptions>
       <TreatWarningAsError>true</TreatWarningAsError>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
@@ -220,7 +225,7 @@
       </PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(ProjectDir)..\..\include\mimalloc;$(ProjectDir)..\..\include</AdditionalIncludeDirectories>
-      <LanguageStandard>stdcpplatest</LanguageStandard>
+      <LanguageStandard>stdcpp20</LanguageStandard>
       <AdditionalOptions>/Fa"$(IntDir)/" </AdditionalOptions>
       <TreatWarningAsError>true</TreatWarningAsError>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>

@@ -30,37 +30,37 @@ struct HashmapUnsafe
   static u32 constexpr DISTANCE_SHIFT = 29;
 
   //---
-  u32 capacity;
-  u32 max_probe_length;
-  u32* slot_kv_index;
-  u32* slot_distance_digest;
-  VectorUnsafe<K, RESERVE_CAPACITY> keys;
-  VectorUnsafe<V, RESERVE_CAPACITY> values;
-  VectorUnsafe<u32, RESERVE_CAPACITY> kv_slot_lookup;
+  u32 _capacity;
+  u32 _max_probe_length;
+  u32* _slot_kv_index;
+  u32* _slot_distance_digest;
+  VectorUnsafe<K, RESERVE_CAPACITY> _keys;
+  VectorUnsafe<V, RESERVE_CAPACITY> _values;
+  VectorUnsafe<u32, RESERVE_CAPACITY> _kv_slot_lookup;
 
   //---
   HashmapUnsafe(const utf8* name)
   {
-    capacity = RESERVE_CAPACITY;
-    max_probe_length = 1 + (Math::log2(capacity) >> 2);
-    slot_kv_index = (u32*)malloc_unsafe(sizeof(u32) * capacity, 
-                                        ShortStringUnsafe<96>(name, u8"::slot_kv_index").str);
-    slot_distance_digest = (u32*)malloc_unsafe(sizeof(u32) * capacity, 
-                                               ShortStringUnsafe<96>(name, u8"::slot_distance_digest").str);
+    _capacity = RESERVE_CAPACITY;
+    _max_probe_length = 1 + (Math::log2(_capacity) >> 2);
+    _slot_kv_index = (u32*)malloc_unsafe(sizeof(u32) * _capacity, 
+                                        ShortStringUnsafe<96>(name, u8"::slot_kv_index")._str);
+    _slot_distance_digest = (u32*)malloc_unsafe(sizeof(u32) * _capacity, 
+                                               ShortStringUnsafe<96>(name, u8"::slot_distance_digest")._str);
     I8 empty_slot = I8_SET1(EMPTY_SLOT);
-    for (u32 r = 0; r < (capacity >> 3); ++r) {
-      I8_STORE(&((I8*)slot_distance_digest)[r], empty_slot);
+    for (u32 r = 0; r < (_capacity >> 3); ++r) {
+      I8_STORE(&((I8*)_slot_distance_digest)[r], empty_slot);
     }
   }
 
   //---
   ~HashmapUnsafe()
   {
-    if (slot_kv_index) {
-      free_unsafe((void**)&slot_kv_index);
+    if (_slot_kv_index) {
+      free_unsafe((void**)&_slot_kv_index);
     }
-    if (slot_distance_digest) {
-      free_unsafe((void**)&slot_distance_digest);
+    if (_slot_distance_digest) {
+      free_unsafe((void**)&_slot_distance_digest);
     }
   }
   
@@ -87,22 +87,22 @@ struct HashmapUnsafe
                  u32 hash_count = 0)
   {
     u32 key_hash = (existing_hash == NEW_HASH) ? hash(key) : existing_hash;
-    u32 slot_index = (key_hash & (capacity - 1));
-    for (u32 i = 0; i < max_probe_length; ++i) {
-      slot_index = Math::min((u32)capacity - 8, slot_index);
+    u32 slot_index = (key_hash & (_capacity - 1));
+    for (u32 i = 0; i < _max_probe_length; ++i) {
+      slot_index = Math::min((u32)_capacity - 8, slot_index);
       I8 key_digest = I8_SET1(hash(key_hash) & DIGEST_MASK);
-      I8 digests = I8_AND(I8_LOADU(&slot_distance_digest[slot_index]), 
+      I8 digests = I8_AND(I8_LOADU(&_slot_distance_digest[slot_index]), 
                           I8_SET1(OCCUPIED_AND_DIGEST_MASK));
       u32 digest_mask = I8_MOVEMASK(I8_CMP_EQ(key_digest, digests));
       while (digest_mask) {
         u32 distance = Math::lsb_set(digest_mask) >> 2;
-        u32 kv_index = slot_kv_index[slot_index + distance];
-        if (keys[kv_index] == key) {
-          return &values[kv_index];
+        u32 kv_index = _slot_kv_index[slot_index + distance];
+        if (_keys[kv_index] == key) {
+          return &_values[kv_index];
         }
         digest_mask ^= (0xF << (distance << 2));
       }
-      slot_index = (slot_index + 8) & (capacity - 1);
+      slot_index = (slot_index + 8) & (_capacity - 1);
     }
     if (hash_count < MAX_REHASHES) {
       return find(key, hash(key_hash), hash_count + 1);
@@ -124,10 +124,10 @@ struct HashmapUnsafe
                      u32 hash_count = 0)
   {
     u32 key_hash = (existing_hash == NEW_HASH) ? hash(key) : existing_hash;
-    u32 slot_index = key_hash & (capacity - 1);
-    for (u32 i = 0; i < max_probe_length; ++i) {
-      slot_index = Math::min((u32)capacity - 8, slot_index);
-      I8 slots = I8_LOADU(&slot_distance_digest[slot_index]);
+    u32 slot_index = key_hash & (_capacity - 1);
+    for (u32 i = 0; i < _max_probe_length; ++i) {
+      slot_index = Math::min((u32)_capacity - 8, slot_index);
+      I8 slots = I8_LOADU(&_slot_distance_digest[slot_index]);
       I8 slot_distances = I8_SHIFTR(slots, 29);
       I8 empty_slot = I8_SET1(EMPTY_SLOT);
       I8 distance_check = I8_SET(0, 1, 2, 3, 4, 5, 6, 7);
@@ -139,48 +139,48 @@ struct HashmapUnsafe
         if (empty_distance <= swap_distance) {
           u32 insert_index = slot_index + empty_distance;
           if (kv_index == NEW_KV) {
-            *keys.emplace_back(1) = key;
-            *values.emplace_back(1) = value;
-            kv_slot_lookup.emplace_back(1);
-            kv_index = values.count - 1;
+            *_keys.emplace_back(1) = key;
+            *_values.emplace_back(1) = value;
+            _kv_slot_lookup.emplace_back(1);
+            kv_index = _values._count - 1;
           }
-          slot_kv_index[insert_index] = kv_index;
-          slot_distance_digest[insert_index] = (empty_distance << DISTANCE_SHIFT) | 
+          _slot_kv_index[insert_index] = kv_index;
+          _slot_distance_digest[insert_index] = (empty_distance << DISTANCE_SHIFT) | 
                                                (hash(key_hash) & DIGEST_MASK);
-          kv_slot_lookup[kv_index] = insert_index;
+          _kv_slot_lookup[kv_index] = insert_index;
           return true;
         } else {
           u32 insert_index = slot_index + swap_distance;
           if (kv_index == NEW_KV) {
-            *keys.emplace_back(1) = key;
-            *values.emplace_back(1) = value;
-            kv_slot_lookup.emplace_back(1);
-            kv_index = values.count - 1;
+            *_keys.emplace_back(1) = key;
+            *_values.emplace_back(1) = value;
+            _kv_slot_lookup.emplace_back(1);
+            kv_index = _values._count - 1;
           }
-          u32 swap_kv_index = slot_kv_index[insert_index];
-          K& swap_key = keys[swap_kv_index];
-          V& swap_value = values[swap_kv_index];
-          slot_kv_index[insert_index] = kv_index;
-          slot_distance_digest[insert_index] = (swap_distance << DISTANCE_SHIFT) | 
+          u32 swap_kv_index = _slot_kv_index[insert_index];
+          K& swap_key = _keys[swap_kv_index];
+          V& swap_value = _values[swap_kv_index];
+          _slot_kv_index[insert_index] = kv_index;
+          _slot_distance_digest[insert_index] = (swap_distance << DISTANCE_SHIFT) | 
                                                (hash(key_hash) & DIGEST_MASK);
-          kv_slot_lookup[kv_index] = insert_index;
+          _kv_slot_lookup[kv_index] = insert_index;
           return insert(swap_key, swap_value, swap_kv_index);
         }
       }
-      slot_index = (slot_index + 8) & (capacity - 1);
+      slot_index = (slot_index + 8) & (_capacity - 1);
     }
     if (hash_count < MAX_REHASHES) {
       if (kv_index == NEW_KV) {
         return insert(key, value, kv_index, hash(key_hash), hash_count + 1);
       } else {
-        return insert(keys[kv_index], values[kv_index], 
+        return insert(_keys[kv_index], _values[kv_index], 
                       kv_index, hash(key_hash), hash_count + 1);
       }
     }
     if (kv_index == NEW_KV) {
-      *keys.emplace_back(1) = key;
-      *values.emplace_back(1) = value;
-      kv_slot_lookup.emplace_back(1);
+      *_keys.emplace_back(1) = key;
+      *_values.emplace_back(1) = value;
+      _kv_slot_lookup.emplace_back(1);
     }
     return rebuild_larger();
   }
@@ -191,27 +191,27 @@ struct HashmapUnsafe
                      u32 hash_count = 0)
   {
     u32 key_hash = (existing_hash == Types::U32_MAX) ? hash(key) : existing_hash;
-    u32 slot_index = (key_hash & (capacity - 1));
-    for (u32 i = 0; i < max_probe_length; ++i) {
-      slot_index = Math::min((u32)capacity - 8, slot_index);
+    u32 slot_index = (key_hash & (_capacity - 1));
+    for (u32 i = 0; i < _max_probe_length; ++i) {
+      slot_index = Math::min((u32)_capacity - 8, slot_index);
       I8 key_digest = I8_SET1(hash(key_hash) & DIGEST_MASK);
-      I8 digests = I8_AND(I8_LOADU(&slot_distance_digest[slot_index]), 
+      I8 digests = I8_AND(I8_LOADU(&_slot_distance_digest[slot_index]), 
                           I8_SET1(OCCUPIED_AND_DIGEST_MASK));
       u32 digest_mask = I8_MOVEMASK(I8_CMP_EQ(key_digest, digests));
       while (digest_mask) {
         u32 distance = Math::lsb_set(digest_mask) >> 2;
-        u32 kv_index = slot_kv_index[slot_index + distance];
-        if (keys[kv_index] == key) {
-          slot_kv_index[kv_slot_lookup[kv_slot_lookup.count - 1]] = kv_index;
-          slot_distance_digest[slot_index + distance] = EMPTY_SLOT;
-          keys.remove(kv_index, 1);
-          values.remove(kv_index, 1);
-          kv_slot_lookup.remove(kv_index, 1);
+        u32 kv_index = _slot_kv_index[slot_index + distance];
+        if (_keys[kv_index] == key) {
+          _slot_kv_index[_kv_slot_lookup[_kv_slot_lookup._count - 1]] = kv_index;
+          _slot_distance_digest[slot_index + distance] = EMPTY_SLOT;
+          _keys.remove(kv_index, 1);
+          _values.remove(kv_index, 1);
+          _kv_slot_lookup.remove(kv_index, 1);
           return true;
         }
         digest_mask ^= (0xF << (distance << 2));
       }
-      slot_index = (slot_index + 8) & (capacity - 1);
+      slot_index = (slot_index + 8) & (_capacity - 1);
     }
     if (hash_count < MAX_REHASHES) {
       return remove(key, hash(key_hash), hash_count + 1);
@@ -222,18 +222,18 @@ struct HashmapUnsafe
   //---
   inline bool rebuild_larger()
   {
-    capacity <<= 1;
-    max_probe_length = 1 + (Math::log2(capacity) >> 2);
-    slot_kv_index = (u32*)realloc_unsafe(slot_kv_index, 
-                                         sizeof(u32) * capacity);
-    slot_distance_digest = (u32*)realloc_unsafe(slot_distance_digest, 
-                                                sizeof(u32) * capacity);
+    _capacity <<= 1;
+    _max_probe_length = 1 + (Math::log2(_capacity) >> 2);
+    _slot_kv_index = (u32*)realloc_unsafe(_slot_kv_index, 
+                                         sizeof(u32) * _capacity);
+    _slot_distance_digest = (u32*)realloc_unsafe(_slot_distance_digest, 
+                                                sizeof(u32) * _capacity);
     I8 empty_slot = I8_SET1(EMPTY_SLOT);
-    for (u32 r = 0; r < (capacity >> 3); ++r) {
-      I8_STORE(&((I8*)slot_distance_digest)[r], empty_slot);
+    for (u32 r = 0; r < (_capacity >> 3); ++r) {
+      I8_STORE(&((I8*)_slot_distance_digest)[r], empty_slot);
     }
-    for (u32 v = 0; v < values.count; ++v) {
-      insert(keys[v], values[v], v);
+    for (u32 v = 0; v < _values._count; ++v) {
+      insert(_keys[v], _values[v], v);
     }
     return true;
   }
@@ -242,10 +242,10 @@ struct HashmapUnsafe
   inline f32 load_factor()
   {
     u32 used_slots = 0;
-    for (u32 b = 0; b < capacity; ++b) {
-      used_slots += (slot_distance_digest[b] != EMPTY_SLOT);
+    for (u32 b = 0; b < _capacity; ++b) {
+      used_slots += (_slot_distance_digest[b] != EMPTY_SLOT);
     }
-    return ((f32)used_slots / (f32)capacity);
+    return ((f32)used_slots / (f32)_capacity);
   }
 };
 }

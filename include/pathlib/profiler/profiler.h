@@ -15,13 +15,13 @@ struct Profiler
   //---
   struct MemoryItem
   {
-    ShortStringUnsafe<96> name;
-    u32 pool_id;
-    u64 size;
+    ShortStringUnsafe<96> _name;
+    u32 _pool_id;
+    u64 _size;
   };
 
   //---
-  PoolsUnsafe<MemoryItem, 1024, 8> memory_items;
+  PoolsUnsafe<MemoryItem, 1024, 8> _memory_items;
 
   //---
   Profiler();

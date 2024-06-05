@@ -20,6 +20,9 @@ struct SystemTime
   u16 wMilliseconds;
 };
 
+//---
+typedef void* HANDLE;
+
 namespace Pathlib::Win32 {
 
 //---

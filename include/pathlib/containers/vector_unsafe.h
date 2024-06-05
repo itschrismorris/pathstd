@@ -15,81 +15,81 @@ template <typename T,
 struct VectorUnsafe
 {
   //---
-  T* data;
-  u64 count;
-  u64 capacity;
+  T* _data;
+  u64 _count;
+  u64 _capacity;
 
   //---
   VectorUnsafe(const utf8* name,
                u64 reserve_capacity = RESERVE_CAPACITY)
   {
-    capacity = reserve_capacity;
-    data = (T*)malloc_unsafe(sizeof(T) * reserve_capacity,
-                             name ? ShortStringUnsafe<96>(name, u8"::[T*]data").str : nullptr);
+    _capacity = reserve_capacity;
+    _data = (T*)malloc_unsafe(sizeof(T) * reserve_capacity,
+                              name ? ShortStringUnsafe<96>(name, u8"::[T*]data")._str : nullptr);
     clear();
   }
 
   //---
   ~VectorUnsafe()
   {
-    for (u64 c = 0; c < count; ++c) {
-      Memory::call_destructor<T>(&data[c]);
+    for (u64 c = 0; c < _count; ++c) {
+      Memory::call_destructor<T>(&_data[c]);
     }
-    free_unsafe((void**)&data);
+    free_unsafe((void**)&_data);
   }
 
   //---
   inline T& operator[](u64 index)
   {
-    return data[index];
+    return _data[index];
   }
 
   //---
   inline const T& operator[](u64 index) const
   {
-    return data[index];
+    return _data[index];
   }
 
   //---
   template <typename... Args>
-  inline T* emplace_back(u64 _count = 1,
+  inline T* emplace_back(u64 count = 1,
                          Args&&... constructor_args)
   {
-    u64 original_count = count;
-    count += _count;
-    if (count > capacity) {
-      capacity = count * 1.5;
-      data = (T*)realloc_unsafe(data, sizeof(T) * capacity);
+    u64 original_count = _count;
+    _count += count;
+    if (_count > _capacity) {
+      _capacity = _count * 1.5;
+      _data = (T*)realloc_unsafe(_data, sizeof(T) * _capacity);
     }
-    Memory::call_constructor<T>(data + original_count, constructor_args...);
-    return (data + original_count);
+    Memory::call_constructor<T>(_data + original_count, constructor_args...);
+    return (_data + original_count);
   }
 
   //---
   inline void remove(u64 index)
   {
-    Memory::call_destructor<T>(&data[index]);
-    --count;
-    memcpy_unsafe(index, data + count, sizeof(T));
+    Memory::call_destructor<T>(&_data[index]);
+    --_count;
+    memcpy_unsafe(index, _data + _count, sizeof(T));
   }
 
   //---
   inline void remove(u64 index,
-                     u64 _count)
+                     u64 count)
   {
-    for (u64 c = index; c < _count; ++c) {
-      Memory::call_destructor<T>(&data[c]);
+    for (u64 c = index; c < count; ++c) {
+      Memory::call_destructor<T>(&_data[c]);
     }
-    T* start = (data + index);
-    T* end = (data + count - _count);
-    count -= _count;
-    memcpy_unsafe(start, end, sizeof(T) * _count);
+    T* start = (_data + index);
+    T* end = (_data + _count - count);
+    _count -= count;
+    memcpy_unsafe(start, end, sizeof(T) * count);
   }
 
   //---
   inline void clear()
   {
-    count = 0;
+    _count = 0;
   }
 };
 }

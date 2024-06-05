@@ -11,8 +11,8 @@ namespace Pathlib::_Internal {
 struct Timer
 {
   //---
-  u64 start_time;
-  u64 ticks_per_second;
+  u64 _start_time;
+  u64 _ticks_per_second;
 
   //---
   Timer();

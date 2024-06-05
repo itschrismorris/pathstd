@@ -19,22 +19,22 @@ struct PoolsUnsafe
 {
   //---
   static_assert(POOL_CAPACITY <= Types::U16_MAX, "POOL_CAPACITY cannot exceed 65535 (16-bits used for pool_id).");
-  static_assert(has_pool_id<T>::value, "Pool objects must contain a u32 member named 'pool_id' to be used in a pool.");
-  using POOL_ID_TYPE = _member_type<T, decltype(&T::pool_id)>::type;
+  static_assert(has_pool_id<T>::value, "Pool objects must contain a u32 member named '_pool_id' to be used in a pool.");
+  using POOL_ID_TYPE = _member_type<T, decltype(&T::_pool_id)>::type;
   static_assert(SAME_TYPE(POOL_ID_TYPE, u32), "Pool object member 'pool_id' must be of type u32.");
 
   //---
-  VectorUnsafe<PoolUnsafe<T, POOL_CAPACITY>, POOLS_RESERVE_CAPACITY> pools;
-  u32 count;
-  ShortStringUnsafe<96> name;
+  VectorUnsafe<PoolUnsafe<T, POOL_CAPACITY>, POOLS_RESERVE_CAPACITY> _pools;
+  u32 _count;
+  ShortStringUnsafe<96> _name;
   
   //---
-  PoolsUnsafe(const utf8* _name) : pools(_name ? ShortStringUnsafe<96>(u8"[Pools]\"", _name, u8"\"::[Vector]pools").str : nullptr)
+  PoolsUnsafe(const utf8* name) : _pools(name ? ShortStringUnsafe<96>(u8"[Pools]\"", name, u8"\"::[Vector]pools")._str : nullptr)
   {
-    count = 0;
-    pools.emplace_back(1, _name ? ShortStringUnsafe<96>(_name, u8"[", count, u8"]").str : nullptr, 
-                       pools.count);
-    name = _name;
+    _count = 0;
+    _pools.emplace_back(1, name ? ShortStringUnsafe<96>(name, u8"[", _count, u8"]")._str : nullptr, 
+                       _pools._count);
+    _name = name;
   }
 
   /**/
@@ -42,7 +42,7 @@ struct PoolsUnsafe
   {
     if (EXPECT(is_occupied(id))) {
       u32 pools_id = (id >> 16);
-      return &pools[pools_id].data[id & 0xFFFF];
+      return &_pools[pools_id]._data[id & 0xFFFF];
     } else {
       return nullptr;
     }
@@ -58,23 +58,23 @@ struct PoolsUnsafe
   //---
   inline T* get_vacant()
   {
-    for (u32 p = 0; p < pools.count; ++p) {
-      if (pools[p].count < pools[p].get_capacity()) {
-        ++count;
-        return pools[p].get_vacant();
+    for (u32 p = 0; p < _pools._count; ++p) {
+      if (_pools[p]._count < _pools[p].get_capacity()) {
+        ++_count;
+        return _pools[p].get_vacant();
       }
     }
-    ++count;
-    pools.emplace_back(1, (name.size > 0) ? ShortStringUnsafe<96>(name, u8"[", count, u8"]").str : nullptr, 
-                       pools.count - 1);
-    return pools[pools.count - 1].get_vacant();
+    ++_count;
+    _pools.emplace_back(1, (_name._size > 0) ? ShortStringUnsafe<96>(_name, u8"[", _count, u8"]")._str : nullptr, 
+                       _pools._count - 1);
+    return _pools[_pools._count - 1].get_vacant();
   }
   
   //---
   inline void free(u32 id)
   {
-    pools[id >> 16].free(id);
-    --count;
+    _pools[id >> 16].free(id);
+    --_count;
   }
 
   //---
@@ -86,18 +86,18 @@ struct PoolsUnsafe
   //---
   inline void clear()
   {
-    for (u32 p = 0; p < pools.count; ++p) {
-      pools[p].clear();
+    for (u32 p = 0; p < _pools._count; ++p) {
+      _pools[p].clear();
     }
-    count = 0;
+    _count = 0;
   }
 
   //---
   template<typename Callable>
   inline bool iterate(Callable&& function)
   {
-    for (u64 p = 0; p < pools.count; ++p) {
-      if (!pools[p].iterate(function)) {
+    for (u64 p = 0; p < _pools._count; ++p) {
+      if (!_pools[p].iterate(function)) {
         return false;
       }
     }

@@ -67,6 +67,9 @@
     <Filter Include="include\types">
       <UniqueIdentifier>{adda3b4a-971a-40bb-a9bc-dfd2a0ed30a4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="include\concurrency">
+      <UniqueIdentifier>{a1c02161-807f-4ce1-ab46-ccd17d2f3664}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\include\pathlib\log\log.h">
@@ -212,6 +215,21 @@
     </ClInclude>
     <ClInclude Include="..\..\include\pathlib\types\types.h">
       <Filter>include\types</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\pathlib\concurrency\atomics.h">
+      <Filter>include\concurrency</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\pathlib\concurrency\thread.h">
+      <Filter>include\concurrency</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\pathlib\concurrency\spinlock.h">
+      <Filter>include\concurrency</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\pathlib\concurrency\mpsc_queue.h">
+      <Filter>include\concurrency</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\pathlib\concurrency\threadpool.h">
+      <Filter>include\concurrency</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

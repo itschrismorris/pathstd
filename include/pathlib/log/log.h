@@ -14,7 +14,7 @@ namespace Pathlib::_Internal {
 struct Log
 {
   //---
-  void* file;
+  void* _file;
   LongStringUnsafe<256> _buffer;
 
   //---
@@ -25,9 +25,9 @@ struct Log
   template <u64 CAPACITY>
   inline bool log(const ShortString<CAPACITY>& string)
   {
-    return (Win32::write_console(string.str, string.size) && 
+    return (Win32::write_console(string._str, string._size) && 
             Win32::write_console(u8"\n", 1) &&
-            Win32::write_log(string.str, string.size) &&  
+            Win32::write_log(string._str, string._size) &&  
             Win32::write_log(u8"\n", 1));
   }
 
@@ -35,9 +35,9 @@ struct Log
   template <u64 CAPACITY>
   inline bool log(const ShortStringUnsafe<CAPACITY>& string)
   {
-    return (Win32::write_console(string.str, string.size) && 
+    return (Win32::write_console(string._str, string._size) && 
             Win32::write_console(u8"\n", 1) &&
-            Win32::write_log(string.str, string.size) && 
+            Win32::write_log(string._str, string._size) && 
             Win32::write_log(u8"\n", 1));
   }
 
@@ -55,9 +55,9 @@ struct Log
   template <u64 RESERVE_CAPACITY>
   inline bool log(const LongStringUnsafe<RESERVE_CAPACITY>& string)
   {
-    return  (Win32::write_console(string.str, string.size) && 
+    return  (Win32::write_console(string._str, string._size) && 
              Win32::write_console(u8"\n", 1) &&
-             Win32::write_log(string.str, string.size) && 
+             Win32::write_log(string._str, string._size) && 
              Win32::write_log(u8"\n", 1));
   }
 
@@ -81,12 +81,12 @@ struct Log
   template <typename... Args>
   inline bool log(Args&&... args)
   {
-    if (file) {
-      _buffer.size = 0;
+    if (_file) {
+      _buffer._size = 0;
       (_buffer._append(_buffer, args), ...);
       _buffer.append(u8'\n');
-      return (Win32::write_console(_buffer.str, _buffer.size) && 
-              Win32::write_log(_buffer.str, _buffer.size));
+      return (Win32::write_console(_buffer._str, _buffer._size) && 
+              Win32::write_log(_buffer._str, _buffer._size));
     }
     return false;
   }
@@ -95,16 +95,16 @@ struct Log
   template <typename... Args>
   inline bool logt(Args&&... args)
   {
-    if (file) {
+    if (_file) {
       SystemTime time;
       Win32::get_local_time(&time);
-      _buffer.size = 0;
+      _buffer._size = 0;
       _buffer.append(time.wHour, u8":", time.wMinute, u8":", 
                      time.wSecond, u8":", time.wMilliseconds, u8": ");
       (_buffer._append(_buffer, args), ...);
       _buffer.append(u8'\n');
-      return (Win32::write_console(_buffer.str, _buffer.size) && 
-              Win32::write_log(_buffer.str, _buffer.size));
+      return (Win32::write_console(_buffer._str, _buffer._size) && 
+              Win32::write_log(_buffer._str, _buffer._size));
     }
     return false;
   }

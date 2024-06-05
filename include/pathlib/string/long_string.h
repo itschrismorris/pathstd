@@ -25,7 +25,7 @@ public:
   LongString(const utf8* name)
   {
     _capacity = RESERVE_CAPACITY;
-    _str = (utf8*)malloc_unsafe(RESERVE_CAPACITY + 1, ShortStringUnsafe<96>(name, u8"::str").str);
+    _str = (utf8*)malloc_unsafe(RESERVE_CAPACITY + 1, ShortStringUnsafe<96>(name, u8"::str")._str);
     clear();
   }
 
@@ -41,7 +41,7 @@ public:
   LongString(const LongString& string)
   {
     _str = (utf8*)malloc_unsafe(string._capacity + 1, 
-                               ShortStringUnsafe<96>(_Internal::Profiler::get_memory_item_name(string._str), u8"(copy)::str").str);
+                               ShortStringUnsafe<96>(_Internal::Profiler::get_memory_item_name(string._str), u8"(copy)::str")._str);
     _capacity = string._capacity;
     memcpy_unsafe<true, true>(_str, string._str, string._size + 1);
     _size = string._size;
@@ -52,7 +52,7 @@ public:
   LongString(const utf8* name,
              Args&&... args)
   {
-    _str = (utf8*)malloc_unsafe(RESERVE_CAPACITY + 1, ShortStringUnsafe<96>(name, u8"::str").str);
+    _str = (utf8*)malloc_unsafe(RESERVE_CAPACITY + 1, ShortStringUnsafe<96>(name, u8"::str")._str);
     _capacity = RESERVE_CAPACITY;
     _size = 0;
     (LongString::_append(*this, args), ...);
@@ -138,12 +138,12 @@ public:
   template <u64 CAPACITY>
   inline LongString& operator +=(const ShortString<CAPACITY>& arg)
   {
-    u64 new_size = _size + arg.size;
+    u64 new_size = _size + arg._size;
     if (new_size > _capacity) {
       _capacity = _size * 1.5;
       _str = (utf8*)realloc_unsafe(_str, _capacity + 1);
     }
-    memcpy_unsafe<false, true>(&_str[_size], arg.str, arg.size + 1);
+    memcpy_unsafe<false, true>(&_str[_size], arg._str, arg._size + 1);
     _size = new_size;
     return *this;
   }

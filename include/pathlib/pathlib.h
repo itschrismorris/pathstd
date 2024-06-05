@@ -5,6 +5,8 @@
 #pragma once
 #include "pathlib/win32/console.h"
 #include "pathlib/errors/errors.h"
+#include "pathlib/concurrency/mpsc_queue.h"
+#include "pathlib/concurrency/atomics.h"
 #include "pathlib/log/log.h"
 #include "pathlib/math/math.h"
 #include "pathlib/memory/malloc.h"

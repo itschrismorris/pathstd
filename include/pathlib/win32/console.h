@@ -38,7 +38,7 @@ struct Console
   template <u64 CAPACITY>
   inline bool write(const ShortString<CAPACITY>& string)
   {
-    return Win32::write_console(string.str, string.size) && 
+    return Win32::write_console(string._str, string._size) && 
            Win32::write_console(u8"\n", 1);
   }
 
@@ -46,7 +46,7 @@ struct Console
   template <u64 CAPACITY>
   inline bool write(const ShortStringUnsafe<CAPACITY>& string)
   {
-    return Win32::write_console(string.str, string.size) && Win32::write_console(u8"\n", 1);
+    return Win32::write_console(string._str, string._size) && Win32::write_console(u8"\n", 1);
   }
 
   //---
@@ -61,7 +61,7 @@ struct Console
   template <u64 RESERVE_CAPACITY>
   inline bool write(const LongStringUnsafe<RESERVE_CAPACITY>& string)
   {
-    return Win32::write_console(string.str, string.size) && Win32::write_console(u8"\n", 1);
+    return Win32::write_console(string._str, string._size) && Win32::write_console(u8"\n", 1);
   }
 
   //---
@@ -74,10 +74,10 @@ struct Console
   template <typename... Args>
   inline bool write(Args&&... args)
   {
-    _buffer.size = 0;
+    _buffer._size = 0;
     (_buffer._append(_buffer, args), ...);
     _buffer.append(u8'\n');
-    return Win32::write_console(_buffer.str, _buffer.size);
+    return Win32::write_console(_buffer._str, _buffer._size);
   }
 };
 }

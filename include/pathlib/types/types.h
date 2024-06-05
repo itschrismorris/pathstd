@@ -41,6 +41,9 @@ template <typename T> struct alignas(32) vec8 { vec4<T> lo; vec4<T> hi; };
 #define F8 __m256
 
 //---
+static constexpr u32 CACHE_LINE_SIZE = 64;
+
+//---
 #define EXPORT __declspec(dllexport)
 #define SAME_TYPE(A, B) __is_same(A, B)
 #define IS_VEC2(A) _is_vec2<A>::value
@@ -53,6 +56,8 @@ template <typename T> struct alignas(32) vec8 { vec4<T> lo; vec4<T> hi; };
 #define IS_LONG_STRING(A) _is_long_string<A>::value
 #define IS_POINTER(A) _is_pointer<A>::value
 #define EXPECT(A) __builtin_expect((A), 1)
+#define DISALLOW_COPY(T) T(const T&) = delete;         \
+                         T& operator=(const T&) = delete;
 
 //---
 struct false_type { static constexpr bool value = false; constexpr operator bool() const { return value; } };

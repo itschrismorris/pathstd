@@ -15,52 +15,51 @@ struct SafePtr
 {
 private:
   //---
-  T* ptr;
-  T* offset_ptr;
-  u64 count;
-  bool allocated_memory;
+  T* _ptr;
+  T* _offset_ptr;
+  u64 _count;
+  bool _allocated_memory;
 
 public:
   //---
   SafePtr() 
   {
-    ptr = offset_ptr = nullptr;
-    count = 0;
-    allocated_memory = false;
+    _ptr = _offset_ptr = nullptr;
+    _count = 0;
+    _allocated_memory = false;
   }
 
   //---
-  SafePtr(T* _ptr,
-          u64 _count)
+  SafePtr(T* ptr,
+          u64 count)
   {
     
-    ptr = offset_ptr = _ptr;
-    if (_ptr == nullptr) {
-      count = 0;
+    _ptr = _offset_ptr = ptr;
+    if (ptr == nullptr) {
+      _count = 0;
     } else {
-      count = _count;
+      _count = count;
     }
-    allocated_memory = false;
+    _allocated_memory = false;
   }
 
   //---
-  SafePtr(const T* _ptr)
+  SafePtr(const T* ptr)
   {
-    ptr = offset_ptr = (T*)_ptr;
-    if (_ptr == nullptr) {
-      count = 0;
+    _ptr = _offset_ptr = (T*)ptr;
+    if (ptr == nullptr) {
+      _count = 0;
+    } else {
+      _count = 1;
     }
-    else {
-      count = 1;
-    }
-    allocated_memory = false;
+    _allocated_memory = false;
   }
 
   //---
   ~SafePtr() 
   {
-    if (allocated_memory && is_valid()) {
-      free_unsafe((void**)&ptr);
+    if (_allocated_memory && is_valid()) {
+      free_unsafe((void**)&_ptr);
     }
   }
 
@@ -68,82 +67,81 @@ public:
   template <typename U>
   operator U*() const 
   {
-    return (U*)offset_ptr;
+    return (U*)_offset_ptr;
   }
 
   //---
   T* operator->()
   {
-    if (EXPECT(this->ptr != nullptr)) {
-      return this->ptr;
+    if (EXPECT(this->_ptr != nullptr)) {
+      return this->_ptr;
     } else {
       get_errors().set_last_error(u8"Attempt to access an object through a null SafePtr.");
       get_errors().to_log();
       get_errors().kill_script();
-      return &ptr[0];
+      return &_ptr[0];
     }
   }
 
   //---
   T& operator*() const 
   {
-    if (EXPECT(offset_ptr != nullptr)) {
-      return offset_ptr[0];
+    if (EXPECT(_offset_ptr != nullptr)) {
+      return _offset_ptr[0];
     } else {
       get_errors().set_last_error(u8"Attempt to access a null SafePtr.");
       get_errors().to_log();
       get_errors().kill_script();
-      return ptr[0];
+      return _ptr[0];
     }
   }
 
   //---
   T& operator[](u64 index)
   {
-    if (EXPECT(((offset_ptr - ptr + index) < count))) {
-      return offset_ptr[index];
+    if (EXPECT(((_offset_ptr - _ptr + index) < _count))) {
+      return _offset_ptr[index];
     } else {
-      if (ptr == nullptr) {
+      if (_ptr == nullptr) {
         get_errors().set_last_error(u8"Attempt to access a null SafePtr.");
       } else {
         get_errors().set_last_error(u8"Out of bounds access to SafePtr.");
       }
       get_errors().to_log();
       get_errors().kill_script();
-      return ptr[0];
+      return _ptr[0];
     }
   }
 
   //---
-  SafePtr& operator =(const SafePtr& _ptr)
+  SafePtr& operator =(const SafePtr& ptr)
   {
-    ptr = _ptr.ptr;
-    offset_ptr = _ptr.offset_ptr;
-    count = _ptr.count;
+    _ptr = ptr._ptr;
+    _offset_ptr = ptr._offset_ptr;
+    _count = ptr._count;
     return *this;
   }
 
   //---
-  SafePtr& operator =(T* _ptr)
+  SafePtr& operator =(T* ptr)
   {
-    ptr = offset_ptr = _ptr;
-    if (_ptr == nullptr) {
-      count = 0;
+    _ptr = _offset_ptr = ptr;
+    if (ptr == nullptr) {
+      _count = 0;
     } else {
-      count = 1;
+      _count = 1;
     }
     return *this;
   }
 
   //---
-  SafePtr& operator =(const T* _ptr)
+  SafePtr& operator =(const T* ptr)
   {
-    ptr = offset_ptr = _ptr;
-    if (_ptr == nullptr) {
-      count = 0;
-    }
-    else {
-      count = 1;
+    _ptr = _offset_ptr = ptr;
+    if (ptr == nullptr) {
+      _count = 0;
+    } else {
+      _count = 1;
     }
     return *this;
   }
@@ -151,12 +149,12 @@ public:
   //---
   const SafePtr operator-(u64 offset)
   {
-    if (EXPECT(((offset_ptr - offset) < offset_ptr) &&
-               ((offset_ptr - offset) >= ptr))) {
+    if (EXPECT(((_offset_ptr - offset) < _offset_ptr) &&
+               ((_offset_ptr - offset) >= _ptr))) {
       SafePtr new_ptr;
-      new_ptr.ptr = ptr;
-      new_ptr.offset_ptr = offset_ptr - offset;
-      new_ptr.count = count;
+      new_ptr._ptr = _ptr;
+      new_ptr._offset_ptr = _offset_ptr - offset;
+      new_ptr._count = _count;
       return new_ptr;
     } else {
       get_errors().set_last_error(u8"Out of bounds pointer arithmetic; pointer must remain at, or after, original address.");
@@ -169,12 +167,12 @@ public:
   //---
   const SafePtr operator+(u64 offset)
   {
-    if (EXPECT(((offset_ptr + offset) > offset_ptr) &&
-               ((offset_ptr + offset) < (ptr + count)))) {
+    if (EXPECT(((_offset_ptr + offset) > _offset_ptr) &&
+               ((_offset_ptr + offset) < (_ptr + _count)))) {
       SafePtr new_ptr;
-      new_ptr.ptr = ptr;
-      new_ptr.offset_ptr = offset_ptr + offset;
-      new_ptr.count = count;
+      new_ptr._ptr = _ptr;
+      new_ptr._offset_ptr = _offset_ptr + offset;
+      new_ptr._count = _count;
       return new_ptr;
     } else {
       get_errors().set_last_error(u8"Out of bounds pointer arithmetic.");
@@ -185,39 +183,39 @@ public:
   }
 
   //---
-  void set_count(u64 _count)
+  void set_count(u64 count)
   {
-    count = _count;
+    _count = count;
   }
 
   //---
-  void set_allocated_memory(bool _allocated_memory)
+  void set_allocated_memory(bool allocated_memory)
   {
-    allocated_memory = _allocated_memory;
+    _allocated_memory = allocated_memory;
   }
 
   //---
   u64 get_count() const
   {
-    return count;
+    return _count;
   }
 
   //---
   const T* get_ptr() const
   {
-    return ptr;
+    return _ptr;
   }
 
   //---
   bool is_null() const
   {
-    return ((ptr == nullptr) || (count == 0));
+    return ((_ptr == nullptr) || (_count == 0));
   }
 
   //---
   bool is_valid() const
   {
-    return ((ptr != nullptr) && (count > 0));
+    return ((_ptr != nullptr) && (_count > 0));
   }
 };
 }

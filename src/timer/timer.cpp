@@ -22,13 +22,13 @@ Timer::Timer()
     get_errors().last_error_from_win32();
     get_errors().to_log();
   }
-  ticks_per_second = ticks.QuadPart;
+  _ticks_per_second = ticks.QuadPart;
   LARGE_INTEGER now_ticks;
   if (!QueryPerformanceCounter(&now_ticks)) {
     get_errors().last_error_from_win32();
     get_errors().to_log();
   }
-  start_time = (now_ticks.QuadPart * 1000) / ticks_per_second;
+  _start_time = (now_ticks.QuadPart * 1000) / _ticks_per_second;
 }
 
 //---
@@ -45,8 +45,8 @@ u64 Timer::now_ms(void)
     get_errors().to_log();
     return 0;
   }
-  u64 now_ms = (now_ticks.QuadPart * 1000) / ticks_per_second;
-  return (now_ms - start_time);
+  u64 now_ms = (now_ticks.QuadPart * 1000) / _ticks_per_second;
+  return (now_ms - _start_time);
 }
 
 //---
@@ -58,7 +58,7 @@ u64 Timer::now_us(void)
     get_errors().to_log();
     return 0;
   }
-  u64 now_us = (now_ticks.QuadPart * 1000000) / ticks_per_second;
-  return (now_us - start_time);
+  u64 now_us = (now_ticks.QuadPart * 1000000) / _ticks_per_second;
+  return (now_us - _start_time);
 }
 }

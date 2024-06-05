@@ -84,8 +84,8 @@ u64 get_last_error_string(utf8* string_out,
 bool write_log(const utf8* string,
                u64 size)
 {
-  if (get_log().file) {
-    if (WriteFile((HANDLE)get_log().file, (HANDLE)string, size, nullptr, nullptr) == 0) {
+  if (get_log()._file) {
+    if (WriteFile((HANDLE)get_log()._file, (HANDLE)string, size, nullptr, nullptr) == 0) {
       if (get_last_error() != ERROR_IO_PENDING) {
         get_errors().last_error_from_win32();
         get_errors().to_log();

@@ -14,7 +14,7 @@ struct Errors
   static constexpr u64 MAX_ERROR_LENGTH = 512;
 
   //---
-  utf8 last_error[MAX_ERROR_LENGTH];
+  utf8 _last_error[MAX_ERROR_LENGTH];
   utf8 _buffer[MAX_ERROR_LENGTH];
 
   //---
