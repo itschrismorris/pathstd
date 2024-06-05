@@ -14,7 +14,7 @@ template <typename T,
 struct SPSCQueue
 {
   static_assert(Math::is_pot(CAPACITY), "SPSCQueue CAPACITY must be a power of two.");
-  static_assert(IS_POINTER(T), "SPSCQueue type must be pointer, to objects stored elsewhere.");
+  static_assert(IS_POINTER(T), "SPSCQueue must have pointer type; it is designed to queue objects stored elsewhere.");
 
   //---
   alignas(CACHE_LINE_SIZE) u32 _head;

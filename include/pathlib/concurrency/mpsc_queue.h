@@ -14,7 +14,7 @@ template <typename T,
 struct MPSCQueue
 {
   static_assert(Math::is_pot(CAPACITY), "MPSCQueue CAPACITY must be a power of two.");
-  static_assert(IS_POINTER(T), "MPSCQueue type must be pointer, to objects stored elsewhere.");
+  static_assert(IS_POINTER(T), "MPSCQueue must have pointer type; it is designed to queue objects stored elsewhere.");
 
   //---
   alignas(CACHE_LINE_SIZE) Atomic<u32> _head;
