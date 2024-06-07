@@ -158,11 +158,6 @@ struct LongStringUnsafe
   static inline void _append(LongStringUnsafe& string_out, 
                              const T& arg)
   {
-    if constexpr (IS_POINTER(T)) {
-      if (DONT_EXPECT(arg == nullptr)) {
-        return;
-      }
-    }
     if constexpr (IS_UNSAFE_LONG_STRING(T) || IS_UNSAFE_SHORT_STRING(T)) {
       String::_Internal::from_type_grow(arg._str, &string_out._str, &string_out._size, &string_out._capacity);
     } else if constexpr (IS_LONG_STRING(T) || IS_SHORT_STRING(T)) {

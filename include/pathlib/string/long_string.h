@@ -169,7 +169,7 @@ public:
   {
     if constexpr (IS_POINTER(T)) {
       if (DONT_EXPECT(arg == nullptr)) {
-        get_errors().to_log(u8"Attempt to _append() a nullptr to ShortString.");
+        get_errors().to_log(u8"Attempt to _append() a nullptr to LongString.");
         get_errors().kill_script();
         return;
       }
