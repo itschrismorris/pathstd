@@ -75,9 +75,8 @@ public:
   {
     if constexpr (IS_INTEGRAL(T) || IS_FLOAT(T)) {
       return Math::hash(key);
-    } else if constexpr (IS_SHORT_STRING(T)) {
-      return key.hash();
-    } else if constexpr (IS_LONG_STRING(T)) {
+    } else if constexpr (IS_SAFE_SHORT_STRING(T) || IS_UNSAFE_SHORT_STRING(T) || 
+                         IS_SAFE_LONG_STRING(T) || IS_UNSAFE_LONG_STRING(T)) {
       return key.hash();
     } else if constexpr (SAME_TYPE(T, const utf8*)) {
       return LongStringUnsafe<64>::hash(key);

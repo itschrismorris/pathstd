@@ -53,8 +53,8 @@ static constexpr u32 CACHE_LINE_SIZE = 64;
 #define IS_VEC8(A) _is_vec8<A>::value
 #define IS_INTEGRAL(A) _is_integral<A>::value
 #define IS_FLOAT(A) _is_float<A>::value
-#define IS_SHORT_STRING(A) _is_short_string<A>::value
-#define IS_LONG_STRING(A) _is_long_string<A>::value
+#define IS_SAFE_SHORT_STRING(A) _is_safe_short_string<A>::value
+#define IS_SAFE_LONG_STRING(A) _is_safe_long_string<A>::value
 #define IS_UNSAFE_SHORT_STRING(A) _is_unsafe_short_string<A>::value
 #define IS_UNSAFE_LONG_STRING(A) _is_unsafe_long_string<A>::value
 #define IS_POINTER(A) _is_pointer<A>::value
@@ -72,9 +72,9 @@ struct false_type { static constexpr bool value = false; constexpr operator bool
 struct true_type { static constexpr bool value = true; constexpr operator bool() const { return value; } };
 
 //--
-template <typename T> struct _is_long_string : false_type {};
+template <typename T> struct _is_safe_long_string : false_type {};
 template <typename T> struct _is_unsafe_long_string : false_type {};
-template <typename T> struct _is_short_string : false_type {};
+template <typename T> struct _is_safe_short_string : false_type {};
 template <typename T> struct _is_unsafe_short_string : false_type {};
 
 //---

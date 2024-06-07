@@ -116,12 +116,12 @@ public:
   template <u64 CAPACITY>
   inline LongString& operator +=(const ShortString<CAPACITY>& arg)
   {
-    u64 new_size = _size + arg._size;
+    u64 new_size = _size + arg.get_size();
     if (new_size >= _capacity) {
       _capacity = _size * 1.5;
       _str = (utf8*)realloc_unsafe(_str, _capacity);
     }
-    memcpy_unsafe<false, true>(&_str[_size], arg._str, arg._size + 1);
+    memcpy_unsafe<false, true>(&_str[_size], arg.get_str(), arg.get_size() + 1);
     _size = new_size;
     return *this;
   }
@@ -175,10 +175,22 @@ public:
       }
     }
     if constexpr (IS_UNSAFE_LONG_STRING(T) || IS_UNSAFE_SHORT_STRING(T)) {
-      String::_Internal::from_type_grow(arg._str, &string_out._str, &string_out._size, &string_out._capacity);
-    } else if constexpr (IS_LONG_STRING(T) || IS_SHORT_STRING(T)) {
-      String::_Internal::from_type_grow(arg.get_str().get_ptr(), &string_out._str, &string_out._size, &string_out._capacity);
-    }else {
+      u64 new_size = string_out._size + arg._size;
+      if (new_size > string_out._capacity) {
+        string_out._capacity = new_size * 1.5;
+        string_out._str = (utf8*)realloc_unsafe(string_out._str, string_out._capacity + 1);
+      }
+      memcpy_unsafe<false, true>(&string_out._str[string_out._size], arg._str, arg._size + 1);
+      string_out._size = new_size;
+    } else if constexpr (IS_SAFE_LONG_STRING(T) || IS_SAFE_SHORT_STRING(T)) {
+      u64 new_size = string_out._size + arg.get_size();
+      if (new_size > string_out._capacity) {
+        string_out._capacity = new_size * 1.5;
+        string_out._str = (utf8*)realloc_unsafe(string_out._str, string_out._capacity + 1);
+      }
+      memcpy_unsafe<false, true>(&string_out._str[string_out._size], arg.get_str(), arg.get_size() + 1);
+      string_out._size = new_size;
+    } else {
       String::_Internal::from_type_grow(arg, &string_out._str, &string_out._size, &string_out._capacity);
     }
   }
@@ -278,4 +290,4 @@ public:
 }
 
 //---
-template <u64 RESERVE_CAPACITY> struct _is_long_string<Pathlib::LongString<RESERVE_CAPACITY>> : true_type {};
+template <u64 RESERVE_CAPACITY> struct _is_safe_long_string<Pathlib::LongString<RESERVE_CAPACITY>> : true_type {};

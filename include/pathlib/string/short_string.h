@@ -135,11 +135,15 @@ public:
       }
     }
     if constexpr (IS_UNSAFE_LONG_STRING(T) || IS_UNSAFE_SHORT_STRING(T)) {
-      String::_Internal::from_type_grow(arg._str, &string_out._str, &string_out._size, &string_out._capacity);
-    } else if constexpr (IS_LONG_STRING(T) || IS_SHORT_STRING(T)) {
-      String::_Internal::from_type_grow(arg.get_str().get_ptr(), &string_out._str, &string_out._size, &string_out._capacity);
-    }else {
-      String::_Internal::from_type_grow(arg, &string_out._str, &string_out._size, &string_out._capacity);
+      u64 copy_size = Math::min((CAPACITY - 1) - string_out._size, arg._size);
+      memcpy_unsafe<false, true>(&string_out._str[string_out._size], arg._str, copy_size + 1);
+      string_out._size += copy_size;
+    } else if constexpr (IS_SAFE_LONG_STRING(T) || IS_SAFE_SHORT_STRING(T)) {
+      u64 copy_size = Math::min((CAPACITY - 1) - string_out._size, arg.get_size());
+      memcpy_unsafe<false, true>(&string_out._str[string_out._size], arg.get_str(), copy_size + 1);
+      string_out._size += copy_size;
+    } else {
+      String::_Internal::from_type_clip(arg, string_out._str, &string_out._size, string_out.get_capacity());
     }
   }
 
@@ -230,4 +234,4 @@ public:
 }
 
 //---
-template <u64 CAPACITY> struct _is_short_string<Pathlib::ShortString<CAPACITY>> : true_type {};
+template <u64 CAPACITY> struct _is_safe_short_string<Pathlib::ShortString<CAPACITY>> : true_type {};
