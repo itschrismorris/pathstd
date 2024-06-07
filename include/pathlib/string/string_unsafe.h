@@ -25,8 +25,7 @@ struct StringUnsafe
                         Args&&... args)
   {
     _capacity = RESERVE_CAPACITY;
-    _str = (utf8*)malloc_unsafe(RESERVE_CAPACITY + 1, 
-                                name() ? FixedStringUnsafe<64>(u8"\"", name(), u8"\"::_str")._str : nullptr);
+    _str = (utf8*)malloc_unsafe(RESERVE_CAPACITY + 1, FixedStringUnsafe<64>(u8"\"", name(), u8"\"::_str")._str);
     clear();
     (StringUnsafe::_append(*this, args), ...);
   }

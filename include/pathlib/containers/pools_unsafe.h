@@ -31,13 +31,12 @@ struct PoolsUnsafe
   DISALLOW_COPY(PoolsUnsafe);
   
   //---
-  PoolsUnsafe(const utf8* name) : _pools(name ? FixedStringUnsafe<64>(u8"\"", name, u8"\"::_pools")._str : nullptr)
+  explicit PoolsUnsafe(const Memory::Name& name) : _pools(FixedStringUnsafe<64>(u8"\"", name(), u8"\"::_pools")._str)
   {
     _count = 0;
     u32 pools_id = 0;
-    _pools.emplace_back(1, name ? FixedStringUnsafe<64>(u8"\"", name, u8"\"[", _count, u8"]")._str : nullptr,
-                        pools_id);
-    _name = name;
+    _pools.emplace_back(1, FixedStringUnsafe<64>(u8"\"", name(), u8"\"[", _count, u8"]")._str, pools_id);
+    _name = name();
   }
 
   /**/

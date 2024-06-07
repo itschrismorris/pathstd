@@ -23,18 +23,13 @@ private:
 public:
   //---
   template <typename... Args>
-  explicit String(const utf8* name,
-             Args&&... args)
+  explicit String(const Memory::Name& name,
+                  Args&&... args)
   {
     _capacity = RESERVE_CAPACITY;
-    _str = (utf8*)malloc_unsafe(RESERVE_CAPACITY,
-                                name ? FixedStringUnsafe<64>(u8"\"", name, u8"\"::_str")._str : nullptr);
+    _str = (utf8*)malloc_unsafe(RESERVE_CAPACITY, FixedStringUnsafe<64>(u8"\"", name(), u8"\"::_str")._str);
     clear();
-    if constexpr (sizeof...(Args) == 0) {
-      String::_append(*this, name);
-    } else {
-      (String::_append(*this, args), ...);
-    }
+    (String::_append(*this, args), ...);
   }
 
   //---

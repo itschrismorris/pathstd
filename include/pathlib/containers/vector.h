@@ -21,12 +21,12 @@ private:
 
 public:
   //---
-  Vector(const utf8* name,
+  Vector(const Memory::Name& name,
          u64 reserve_capacity = RESERVE_CAPACITY)
   {
     _capacity = reserve_capacity;
     _data = (T*)malloc_unsafe(sizeof(T) * reserve_capacity,
-                             FixedStringUnsafe<64>(u8"\"", name, u8"\"::_data")._str);
+                              FixedStringUnsafe<64>(u8"\"", name(), u8"\"::_data")._str);
     clear();
   }
 
