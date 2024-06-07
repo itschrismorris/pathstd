@@ -11,48 +11,30 @@ namespace Pathlib {
 void* malloc_unsafe(u64 size,
                     const utf8* name)
 {
-  u64 good_size = mi_malloc_good_size(size + sizeof(u32));
-  u8* ptr = (u8*)mi_malloc_aligned(size + sizeof(u32), 128);
-  u64 usable_size = mi_usable_size(ptr);
+  u8* ptr = (u8*)mi_malloc_aligned(size + 64, 64);
   if (EXPECT(name != nullptr)) {
-    _Internal::Profiler::MemoryItem* memory_item = get_profiler()._memory_items.get_vacant();
-    *(u32*)(&ptr[usable_size - sizeof(u32)]) = memory_item->_pool_id;
-    memory_item->_name = name;
-    memory_item->_size = good_size;
+    u64 copy_size = Math::min(63LLU, StringUtilities::length_of(name));
+    memcpy_unsafe(ptr, name, copy_size);
+    ptr[copy_size] = '\0';
   } else {
-    *(u32*)(&ptr[usable_size - sizeof(u32)]) = NOT_TRACKED;
+    const utf8* unnamed = u8"Unnamed";
+    memcpy_unsafe(ptr, unnamed, 7);
+    ptr[7] = '\0';
   }
-  return ptr;
+  return (ptr + 64);
 }
 
 //---
 void* realloc_unsafe(void* ptr,
                      u64 size)
 {
-  u64 previous_size = mi_usable_size(ptr);
-  u32 pool_id = *(u32*)(&((u8*)ptr)[previous_size - sizeof(u32)]);
-  u64 good_size = mi_malloc_good_size(size + sizeof(u32));
-  u8* new_ptr = (u8*)mi_realloc_aligned(ptr, size + sizeof(u32), 128);
-  u64 usable_size = mi_usable_size(new_ptr);
-  if (EXPECT(pool_id != NOT_TRACKED)) {
-    _Internal::Profiler::MemoryItem* memory_item = get_profiler()._memory_items[pool_id];
-    memory_item->_size = good_size;
-    *(u32*)(&((u8*)new_ptr)[usable_size - sizeof(u32)]) = memory_item->_pool_id;
-  } else {
-    *(u32*)(&((u8*)new_ptr)[usable_size - sizeof(u32)]) = NOT_TRACKED;
-  }
-  return new_ptr;
+  return (u8*)mi_realloc_aligned((u8*)ptr - 64, size + 64, 64) + 64;
 }
 
 //---
 void free_unsafe(void** ptr)
 {
-  u64 usable_size = mi_usable_size(*ptr);
-  u32 pool_id = *(u32*)(&((u8*)(*ptr))[usable_size - sizeof(u32)]);
-  if (EXPECT(pool_id != NOT_TRACKED)) {
-    get_profiler()._memory_items.free(pool_id);
-  }
-  mi_free_aligned(*ptr, 128);
+  mi_free_aligned((u8*)(*ptr) - 64, 64);
   *ptr = nullptr;
 }
 }

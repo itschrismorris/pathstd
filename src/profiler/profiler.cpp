@@ -13,7 +13,7 @@ _Internal::Profiler& get_profiler()
 namespace Pathlib::_Internal {
 
 //---
-Profiler::Profiler() : _memory_items(nullptr)
+Profiler::Profiler()
 {
   #ifdef _DEBUG
     mi_option_enable(mi_option_verbose);
@@ -21,20 +21,30 @@ Profiler::Profiler() : _memory_items(nullptr)
 }
 
 //---
-bool Profiler::get_memory_item(void* ptr,
-                               ShortStringUnsafe<96>& name_out,
-                               u64& size_out)
+static bool list_memory_callback(const mi_heap_t* heap, 
+                                 const mi_heap_area_t* area, 
+                                 void* block, 
+                                 size_t block_size, 
+                                 void* arg) 
 {
-  u64 memory_size = mi_usable_size(ptr);
-  u32 pool_id = *(u32*)(&((u8*)ptr)[memory_size - sizeof(u32)]);
-  _Internal::Profiler::MemoryItem* memory_item = get_profiler()._memory_items[pool_id];
-  if (memory_item) {
-    name_out = memory_item->_name;
-    size_out = memory_item->_size;
-  } else {
-    get_errors().to_log(u8"Failed to retrieve memory item; does not exist in '_memory_items'.");
-    return false;
+  void** out = (void**)arg;
+  VectorUnsafe<FixedStringUnsafe<64>, 128>* names_out = (VectorUnsafe<FixedStringUnsafe<64>, 128>*)out[0];
+  VectorUnsafe<u64, 128>* sizes_out = (VectorUnsafe<u64, 128>*)out[1];
+  if (block && (block_size > 64)) {
+    utf8 name[64];
+    memcpy_unsafe(name, block, 64);
+    name[63] = u8'\0';
+    *names_out->emplace_back(1) = name;
+    *sizes_out->emplace_back(1) = block_size;
   }
   return true;
+}
+
+//---
+void Profiler::list_memory(VectorUnsafe<FixedStringUnsafe<64>, 128>& names_out,
+                           VectorUnsafe<u64, 128>& sizes_out)
+{
+  void* out[2] = { &names_out, &sizes_out };
+  mi_heap_visit_blocks(mi_heap_get_default(), true, list_memory_callback, out);
 }
 }

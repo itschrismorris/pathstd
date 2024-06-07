@@ -1,5 +1,5 @@
 /*
-  Documentation: https://www.path.blog/docs/short_string_unsafe.html
+  Documentation: https://www.path.blog/docs/fixed_string_unsafe.html
 */
 
 #pragma once
@@ -11,7 +11,7 @@ namespace Pathlib {
 
 //---
 template <u64 CAPACITY>
-struct ShortStringUnsafe
+struct FixedStringUnsafe
 {
   //---
   alignas(32) utf8 _str[CAPACITY];
@@ -19,25 +19,25 @@ struct ShortStringUnsafe
   
   //---
   template <typename... Args>
-  ShortStringUnsafe(Args&&... args)
+  FixedStringUnsafe(Args&&... args)
   {
     clear();
-    (ShortStringUnsafe::_append(*this, args), ...);
+    (FixedStringUnsafe::_append(*this, args), ...);
   }
 
   //---
-  ShortStringUnsafe(const ShortStringUnsafe& string)
+  FixedStringUnsafe(const FixedStringUnsafe& string)
   {
     memcpy_unsafe<true, true>(_str, string._str, string._size + 1);
     _size = string._size;
   }
 
   //---
-  ~ShortStringUnsafe() {}
+  ~FixedStringUnsafe() {}
 
   //---
   template <typename T>
-  inline ShortStringUnsafe& operator =(const T& arg)
+  inline FixedStringUnsafe& operator =(const T& arg)
   {
     _size = 0;
     _append(*this, arg);
@@ -48,13 +48,13 @@ struct ShortStringUnsafe
   template <typename T>
   inline bool operator ==(T& string)
   {
-    if constexpr (IS_UNSAFE_LONG_STRING(T) || IS_UNSAFE_SHORT_STRING(T)) {
-      return String::compare<true, true>(_str, string._str, _size, string._size);
-    } else if constexpr (IS_SAFE_LONG_STRING(T) || IS_SAFE_SHORT_STRING(T)) {
-      return String::compare<true, true>(_str, string.get_str(), _size, string.get_size());
+    if constexpr (IS_UNSAFE_STRING(T) || IS_UNSAFE_FIXED_STRING(T)) {
+      return StringUtilities::compare<true, true>(_str, string._str, _size, string._size);
+    } else if constexpr (IS_SAFE_STRING(T) || IS_SAFE_FIXED_STRING(T)) {
+      return StringUtilities::compare<true, true>(_str, string.get_str(), _size, string.get_size());
     } else if constexpr (SAME_TYPE(ARRAY_TYPE(T), const utf8) || SAME_TYPE(ARRAY_TYPE(T), utf8) || 
                          SAME_TYPE(T&, const utf8*&) || SAME_TYPE(T&, utf8*&)) {
-      return String::compare<true, false>(_str, string, _size, String::size_of(string));
+      return StringUtilities::compare<true, false>(_str, string, _size, StringUtilities::length_of(string));
     } else {
       static_assert(false, "Cannot compare ShortString with provided type. Note for enforced "
                            "utf-8 encoding: Use utf8 instead of char, "
@@ -64,16 +64,16 @@ struct ShortStringUnsafe
 
   //---
   template <typename T>
-  inline const ShortStringUnsafe operator +(const T& arg)
+  inline const FixedStringUnsafe operator +(const T& arg)
   {
-    ShortStringUnsafe new_string = *this;
-    ShortStringUnsafe::_append(&new_string, arg);
+    FixedStringUnsafe new_string = *this;
+    FixedStringUnsafe::_append(&new_string, arg);
     return new_string;
   }
 
   //---
   template <typename T>
-  inline ShortStringUnsafe& operator +=(const T& arg)
+  inline FixedStringUnsafe& operator +=(const T& arg)
   {
     _append(*this, arg);
     return *this;
@@ -81,19 +81,19 @@ struct ShortStringUnsafe
 
   //---
   template <typename T>
-  static inline void _append(ShortStringUnsafe& string_out, 
+  static inline void _append(FixedStringUnsafe& string_out, 
                              const T& arg)
   {
-    if constexpr (IS_UNSAFE_LONG_STRING(T) || IS_UNSAFE_SHORT_STRING(T)) {
+    if constexpr (IS_UNSAFE_STRING(T) || IS_UNSAFE_FIXED_STRING(T)) {
       u64 copy_size = Math::min((CAPACITY - 1) - string_out._size, arg._size);
       memcpy_unsafe<false, true>(&string_out._str[string_out._size], arg._str, copy_size + 1);
       string_out._size += copy_size;
-    } else if constexpr (IS_SAFE_LONG_STRING(T) || IS_SAFE_SHORT_STRING(T)) {
+    } else if constexpr (IS_SAFE_STRING(T) || IS_SAFE_FIXED_STRING(T)) {
       u64 copy_size = Math::min((CAPACITY - 1) - string_out._size, arg.get_size());
       memcpy_unsafe<false, true>(&string_out._str[string_out._size], arg.get_str(), copy_size + 1);
       string_out._size += copy_size;
     } else {
-      String::_Internal::from_type_clip(arg, string_out._str, &string_out._size, string_out.get_capacity());
+      StringUtilities::_Internal::from_type_clip(arg, string_out._str, &string_out._size, string_out.get_capacity());
     }
   }
 
@@ -120,7 +120,7 @@ struct ShortStringUnsafe
   //---
   static inline u32 hash(const utf8* value)
   {
-    return Math::hash(value, String::size_of(value));
+    return Math::hash(value, StringUtilities::length_of(value));
   }
 
   //---
@@ -131,7 +131,7 @@ struct ShortStringUnsafe
 
   //---
   template <typename T>
-  ShortStringUnsafe& from_value_hex(T value)
+  FixedStringUnsafe& from_value_hex(T value)
   {
     utf8 chars[] = u8"0123456789ABCDEF";
     constexpr u32 digit_count = sizeof(T) * 2;
@@ -152,4 +152,4 @@ struct ShortStringUnsafe
 }
 
 //---
-template <u64 CAPACITY> struct _is_unsafe_short_string<Pathlib::ShortStringUnsafe<CAPACITY>> : true_type {};
+template <u64 CAPACITY> struct _is_unsafe_fixed_string<Pathlib::FixedStringUnsafe<CAPACITY>> : true_type {};

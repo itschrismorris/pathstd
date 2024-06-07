@@ -18,7 +18,7 @@ private:
   T* _ptr;
   T* _offset_ptr;
   u64 _count;
-  bool _allocated_memory;
+  bool _holds_allocation;
 
 public:
   //---
@@ -26,12 +26,13 @@ public:
   {
     _ptr = _offset_ptr = nullptr;
     _count = 0;
-    _allocated_memory = false;
+    _holds_allocation = false;
   }
 
   //---
   SafePtr(T* ptr,
-          u64 count)
+          u64 count,
+          bool allocated_memory = false)
   {
     
     _ptr = _offset_ptr = ptr;
@@ -40,7 +41,7 @@ public:
     } else {
       _count = count;
     }
-    _allocated_memory = false;
+    _holds_allocation = allocated_memory;
   }
 
   //---
@@ -52,7 +53,7 @@ public:
     } else {
       _count = 1;
     }
-    _allocated_memory = false;
+    _holds_allocation = false;
   }
 
   //---
@@ -61,13 +62,13 @@ public:
     _ptr = ptr._ptr;
     _offset_ptr = ptr._offset_ptr;
     _count = ptr._count;
-    _allocated_memory = false;
+    _holds_allocation = false;
   }
 
   //---
   ~SafePtr() 
   {
-    if (_allocated_memory && is_valid()) {
+    if (_holds_allocation && is_valid()) {
       free_unsafe((void**)&_ptr);
     }
   }
@@ -78,7 +79,7 @@ public:
     _ptr = ptr._ptr;
     _offset_ptr = ptr._offset_ptr;
     _count = ptr._count;
-    _allocated_memory = false;
+    _holds_allocation = false;
     return *this;
   }
 
@@ -194,9 +195,15 @@ public:
   }
 
   //---
-  void set_allocated_memory(bool allocated_memory)
+  void set_holds_allocation(bool holds_allocation)
   {
-    _allocated_memory = allocated_memory;
+    _holds_allocation = holds_allocation;
+  }
+
+  //---
+  bool get_holds_allocation() const
+  {
+    return _holds_allocation;
   }
 
   //---

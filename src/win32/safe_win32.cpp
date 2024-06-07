@@ -32,20 +32,20 @@ u64 get_callstack(utf8* string_out,
   HANDLE callstack[10];
   HANDLE process = GetCurrentProcess();
   if (!process) {
-    ShortStringUnsafe<256> win32_err;
+    FixedStringUnsafe<256> win32_err;
     get_errors().last_error_from_win32(win32_err._str, 256);
     get_errors().to_log_with_stacktrace(win32_err._str);
     return false;
   }
   if (!SymInitialize(process, nullptr, true)) {
-    ShortStringUnsafe<256> win32_err;
+    FixedStringUnsafe<256> win32_err;
     get_errors().last_error_from_win32(win32_err._str, 256);
     get_errors().to_log_with_stacktrace(win32_err._str);
     return false;
   }
   WORD frames = RtlCaptureStackBackTrace(0, 10, callstack, nullptr);
   if (frames == 0) {
-    ShortStringUnsafe<256> win32_err;
+    FixedStringUnsafe<256> win32_err;
     get_errors().last_error_from_win32(win32_err._str, 256);
     get_errors().to_log_with_stacktrace(win32_err._str);
     return false;
@@ -58,7 +58,7 @@ u64 get_callstack(utf8* string_out,
   for (WORD i = 0; i < frames; ++i) {
     DWORD64 address = (DWORD64)(callstack[i]);
     if (!SymFromAddr(process, address, nullptr, symbol)) {
-      ShortStringUnsafe<256> win32_err;
+      FixedStringUnsafe<256> win32_err;
       get_errors().last_error_from_win32(win32_err._str, 256);
       get_errors().to_log_with_stacktrace(win32_err._str);
       return false;
@@ -69,7 +69,7 @@ u64 get_callstack(utf8* string_out,
     string_out[string_size] = u8'\0';
   }
   if (!SymCleanup(process)) {
-    ShortStringUnsafe<256> win32_err;
+    FixedStringUnsafe<256> win32_err;
     get_errors().last_error_from_win32(win32_err._str, 256);
     get_console().write(win32_err._str);
     return 0;
@@ -96,7 +96,7 @@ u64 get_last_error_string(utf8* string_out,
     string_out[utf8_size] = u8'\0';
     return utf8_size;
   } else {
-    ShortStringUnsafe<256> win32_err;
+    FixedStringUnsafe<256> win32_err;
     get_errors().last_error_from_win32(win32_err._str, 256);
     get_console().write(win32_err._str);
     string_out[0] = u8'\0';
@@ -111,7 +111,7 @@ bool write_log(const utf8* string,
   if (get_log()._file) {
     if (WriteFile((HANDLE)get_log()._file, (HANDLE)string, size, nullptr, nullptr) == 0) {
       if (get_last_error() != ERROR_IO_PENDING) {
-        ShortStringUnsafe<256> win32_err;
+        FixedStringUnsafe<256> win32_err;
         get_errors().last_error_from_win32(win32_err._str, 256);
         get_console().write(win32_err._str);
         return false;
@@ -141,18 +141,18 @@ bool write_console(const utf8* string,
                    u64 size)
 {
   if (size == Types::U64_MAX) {
-    size = String::size_of(string);
+    size = StringUtilities::length_of(string);
   }
   void* out = GetStdHandle(STD_OUTPUT_HANDLE);
   if (out) {
     if (WriteConsoleA(out, string, size, nullptr, nullptr) == 0) {
-      ShortStringUnsafe<256> win32_err;
+      FixedStringUnsafe<256> win32_err;
       get_errors().last_error_from_win32(win32_err._str, 256);
       get_console().write(win32_err._str);
       return false;
     }
   } else {
-    ShortStringUnsafe<256> win32_err;
+    FixedStringUnsafe<256> win32_err;
     get_errors().last_error_from_win32(win32_err._str, 256);
     get_console().write(win32_err._str);
     return false;
@@ -174,7 +174,7 @@ u64 utf16_to_utf8(utf8* utf8_string_out,
       return (utf8_size - (utf16_size == -1));
     }
   }
-  ShortStringUnsafe<256> win32_err;
+  FixedStringUnsafe<256> win32_err;
   get_errors().last_error_from_win32(win32_err._str, 256);
   get_errors().to_log_with_stacktrace(win32_err._str);
   utf8_string_out[0] = u8'\0';
@@ -195,7 +195,7 @@ u64 utf8_to_utf16(wchar_t* utf16_string_out,
       return (utf16_size - (utf8_size == -1));
     }
   }
-  ShortStringUnsafe<256> win32_err;
+  FixedStringUnsafe<256> win32_err;
   get_errors().last_error_from_win32(win32_err._str, 256);
   get_errors().to_log_with_stacktrace(win32_err._str);
   utf16_string_out[0] = u8'\0';

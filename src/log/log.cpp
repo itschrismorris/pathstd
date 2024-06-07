@@ -25,7 +25,7 @@ Log::Log(const utf8* log_path)
       _file = nullptr;
       get_console().set_text_color(get_console().RED);
       get_console().write(u8"** Failed to create log file.");
-      ShortStringUnsafe<256> win32_err;
+      FixedStringUnsafe<256> win32_err;
       get_errors().last_error_from_win32(win32_err._str, 256);
       get_console().write(win32_err._str);
       get_console().set_text_color(get_console().WHITE);

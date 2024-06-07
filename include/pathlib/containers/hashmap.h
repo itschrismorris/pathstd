@@ -5,8 +5,8 @@
 #pragma once
 #include "pathlib/types/types.h"
 #include "pathlib/containers/vector_unsafe.h"
-#include "pathlib/string/size_of.h"
-#include "pathlib/string/long_string_unsafe.h"
+#include "pathlib/string/length_of.h"
+#include "pathlib/string/string_unsafe.h"
 
 namespace Pathlib {
 
@@ -41,22 +41,22 @@ private:
 
 public:
   //---
-  DISALLOW_COPY(Hashmap);
-
-  //---
-  Hashmap(const utf8* name)
+  explicit Hashmap(const Memory::Name& name)
   {
     _capacity = RESERVE_CAPACITY;
     _max_probe_length = 1 + (Math::log2(_capacity) >> 2);
     _slot_kv_index = (u32*)malloc_unsafe(sizeof(u32) * _capacity, 
-                                        ShortStringUnsafe<96>(name, u8"::_slot_kv_index")._str);
+                                         FixedStringUnsafe<64>(u8"\"", name(), u8"\"::_slot_kv_index")._str);
     _slot_distance_digest = (u32*)malloc_unsafe(sizeof(u32) * _capacity, 
-                                               ShortStringUnsafe<96>(name, u8"::_slot_distance_digest")._str);
+                                                FixedStringUnsafe<64>(u8"\"", name(), u8"\"::_slot_distance_digest")._str);
     I8 empty_slot = I8_SET1(EMPTY_SLOT);
     for (u32 r = 0; r < (_capacity >> 3); ++r) {
       I8_STORE(&((I8*)_slot_distance_digest)[r], empty_slot);
     }
   }
+
+  //---
+  DISALLOW_COPY(Hashmap);
 
   //---
   ~Hashmap()
@@ -75,11 +75,11 @@ public:
   {
     if constexpr (IS_INTEGRAL(T) || IS_FLOAT(T)) {
       return Math::hash(key);
-    } else if constexpr (IS_SAFE_SHORT_STRING(T) || IS_UNSAFE_SHORT_STRING(T) || 
-                         IS_SAFE_LONG_STRING(T) || IS_UNSAFE_LONG_STRING(T)) {
+    } else if constexpr (IS_SAFE_FIXED_STRING(T) || IS_UNSAFE_FIXED_STRING(T) || 
+                         IS_SAFE_STRING(T) || IS_UNSAFE_STRING(T)) {
       return key.hash();
     } else if constexpr (SAME_TYPE(T, const utf8*)) {
-      return LongStringUnsafe<64>::hash(key);
+      return StringUnsafe<32>::hash(key);
     } else {
       static_assert(false, "Unsupported type used for hashmap key.");
     }

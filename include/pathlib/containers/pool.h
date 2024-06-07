@@ -30,9 +30,6 @@ private:
 
 public:
   //---
-  DISALLOW_COPY(Pool);
-
-  //---
   Pool(const utf8* name,
        u32 pools_id = 0) 
   {
@@ -41,9 +38,12 @@ public:
     _free_head = 0;
     _pools_id = pools_id;
     _data = (T*)malloc_unsafe(sizeof(T) * CAPACITY, 
-                             name ? ShortStringUnsafe<96>(u8"[Pool]\"", name, u8"\"::[T*]_data")._str : nullptr);
+                              name ? FixedStringUnsafe<64>(u8"\"", name, u8"\"::_data")._str : nullptr);
     memset_unsafe(_data, 0xFF, sizeof(T) * CAPACITY);
   }
+
+  //---
+  DISALLOW_COPY(Pool);
 
   //---
   ~Pool() 

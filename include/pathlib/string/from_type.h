@@ -1,14 +1,14 @@
 /*
-  Documentation: https://www.path.blog/docs/format_type.html
+  Documentation: https://www.path.blog/docs/from_type.html
 */
 
 #pragma once
 #include "pathlib/memory/memcpy_unsafe.h"
 #include "pathlib/memory/malloc_unsafe.h"
-#include "pathlib/string/size_of.h"
+#include "pathlib/string/length_of.h"
 #include "pathlib/types/types.h"
 
-namespace Pathlib::String::_Internal {
+namespace Pathlib::StringUtilities::_Internal {
 
 //---
 static inline u16 const two_digits[100] =
@@ -165,7 +165,7 @@ static inline void from_type_clip(const T& arg,
                        SAME_TYPE(ARRAY_TYPE(T), utf8) || 
                        SAME_TYPE(T&, const utf8*&) || 
                        SAME_TYPE(T&, utf8*&)) {
-    u64 copy_size = Math::min(string_capacity - *string_size - 1, String::size_of(arg));
+    u64 copy_size = Math::min(string_capacity - *string_size - 1, StringUtilities::length_of(arg));
     memcpy_unsafe(&string[*string_size], arg, copy_size);
     *string_size += copy_size;
     string[*string_size] = u8'\0';
@@ -253,7 +253,7 @@ static inline void from_type_grow(const T& arg,
     *string_size = new_size;
   } else if constexpr (SAME_TYPE(ARRAY_TYPE(T), const utf8) || SAME_TYPE(ARRAY_TYPE(T), utf8) || 
                        SAME_TYPE(T&, const utf8*&) || SAME_TYPE(T&, utf8*&)) {
-    u64 arg_size = String::size_of(arg);
+    u64 arg_size = StringUtilities::length_of(arg);
     u64 new_size = *string_size + arg_size;
     if (new_size >= *string_capacity) {
       *string_capacity = new_size * 1.5;

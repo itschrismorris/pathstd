@@ -5,7 +5,7 @@
 #pragma once
 #include "pathlib/win32/safe_win32.h"
 #include "pathlib/types/types.h"
-#include "pathlib/string/long_string_unsafe.h"
+#include "pathlib/string/string_unsafe.h"
 
 namespace Pathlib::_Internal {
   
@@ -31,7 +31,7 @@ struct Console
   template <typename... Args>
   inline bool write(Args&&... args)
   {
-    LongStringUnsafe<512> buffer(nullptr);
+    StringUnsafe<256> buffer(Memory::Name(Memory::Name(u8"")));
     (buffer._append(buffer, args), ...);
     buffer.append(u8'\n');
     return Win32::write_console(buffer._str, buffer._size);

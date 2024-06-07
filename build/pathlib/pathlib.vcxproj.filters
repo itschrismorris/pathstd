@@ -201,19 +201,19 @@
     <ClInclude Include="..\..\include\pathlib\string\from_type.h">
       <Filter>include\string</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\include\pathlib\string\long_string.h">
+    <ClInclude Include="..\..\include\pathlib\string\string.h">
       <Filter>include\string</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\include\pathlib\string\long_string_unsafe.h">
+    <ClInclude Include="..\..\include\pathlib\string\string_unsafe.h">
       <Filter>include\string</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\include\pathlib\string\short_string.h">
+    <ClInclude Include="..\..\include\pathlib\string\fixed_string.h">
       <Filter>include\string</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\include\pathlib\string\short_string_unsafe.h">
+    <ClInclude Include="..\..\include\pathlib\string\fixed_string_unsafe.h">
       <Filter>include\string</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\include\pathlib\string\size_of.h">
+    <ClInclude Include="..\..\include\pathlib\string\length_of.h">
       <Filter>include\string</Filter>
     </ClInclude>
     <ClInclude Include="..\..\include\pathlib\types\types.h">

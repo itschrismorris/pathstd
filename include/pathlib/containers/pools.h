@@ -26,20 +26,22 @@ private:
   //---
   VectorUnsafe<PoolUnsafe<T, POOL_CAPACITY>, POOLS_RESERVE_CAPACITY> _pools;
   u64 _count;
-  ShortStringUnsafe<96> _name;
+  FixedStringUnsafe<64> _name;
 public:
+  //---
+  Pools(const utf8* name) : _pools(name ? FixedStringUnsafe<64>(u8"\"", name, u8"\"::_pools")._str : nullptr)
+  {
+    _count = 0;
+    u32 pools_id = 0;
+    _pools.emplace_back(1, name ? FixedStringUnsafe<64>(u8"\"", name, u8"\"[", _count, u8"]")._str : nullptr,
+                        pools_id);
+    _name = name;
+  }
+
   //---
   DISALLOW_COPY(Pools);
 
   //---
-  Pools(const utf8* name) : _pools(name ? ShortStringUnsafe<96>(u8"[Pools]\"", name, u8"\"::[Vector]_pools")._str : nullptr)
-  {
-    _count = 0;
-    u32 pools_id = 0;
-    _pools.emplace_back(1, name ? ShortStringUnsafe<96>(name, u8"[", _count, u8"]")._str : nullptr,
-                        pools_id);
-    _name = name;
-  }
   ~Pools() {}
 
   //---
@@ -59,7 +61,7 @@ public:
     }
     ++_count;
     u32 pools_id = _pools._count - 1;
-    _pools.emplace_back(1, (_name._size > 0) ? ShortStringUnsafe<96>(_name, u8"[", _count, u8"]")._str : nullptr,
+    _pools.emplace_back(1, (_name._size > 0) ? FixedStringUnsafe<64>(u8"\"", _name, u8"\"[", _count, u8"]")._str : nullptr,
                         pools_id);
     return SafePtr<T>(_pools[_pools._count - 1].get_vacant(_pools._count - 1));
   }

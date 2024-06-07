@@ -1,18 +1,18 @@
 /*
-  Documentation: https://www.path.blog/docs/short_string_unsafe.html
+  Documentation: https://www.path.blog/docs/fixed_string_unsafe.html
 */
 
 #pragma once
 #include "pathlib/types/types.h"
 #include "pathlib/memory/malloc_unsafe.h"
 #include "pathlib/string/from_type.h"
-#include "pathlib/string/short_string.h"
+#include "pathlib/string/fixed_string.h"
 
 namespace Pathlib {
 
 //---
 template <u64 RESERVE_CAPACITY>
-struct LongString
+struct String
 {
 private:
   //---
@@ -21,28 +21,27 @@ private:
   u64 _size;
   
 public:
-
-  //---
-  DISALLOW_COPY_CONSTRUCTOR(LongString);
-  
   //---
   template <typename... Args>
-  explicit LongString(const utf8* name,
+  explicit String(const utf8* name,
              Args&&... args)
   {
     _capacity = RESERVE_CAPACITY;
     _str = (utf8*)malloc_unsafe(RESERVE_CAPACITY,
-                                name ? ShortStringUnsafe<96>(u8"[LongString]\"", name, u8"\"::[utf8*]_str")._str : nullptr);
+                                name ? FixedStringUnsafe<64>(u8"\"", name, u8"\"::_str")._str : nullptr);
     clear();
     if constexpr (sizeof...(Args) == 0) {
-      LongString::_append(*this, name);
+      String::_append(*this, name);
     } else {
-      (LongString::_append(*this, args), ...);
+      (String::_append(*this, args), ...);
     }
   }
 
   //---
-  ~LongString() 
+  DISALLOW_COPY_CONSTRUCTOR(String);
+
+  //---
+  ~String() 
   {
     if (_str) {
       free_unsafe((void**)&_str);
@@ -51,7 +50,7 @@ public:
 
   //---
   template <typename T>
-  inline LongString& operator =(const T& arg)
+  inline String& operator =(const T& arg)
   {
     _size = 0;
     _append(*this, arg);
@@ -62,13 +61,13 @@ public:
   template <typename T>
   inline bool operator ==(T& string)
   {
-    if constexpr (IS_UNSAFE_LONG_STRING(T) || IS_UNSAFE_SHORT_STRING(T)) {
-      return String::compare<true, true>(_str, string._str, _size, string._size);
-    } else if constexpr (IS_SAFE_LONG_STRING(T) || IS_SAFE_SHORT_STRING(T)) {
-      return String::compare<true, true>(_str, string.get_str(), _size, string.get_size());
+    if constexpr (IS_UNSAFE_STRING(T) || IS_UNSAFE_FIXED_STRING(T)) {
+      return StringUtilities::compare<true, true>(_str, string._str, _size, string._size);
+    } else if constexpr (IS_SAFE_STRING(T) || IS_SAFE_FIXED_STRING(T)) {
+      return StringUtilities::compare<true, true>(_str, string.get_str(), _size, string.get_size());
     } else if constexpr (SAME_TYPE(ARRAY_TYPE(T), const utf8) || SAME_TYPE(ARRAY_TYPE(T), utf8) || 
                          SAME_TYPE(T&, const utf8*&) || SAME_TYPE(T&, utf8*&)) {
-      return String::compare<true, false>(_str, string, _size, String::size_of(string));
+      return StringUtilities::compare<true, false>(_str, string, _size, StringUtilities::length_of(string));
     } else {
       static_assert(false, "Cannot compare LongString with provided type. Note for enforced "
                            "utf-8 encoding: Use utf8 instead of char, "
@@ -78,15 +77,15 @@ public:
 
   //---
   template <typename T>
-  inline const LongString operator +(const T& arg)
+  inline const String operator +(const T& arg)
   {
-    LongString::_append(*this, arg);
+    String::_append(*this, arg);
     return *this;
   }
 
   //---
   template <typename T>
-  inline LongString& operator +=(const T& arg)
+  inline String& operator +=(const T& arg)
   {
     _append(*this, arg);
     return *this;
@@ -94,7 +93,7 @@ public:
 
   //---
   template <typename T>
-  static inline void _append(LongString& string_out, 
+  static inline void _append(String& string_out, 
                              const T& arg)
   {
     static_assert(!SAME_TYPE(T, const char*) && !SAME_TYPE(T, char*), 
@@ -106,7 +105,7 @@ public:
         return;
       }
     }
-    if constexpr (IS_UNSAFE_LONG_STRING(T) || IS_UNSAFE_SHORT_STRING(T)) {
+    if constexpr (IS_UNSAFE_STRING(T) || IS_UNSAFE_FIXED_STRING(T)) {
       u64 new_size = string_out._size + arg._size;
       if (new_size > string_out._capacity) {
         string_out._capacity = new_size * 1.5;
@@ -114,7 +113,7 @@ public:
       }
       memcpy_unsafe<false, true>(&string_out._str[string_out._size], arg._str, arg._size + 1);
       string_out._size = new_size;
-    } else if constexpr (IS_SAFE_LONG_STRING(T) || IS_SAFE_SHORT_STRING(T)) {
+    } else if constexpr (IS_SAFE_STRING(T) || IS_SAFE_FIXED_STRING(T)) {
       u64 new_size = string_out._size + arg.get_size();
       if (new_size > string_out._capacity) {
         string_out._capacity = new_size * 1.5;
@@ -123,7 +122,7 @@ public:
       memcpy_unsafe<false, true>(&string_out._str[string_out._size], arg.get_str(), arg.get_size() + 1);
       string_out._size = new_size;
     } else {
-      String::_Internal::from_type_grow(arg, &string_out._str, &string_out._size, &string_out._capacity);
+      StringUtilities::_Internal::from_type_grow(arg, &string_out._str, &string_out._size, &string_out._capacity);
     }
   }
 
@@ -162,7 +161,7 @@ public:
   //---
   static inline u32 hash(const utf8* value)
   {
-    return Math::hash(value, String::size_of(value));
+    return Math::hash(value, StringUtilities::length_of(value));
   }
 
   //---
@@ -173,7 +172,7 @@ public:
   
   //---
   template <typename T>
-  LongString& from_value_hex(T value)
+  String& from_value_hex(T value)
   {
     utf8 chars[] = u8"0123456789ABCDEF";
     constexpr u32 digit_count = sizeof(T) * 2;
@@ -197,4 +196,4 @@ public:
 }
 
 //---
-template <u64 RESERVE_CAPACITY> struct _is_safe_long_string<Pathlib::LongString<RESERVE_CAPACITY>> : true_type {};
+template <u64 RESERVE_CAPACITY> struct _is_safe_string<Pathlib::String<RESERVE_CAPACITY>> : true_type {};

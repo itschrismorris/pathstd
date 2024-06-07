@@ -5,7 +5,7 @@
 #pragma once
 #include "pathlib/types/types.h"
 #include "pathlib/memory/memcpy.h"
-#include "pathlib/string/short_string_unsafe.h"
+#include "pathlib/string/fixed_string_unsafe.h"
 
 namespace Pathlib {
 
@@ -20,17 +20,17 @@ struct VectorUnsafe
   u64 _capacity;
 
   //---
-  DISALLOW_COPY(VectorUnsafe);
-
-  //---
   VectorUnsafe(const utf8* name,
                u64 reserve_capacity = RESERVE_CAPACITY)
   {
     _capacity = reserve_capacity;
     _data = (T*)malloc_unsafe(sizeof(T) * reserve_capacity,
-                              name ? ShortStringUnsafe<96>(name, u8"::[T*]_data")._str : nullptr);
+                              name ? FixedStringUnsafe<64>(u8"\"", name, u8"\"::_data")._str : nullptr);
     clear();
   }
+
+  //---
+  DISALLOW_COPY(VectorUnsafe);
 
   //---
   ~VectorUnsafe()

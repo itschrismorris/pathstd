@@ -1,14 +1,13 @@
 /* 
-  Documentation: https://www.path.blog/docs/size.html
+  Documentation: https://www.path.blog/docs/compare.html
 */
 
 #pragma once
 #include "pathlib/types/types.h"
 #include "pathlib/math/math.h"
-#include "pathlib/string/size_of.h"
+#include "pathlib/string/length_of.h"
 
-namespace Pathlib {
-namespace String {
+namespace Pathlib::StringUtilities {
 namespace _Internal {
 
 //---
@@ -325,13 +324,13 @@ static inline bool compare(const utf8* first,
                            u64 first_size = 0,
                            u64 second_size = 0)
 {
-  first_size = (first_size > 0) ? first_size : String::size_of(first);
-  second_size = (second_size > 0) ? second_size : String::size_of(second);
+  first_size = (first_size > 0) ? first_size : length_of(first);
+  second_size = (second_size > 0) ? second_size : length_of(second);
   if (first_size != second_size) {
     return false;
   }
   if (first_size <= 256) {
-    return _Internal::compare_256(first, second, first_size);
+    return compare_256(first, second, first_size);
   }
   u32 avx_count = first_size / 32;
   u32 bitmask = Types::U32_MAX;
@@ -354,7 +353,6 @@ static inline bool compare(const utf8* first,
     }
   }
   u64 leftover = first_size - (avx_count << 5);
-  return _Internal::compare_256(&first[avx_count << 5], &second[avx_count << 5], leftover);
-}
+  return compare_256(&first[avx_count << 5], &second[avx_count << 5], leftover);
 }
 }

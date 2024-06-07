@@ -20,8 +20,23 @@ static constexpr u32 MEGABYTE = (1024 * 1024);
 static constexpr u32 GIGABYTE = (1024 * 1024 * 1024);
 
 //---
-bool clone_memory(void** dst_out,
-                  void* src);
+struct Name 
+{
+  //---
+  const utf8* _name;
+
+  //---
+  explicit Name(const char8_t* name) 
+  {
+    if (name) _name = name;
+    else _name = u8"Unnamed";
+  }
+
+  ~Name() {}
+
+  //---
+  inline constexpr const utf8* operator()() const { return _name; }
+};
 
 //---
 template <typename T,
@@ -44,7 +59,4 @@ static inline void call_destructor(T* obj)
     obj->~T();
   }
 }
-
-//---
-namespace _Internal { extern bool scripting_mode; }
 }

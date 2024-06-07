@@ -4,8 +4,8 @@
 
 #pragma once
 #include "pathlib/types/types.h"
-#include "pathlib/string/short_string_unsafe.h"
-#include "pathlib/string/long_string_unsafe.h"
+#include "pathlib/string/fixed_string_unsafe.h"
+#include "pathlib/string/string_unsafe.h"
 
 //---
 struct SystemTime 

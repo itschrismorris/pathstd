@@ -19,14 +19,16 @@ private:
   u64 _count;
 
 public:
-  //---
-  DISALLOW_COPY(Array);
 
   //---
   Array()
   {
     clear();
   }
+
+  //---
+  DISALLOW_COPY(Array);
+  
   ~Array() {}
 
   //---

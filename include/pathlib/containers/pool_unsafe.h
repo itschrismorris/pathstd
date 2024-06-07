@@ -7,7 +7,7 @@
 #include "pathlib/errors/errors.h"
 #include "pathlib/memory/memory.h"
 #include "pathlib/memory/memset_unsafe.h"
-#include "pathlib/string/short_string_unsafe.h"
+#include "pathlib/string/fixed_string_unsafe.h"
 
 //---
 CHECK_HAS_MEMBER(has_pool_id, _pool_id);
@@ -36,9 +36,6 @@ struct PoolUnsafe
   u32 _pools_id;
 
   //---
-  DISALLOW_COPY(PoolUnsafe);
-
-  //---
   PoolUnsafe(const utf8* name,
              u32 pools_id = 0)
   {
@@ -47,9 +44,12 @@ struct PoolUnsafe
     _free_head = 0;
     _pools_id = pools_id;
     _data = (T*)malloc_unsafe(sizeof(T) * CAPACITY, 
-                              name ? ShortStringUnsafe<96>(u8"[Pool]\"", name, u8"\"::[T*]_data")._str : nullptr);
+                              name ? FixedStringUnsafe<64>(u8"\"", name, u8"\"::_data")._str : nullptr);
     memset_unsafe(_data, 0xFF, sizeof(T) * CAPACITY);
   }
+
+  //---
+  DISALLOW_COPY(PoolUnsafe);
 
   //---
   ~PoolUnsafe()

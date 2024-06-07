@@ -22,7 +22,7 @@ struct Errors
   template <typename... Args>
   bool to_log(Args... args)
   {
-    LongStringUnsafe<512> buffer(nullptr, u8"\n************\n");
+    StringUnsafe<256> buffer(Memory::Name(u8""), u8"\n************\n");
     (buffer._append(buffer, args), ...);
     buffer.append(u8"\n************");
     if (!get_console().set_text_color(get_console().RED) ||
@@ -37,7 +37,7 @@ struct Errors
   template <typename... Args>
   bool to_log_with_stacktrace(Args... args)
   {
-    LongStringUnsafe<512> buffer(nullptr, u8"\n************\n");
+    StringUnsafe<256> buffer(Memory::Name(u8""), u8"\n************\n");
     (buffer._append(buffer, args), ...);
     buffer.append(u8"\n\n");
     buffer._size += Win32::get_callstack(buffer._str + buffer._size, 512 - buffer._size);

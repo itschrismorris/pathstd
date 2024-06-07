@@ -27,10 +27,6 @@ void Errors::last_error_from_win32(utf8* string_out,
 //
 void Errors::kill_script()
 {
-  if (Memory::_Internal::scripting_mode) {
-    ExitProcess(0);
-  } else {
-    ExitProcess(0);
-  }
+  ExitProcess(0);
 }
 } 
