@@ -15,10 +15,10 @@ template <typename T,
 struct Pool
 {
   //---
-  static_assert(CAPACITY <= Types::U16_MAX, "Pool CAPACITY cannot exceed 65535 (16-bits used for pool_id).");
-  static_assert(has_pool_id<T>::value, "Pool objects must contain a u32 member named 'pool_id' to be used in a pool.");
-  using POOL_ID_TYPE = _member_type<T, decltype(&T::pool_id)>::type;
-  static_assert(SAME_TYPE(POOL_ID_TYPE, u32), "Pool object member 'pool_id' must be of type u32.");
+  static_assert(CAPACITY <= Types::U16_MAX, "Pool CAPACITY cannot exceed 65535 (16-bits used for _pool_id).");
+  static_assert(has_pool_id<T>::value, "Pool objects must contain a u32 member named '_pool_id' to be used in a pool.");
+  using POOL_ID_TYPE = _member_type<T, decltype(&T::_pool_id)>::type;
+  static_assert(SAME_TYPE(POOL_ID_TYPE, u32), "Pool object member '_pool_id' must be of type u32.");
 
 private:
   //---
@@ -63,11 +63,10 @@ public:
 
   //---
   template <typename... Args>
-  T* get_vacant(Args&&... constructor_args)
+  SafePtr<T> get_vacant(Args&&... constructor_args)
   {
     if (_count >= CAPACITY) {
-      get_errors().set_last_error(u8"Failed to alloc() from pool; it is already at capacity.");
-      get_errors().to_log();
+      get_errors().to_log(u8"Failed to alloc() from pool; it is already at capacity.");
       return nullptr;
     }
     ++_count;
@@ -76,10 +75,10 @@ public:
       _free_head = _count;
       _free_count = 1;
     } else {
-      _free_head = new_object->pool_id;
+      _free_head = new_object->_pool_id;
     }
     Memory::call_constructor<T>(new_object, constructor_args...);
-    new_object->pool_id = (new_object - _data) | (_pools_id << 16);
+    new_object->_pool_id = (new_object - _data) | (_pools_id << 16);
     return SafePtr<T>(new_object);
   }
 
@@ -94,8 +93,7 @@ public:
       object->pool_id = _free_head | 0xFFFF0000;
       _free_head = (object - _data);
     } else {
-      get_errors().set_last_error(u8"Attempt to free an invalid pool_id from Pool.");
-      get_errors().to_log();
+      get_errors().to_log(u8"Attempt to free an invalid pool_id from Pool.");
       get_errors().kill_script();
     }
   }
@@ -107,8 +105,7 @@ public:
       free(object->pool_id);
       object = nullptr;
     } else {
-      get_errors().set_last_error(u8"Attempt to free a null SafePtr from Pool.");
-      get_errors().to_log();
+      get_errors().to_log(u8"Attempt to free a null SafePtr from Pool.");
       get_errors().kill_script();
     }
   }
@@ -125,7 +122,10 @@ public:
   template<typename Callable>
   inline bool iterate(Callable&& function)
   {
-    static_assert(SAME_TYPE(result_of<Callable(T&)>::type, bool), "Pool iteration callback must return a bool for continuing or breaking from the iteration.");
+    static_assert(HasTParameter<T&, Callable>::value, 
+                  "Pool iteration callback must take a parameter with a reference to the pool object type: '(T& object)'");
+    static_assert(SAME_TYPE(result_of<Callable(T&)>::type, bool), 
+                  "Pool iteration callback must return a bool for continuing or breaking from the iteration.");
     u32 objects_visited = 0;
     u32 original_count = _count;
     for (u32 m = 0; m < CAPACITY; ++m) {
@@ -133,7 +133,7 @@ public:
         break;
       }
       T& pool_object = _data[m];
-      if (!is_occupied(pool_object.pool_id)) {
+      if (!is_occupied(pool_object._pool_id)) {
         continue;
       }
       if (!function(pool_object)) {

@@ -13,6 +13,7 @@ typedef unsigned __int32 u32;
 typedef   signed __int32 i32;
 typedef unsigned __int64 u64;
 typedef   signed __int64 i64;
+typedef unsigned long ulong;
 typedef float  f32;
 typedef double f64;
 typedef char8_t utf8;
@@ -63,6 +64,10 @@ static constexpr u32 CACHE_LINE_SIZE = 64;
 struct false_type { static constexpr bool value = false; constexpr operator bool() const { return value; } };
 struct true_type { static constexpr bool value = true; constexpr operator bool() const { return value; } };
 
+//--
+template <typename T> struct _is_long_string : false_type {};
+template <typename T> struct _is_short_string : false_type {};
+
 //---
 template <typename...>
 using void_t = void;
@@ -74,8 +79,7 @@ T declval() noexcept {}
 //---
 template <typename>
 struct result_of;
-template <typename F, 
-          typename... Args>
+template <typename F, typename... Args>
 struct result_of<F(Args...)> 
 {
   using type = decltype(declval<F>()(declval<Args>()...));
@@ -104,6 +108,12 @@ struct has_destructor {
 };
 
 //---
+template <typename T, typename Func, typename = void>
+struct HasTParameter : false_type {};
+template <typename T, typename Func>
+struct HasTParameter<T, Func, void_t<decltype(declval<Func>()(declval<T>()))>> : true_type {};
+
+//---
 #define CHECK_HAS_MEMBER(CALL_NAME, MEMBER_NAME) \
   template <typename T, typename = void> \
   struct CALL_NAME : false_type {}; \
@@ -126,6 +136,8 @@ template <> struct _is_integral<u8> : true_type {};
 template <> struct _is_integral<u16> : true_type {};
 template <> struct _is_integral<u32> : true_type {};
 template <> struct _is_integral<u64> : true_type {};
+template <> struct _is_integral<long> : true_type {};
+template <> struct _is_integral<unsigned long> : true_type {};
 template <typename T> struct _is_float : false_type {};
 template <> struct _is_float<f32> : true_type {};
 template <> struct _is_float<f64> : true_type {};

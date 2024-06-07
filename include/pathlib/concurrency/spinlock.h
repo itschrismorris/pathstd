@@ -45,6 +45,7 @@ struct Spinlock
         u32 spins = 0;
         while (wait) {
           if (++spins < 2000) {
+            __builtin_ia32_pause();
           } else {
             Win32::yield_thread();
           }
@@ -52,8 +53,7 @@ struct Spinlock
         _owner.store(Win32::get_current_thread_id());
         return true;
       } else {
-        get_errors().set_last_error(u8"Spinlock _queue overflowed; could not acquire lock.");
-        get_errors().to_log(false);
+        get_errors().to_log(u8"Spinlock _queue overflowed; could not acquire lock.");
         return false;
       }
     }

@@ -5,7 +5,6 @@
 #pragma once
 #include "pathlib/win32/safe_win32.h"
 #include "pathlib/types/types.h"
-#include "pathlib/errors/errors.h"
 #include "pathlib/string/short_string.h"
 #include "pathlib/string/long_string.h"
 #include "pathlib/string/short_string_unsafe.h"
@@ -25,9 +24,6 @@ struct Console
   static constexpr u16 BG_GREEN = 0x0020;
   static constexpr u16 BG_RED = 0x0040;
   static constexpr u16 BG_WHITE = (BG_RED | BG_GREEN | BG_BLUE);
-
-  //---
-  LongStringUnsafe<256> _buffer;
 
   //---
   Console();
@@ -74,10 +70,10 @@ struct Console
   template <typename... Args>
   inline bool write(Args&&... args)
   {
-    _buffer._size = 0;
-    (_buffer._append(_buffer, args), ...);
-    _buffer.append(u8'\n');
-    return Win32::write_console(_buffer._str, _buffer._size);
+    LongStringUnsafe<512> buffer(nullptr);
+    (buffer._append(buffer, args), ...);
+    buffer.append(u8'\n');
+    return Win32::write_console(buffer._str, buffer._size);
   }
 };
 }

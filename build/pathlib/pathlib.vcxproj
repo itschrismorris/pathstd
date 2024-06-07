@@ -50,8 +50,10 @@
     <ClInclude Include="..\..\include\pathlib\memory\malloc.h" />
     <ClInclude Include="..\..\include\pathlib\memory\malloc_unsafe.h" />
     <ClInclude Include="..\..\include\pathlib\memory\memcpy.h" />
+    <ClInclude Include="..\..\include\pathlib\memory\memcpy_unsafe.h" />
     <ClInclude Include="..\..\include\pathlib\memory\memory.h" />
     <ClInclude Include="..\..\include\pathlib\memory\memset.h" />
+    <ClInclude Include="..\..\include\pathlib\memory\memset_unsafe.h" />
     <ClInclude Include="..\..\include\pathlib\pathlib.h" />
     <ClInclude Include="..\..\include\pathlib\profiler\profiler.h" />
     <ClInclude Include="..\..\include\pathlib\string\compare.h" />
@@ -75,6 +77,7 @@
     <ClInclude Include="..\..\src\win32\mindows.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\src\concurrency\thread.cpp" />
     <ClCompile Include="..\..\src\errors\errors.cpp" />
     <ClCompile Include="..\..\src\log\log.cpp" />
     <ClCompile Include="..\..\src\memory\malloc_unsafe.cpp" />

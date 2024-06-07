@@ -5,6 +5,7 @@
 #pragma once
 #include "pathlib/types/types.h"
 #include "pathlib/math/math.h"
+#include "pathlib/string/size_of.h"
 
 namespace Pathlib {
 namespace String {

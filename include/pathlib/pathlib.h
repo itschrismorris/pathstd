@@ -9,6 +9,7 @@
 #include "pathlib/concurrency/spsc_queue.h"
 #include "pathlib/concurrency/mpsc_queue.h"
 #include "pathlib/concurrency/spinlock.h"
+#include "pathlib/concurrency/thread.h"
 #include "pathlib/log/log.h"
 #include "pathlib/math/math.h"
 #include "pathlib/memory/malloc.h"

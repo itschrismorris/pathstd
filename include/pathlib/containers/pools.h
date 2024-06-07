@@ -32,8 +32,9 @@ public:
   Pools(const utf8* name) : _pools(name ? ShortStringUnsafe<96>(u8"[Pools]\"", name, u8"\"::[Vector]pools")._str : nullptr)
   {
     _count = 0;
+    u32 pools_id = 0;
     _pools.emplace_back(1, name ? ShortStringUnsafe<96>(name, u8"[", _count, u8"]")._str : nullptr,
-                        _pools._count);
+                        pools_id);
     _name = name;
   }
   ~Pools() {}
@@ -54,8 +55,9 @@ public:
       }
     }
     ++_count;
+    u32 pools_id = _pools._count - 1;
     _pools.emplace_back(1, (_name._size > 0) ? ShortStringUnsafe<96>(_name, u8"[", _count, u8"]")._str : nullptr,
-                       _pools._count - 1);
+                        pools_id);
     return SafePtr<T>(_pools[_pools._count - 1].get_vacant(_pools._count - 1));
   }
   

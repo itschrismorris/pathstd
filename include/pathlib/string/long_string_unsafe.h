@@ -3,12 +3,10 @@
 */
 
 #pragma once
+#include "pathlib/types/types.h"
 #include "pathlib/memory/malloc_unsafe.h"
 #include "pathlib/string/from_type.h"
-#include "pathlib/string/long_string.h"
-#include "pathlib/string/short_string.h"
 #include "pathlib/string/short_string_unsafe.h"
-#include "pathlib/profiler/profiler.h"
 
 namespace Pathlib {
 
@@ -20,6 +18,7 @@ struct LongStringUnsafe
   utf8* _str;
   u64 _capacity;
   u64 _size;
+  utf8 _name[96];
 
   //---
   constexpr const utf8* type_name() const
@@ -32,7 +31,10 @@ struct LongStringUnsafe
   {
     _capacity = RESERVE_CAPACITY;
     _str = (utf8*)malloc_unsafe(RESERVE_CAPACITY + 1, 
-                               ShortStringUnsafe<96>(u8"[LongString]\"", name, u8"\"::[utf8*]str")._str);
+                               ShortStringUnsafe<96>(u8"[LongString]\"", name, u8"\"::[utf8*]_str")._str);
+    u64 name_length = Math::max(95, String::size_of(name));
+    memcpy_unsafe(_name, name, name_length);
+    _name[name_length] = u8'\0';
     clear();
   }
 
@@ -48,7 +50,7 @@ struct LongStringUnsafe
   LongStringUnsafe(const LongStringUnsafe& string)
   {
     _str = (utf8*)malloc_unsafe(string._capacity + 1, 
-                               ShortStringUnsafe<96>(_Internal::Profiler::get_memory_item_name(string._str), u8"(copy)::str")._str);
+                                ShortStringUnsafe<96>(u8"[LongString]\"", _name, u8"(copy)::[utf8*]_str")._str);
     _capacity = string._capacity;
     memcpy_unsafe<true, true>(_str, string._str, string._size + 1);
     _size = string._size;
@@ -60,7 +62,7 @@ struct LongStringUnsafe
                    Args&&... args)
   {
     _str = (utf8*)malloc_unsafe(RESERVE_CAPACITY + 1, 
-                               ShortStringUnsafe<96>(u8"[LongString]\"", name, u8"\"::[utf8*]str")._str);
+                               ShortStringUnsafe<96>(u8"[LongString]\"", name, u8"\"::[utf8*]_str")._str);
     _capacity = RESERVE_CAPACITY;
     _size = 0;
     (LongStringUnsafe::_append(*this, args), ...);
@@ -115,34 +117,7 @@ struct LongStringUnsafe
   }
 
   //---
-  inline LongStringUnsafe& operator +=(const LongString<RESERVE_CAPACITY>& arg)
-  {
-    u64 new_size = _size + arg._size;
-    if (new_size > _capacity) {
-      _capacity = _size * 1.5;
-      _str = (utf8*)realloc_unsafe(_str, _capacity + 1);
-    }
-    memcpy_unsafe<false, true>(&_str[_size], arg._str, arg._size + 1);
-    _size = new_size;
-    return *this;
-  }
-
-  //---
   inline LongStringUnsafe& operator +=(const LongStringUnsafe& arg)
-  {
-    u64 new_size = _size + arg._size;
-    if (new_size > _capacity) {
-      _capacity = _size * 1.5;
-      _str = (utf8*)realloc_unsafe(_str, _capacity + 1);
-    }
-    memcpy_unsafe<false, true>(&_str[_size], arg._str, arg._size + 1);
-    _size = new_size;
-    return *this;
-  }
-
-  //---
-  template <u64 CAPACITY>
-  inline LongStringUnsafe& operator +=(const ShortString<CAPACITY>& arg)
   {
     u64 new_size = _size + arg._size;
     if (new_size > _capacity) {
@@ -179,21 +154,6 @@ struct LongStringUnsafe
   //---
   template <u64 ARG_CAPACITY>
   static inline void _append(LongStringUnsafe& string_out, 
-                             const ShortString<ARG_CAPACITY>& arg)
-  {
-
-    u64 new_size = string_out._size + arg.get_size();
-    if (new_size > string_out._capacity) {
-      string_out._capacity = new_size * 1.5;
-      string_out._str = (utf8*)realloc_unsafe(string_out._str, string_out._capacity + 1);
-    }
-    memcpy_unsafe<false, true>(&string_out._str[string_out._size], arg.get_str(), arg.get_size() + 1);
-    string_out._size = new_size;
-  }
-
-  //---
-  template <u64 ARG_CAPACITY>
-  static inline void _append(LongStringUnsafe& string_out, 
                              const ShortStringUnsafe<ARG_CAPACITY>& arg)
   {
     u64 new_size = string_out._size + arg._size;
@@ -202,20 +162,6 @@ struct LongStringUnsafe
       string_out._str = (utf8*)realloc_unsafe(string_out._str, string_out._capacity + 1);
     }
     memcpy_unsafe<false, true>(&string_out._str[string_out._size], arg._str, arg._size + 1);
-    string_out._size = new_size;
-  }
-
-  //---
-  template <u64 ARG_CAPACITY>
-  static inline void _append(LongStringUnsafe& string_out,
-                             const LongString<ARG_CAPACITY>& arg)
-  {
-    u64 new_size = string_out._size + arg.get_size();
-    if (new_size > string_out._capacity) {
-      string_out._capacity = new_size * 1.5;
-      string_out._str = (utf8*)realloc_unsafe(string_out._str, string_out._capacity + 1);
-    }
-    memcpy_unsafe<false, true>(&string_out._str[string_out._size], arg.get_str(), arg.get_size() + 1);
     string_out._size = new_size;
   }
 
@@ -323,6 +269,4 @@ struct LongStringUnsafe
 }
 
 //---
-template <typename T> struct _is_long_string : false_type {};
-template <u64 RESERVE_CAPACITY> struct _is_long_string<Pathlib::LongString<RESERVE_CAPACITY>> : true_type {};
 template <u64 RESERVE_CAPACITY> struct _is_long_string<Pathlib::LongStringUnsafe<RESERVE_CAPACITY>> : true_type {};

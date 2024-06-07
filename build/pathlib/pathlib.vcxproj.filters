@@ -70,6 +70,9 @@
     <Filter Include="include\concurrency">
       <UniqueIdentifier>{a1c02161-807f-4ce1-ab46-ccd17d2f3664}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\concurrency">
+      <UniqueIdentifier>{55279530-18e5-484e-92b7-4f5cd6ee200f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\include\pathlib\log\log.h">
@@ -234,6 +237,12 @@
     <ClInclude Include="..\..\include\pathlib\concurrency\spsc_queue.h">
       <Filter>include\concurrency</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\include\pathlib\memory\memcpy_unsafe.h">
+      <Filter>include\memory</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\pathlib\memory\memset_unsafe.h">
+      <Filter>include\memory</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\log\log.cpp">
@@ -259,6 +268,9 @@
     </ClCompile>
     <ClCompile Include="..\..\src\errors\errors.cpp">
       <Filter>src\errors</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\concurrency\thread.cpp">
+      <Filter>src\concurrency</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

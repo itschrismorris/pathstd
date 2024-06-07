@@ -3,8 +3,7 @@
 */
 
 #pragma once
-#include "pathlib/memory/memcpy.h"
-#include "pathlib/memory/memset.h"
+#include "pathlib/memory/memcpy_unsafe.h"
 #include "pathlib/memory/malloc_unsafe.h"
 #include "pathlib/string/size_of.h"
 #include "pathlib/types/types.h"
@@ -169,11 +168,6 @@ static inline void from_type_clip(const T arg,
     memcpy_unsafe(&string[*string_size], arg, copy_size);
     *string_size += copy_size;
     string[*string_size] = u8'\0';
-  } else if constexpr (SAME_TYPE(T, SafePtr<utf8>)) {
-    u64 copy_size = Math::min(string_capacity - *string_size - 1, arg.get_count());
-    memcpy_unsafe(&string[*string_size], arg, copy_size);
-    *string_size += copy_size;
-    string[*string_size] = u8'\0';
   } else if constexpr (IS_INTEGRAL(T) || IS_FLOAT(T)) {
     utf8 buffer[32];
     u64 conversion_size;
@@ -253,16 +247,6 @@ static inline void from_type_grow(const T arg,
       *string = (utf8*)realloc_unsafe(*string, *string_capacity + 1);
     }
     (*string)[*string_size] = arg;
-    (*string)[new_size] = u8'\0';
-    *string_size = new_size;
-  } else if constexpr (SAME_TYPE(T, SafePtr<utf8>)) {
-    u64 arg_size = arg.get_count();
-    u64 new_size = *string_size + arg_size;
-    if (new_size > *string_capacity) {
-      *string_capacity = new_size * 1.5;
-      *string = (utf8*)realloc_unsafe(*string, *string_capacity + 1);
-    }
-    memcpy_unsafe(&(*string)[*string_size], arg, arg_size);
     (*string)[new_size] = u8'\0';
     *string_size = new_size;
   } else if constexpr (SAME_TYPE(T, const utf8*) || SAME_TYPE(T, utf8*)) {

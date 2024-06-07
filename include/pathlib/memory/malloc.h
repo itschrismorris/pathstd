@@ -18,8 +18,7 @@ SafePtr<T> malloc(u64 count,
   if (Memory::_Internal::scripting_mode) {
     SafePtr<T> ptr = (T*)malloc_unsafe(count * sizeof(T), name);
     if (ptr.is_null()) {
-      get_errors().set_last_error(u8"Failed to malloc(); potentially out of memory.");
-      get_errors().to_log();
+      get_errors().to_log(u8"Failed to malloc(); potentially out of memory.");
       get_errors().kill_script();
       return nullptr;
     }
@@ -29,8 +28,7 @@ SafePtr<T> malloc(u64 count,
   } else {
     SafePtr<T> ptr = (T*)malloc_unsafe(count * sizeof(T), name);
     if (ptr.is_null()) {
-      get_errors().set_last_error(u8"Failed to malloc(); potentially out of memory.");
-      get_errors().to_log();
+      get_errors().to_log(u8"Failed to malloc(); potentially out of memory.");
       get_errors().kill_script();
       return nullptr;
     }
@@ -49,8 +47,7 @@ SafePtr<T> realloc(SafePtr<T>& _ptr,
     if (_ptr.is_valid()) {
       SafePtr<T> ptr = (T*)realloc_unsafe(_ptr, count * sizeof(T));
       if (ptr.is_null()) {
-        get_errors().set_last_error(u8"Failed to realloc(); potentially out of memory.");
-        get_errors().to_log();
+        get_errors().to_log(u8"Failed to realloc(); potentially out of memory.");
         get_errors().kill_script();
         return nullptr;
       }
@@ -58,16 +55,14 @@ SafePtr<T> realloc(SafePtr<T>& _ptr,
       ptr.set_allocated_memory(true);
       return ptr;
     } else {
-      get_errors().set_last_error(u8"Attempt to realloc() a null SafePtr.");
-      get_errors().to_log();
+      get_errors().to_log(u8"Attempt to realloc() a null SafePtr.");
       get_errors().kill_script();
     }
   } else {
     if (_ptr.is_valid()) {
       SafePtr<T> ptr = (T*)realloc_unsafe(_ptr, count * sizeof(T));
       if (ptr.is_null()) {
-        get_errors().set_last_error(u8"Failed to malloc(); potentially out of memory.");
-        get_errors().to_log();
+        get_errors().to_log(u8"Failed to malloc(); potentially out of memory.");
         get_errors().kill_script();
         return nullptr;
       }
@@ -75,8 +70,7 @@ SafePtr<T> realloc(SafePtr<T>& _ptr,
       ptr.set_allocated_memory(true);
       return ptr;
     } else {
-      get_errors().set_last_error(u8"Attempt to realloc() a null SafePtr.");
-      get_errors().to_log();
+      get_errors().to_log(u8"Attempt to realloc() a null SafePtr.");
       get_errors().kill_script();
     }
   }
@@ -91,8 +85,7 @@ void free(SafePtr<T>& _ptr)
       _ptr.set_allocated_memory(false);
       free_unsafe((void**)&_ptr);
     } else {
-      get_errors().set_last_error(u8"Attempt to free() a null SafePtr.");
-      get_errors().to_log();
+      get_errors().to_log(u8"Attempt to free() a null SafePtr.");
       get_errors().kill_script();
     }
   } else {
@@ -100,8 +93,7 @@ void free(SafePtr<T>& _ptr)
       _ptr.set_allocated_memory(false);
       free_unsafe((void**)&_ptr);
     } else {
-      get_errors().set_last_error(u8"Attempt to free() a null SafePtr.");
-      get_errors().to_log();
+      get_errors().to_log(u8"Attempt to free() a null SafePtr.");
       get_errors().kill_script();
     }
   }

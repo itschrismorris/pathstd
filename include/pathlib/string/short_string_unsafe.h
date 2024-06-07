@@ -3,9 +3,9 @@
 */
 
 #pragma once
+#include "pathlib/types/types.h"
 #include "pathlib/string/from_type.h"
 #include "pathlib/string/compare.h"
-#include "pathlib/string/short_string.h"
 
 namespace Pathlib {
 
@@ -86,15 +86,6 @@ struct ShortStringUnsafe
   }
 
   //---
-  inline ShortStringUnsafe& operator +=(const ShortString<CAPACITY>& arg)
-  {
-    u64 copy_size = Math::min((CAPACITY - 1) - _size, arg._size);
-    memcpy_unsafe<false, true>(&_str[_size], arg._str, copy_size);
-    _size += copy_size;
-    return *this;
-  }
-
-  //---
   inline ShortStringUnsafe& operator +=(const ShortStringUnsafe& arg)
   {
     u64 copy_size = Math::min((CAPACITY - 1) - _size, arg._size);
@@ -109,16 +100,6 @@ struct ShortStringUnsafe
   {
     String::_Internal::from_type_clip(arg, _str, &_size, CAPACITY);
     return *this;
-  }
-
-  //---
-  template <u64 ARG_CAPACITY>
-  static inline void _append(ShortStringUnsafe& string_out, 
-                             const ShortString<ARG_CAPACITY>& arg)
-  {
-    u64 copy_size = Math::min((CAPACITY - 1) - string_out._size, arg._size);
-    memcpy_unsafe<false, true>(&string_out._str[string_out._size], arg._str, copy_size + 1);
-    string_out._size += copy_size;
   }
 
   //---
@@ -224,6 +205,4 @@ struct ShortStringUnsafe
 }
 
 //---
-template <typename T> struct _is_short_string : false_type {};
-template <u64 CAPACITY> struct _is_short_string<Pathlib::ShortString<CAPACITY>> : true_type {};
 template <u64 CAPACITY> struct _is_short_string<Pathlib::ShortStringUnsafe<CAPACITY>> : true_type {};

@@ -15,7 +15,6 @@ struct Log
 {
   //---
   void* _file;
-  LongStringUnsafe<256> _buffer;
 
   //---
   Log(const utf8* log_path);
@@ -71,8 +70,7 @@ struct Log
                Win32::write_log(string, size) && 
                Win32::write_log(u8"\n", 1));
     } else {
-      get_errors().set_last_error(u8"Attempt to log() with a null pointer.");
-      get_errors().to_log();
+      get_errors().to_log(u8"Attempt to log() with a null pointer.");
       return false;
     }
   }
@@ -82,11 +80,11 @@ struct Log
   inline bool log(Args&&... args)
   {
     if (_file) {
-      _buffer._size = 0;
-      (_buffer._append(_buffer, args), ...);
-      _buffer.append(u8'\n');
-      return (Win32::write_console(_buffer._str, _buffer._size) && 
-              Win32::write_log(_buffer._str, _buffer._size));
+      ShortStringUnsafe<512> buffer;
+      (buffer._append(buffer, args), ...);
+      buffer.append(u8'\n');
+      return (Win32::write_console(buffer._str, buffer._size) &&
+              Win32::write_log(buffer._str, buffer._size));
     }
     return false;
   }
@@ -96,15 +94,15 @@ struct Log
   inline bool logt(Args&&... args)
   {
     if (_file) {
+      ShortStringUnsafe<512> buffer;
       SystemTime time;
       Win32::get_local_time(&time);
-      _buffer._size = 0;
-      _buffer.append(time.wHour, u8":", time.wMinute, u8":", 
-                     time.wSecond, u8":", time.wMilliseconds, u8": ");
-      (_buffer._append(_buffer, args), ...);
-      _buffer.append(u8'\n');
-      return (Win32::write_console(_buffer._str, _buffer._size) && 
-              Win32::write_log(_buffer._str, _buffer._size));
+      buffer.append(time.wHour, u8":", time.wMinute, u8":", 
+                    time.wSecond, u8":", time.wMilliseconds, u8": ");
+      (buffer._append(buffer, args), ...);
+      buffer.append(u8'\n');
+      return (Win32::write_console(buffer._str, buffer._size) && 
+              Win32::write_log(buffer._str, buffer._size));
     }
     return false;
   }

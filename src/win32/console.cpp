@@ -14,7 +14,7 @@ _Internal::Console& get_console()
 namespace Pathlib::_Internal {
 
 //---
-Console::Console() : _buffer(u8"Console::_buffer")
+Console::Console()
 {
   SetConsoleOutputCP(CP_UTF8);
 }

@@ -20,10 +20,10 @@ template <typename T,
 struct PoolUnsafe
 {
   //---
-  static_assert(CAPACITY <= Types::U16_MAX, "Pool CAPACITY cannot exceed 65535 (16-bits used for pool_id).");
-  static_assert(has_pool_id<T>::value, "Pool objects must contain a u32 member named 'pool_id' to be used in a pool.");
+  static_assert(CAPACITY <= Types::U16_MAX, "Pool CAPACITY cannot exceed 65535 (16-bits used for _'pool_id').");
+  static_assert(has_pool_id<T>::value, "Pool objects must contain a u32 member named '_pool_id' to be used in a pool.");
   using POOL_ID_TYPE = _member_type<T, decltype(&T::_pool_id)>::type;
-  static_assert(SAME_TYPE(POOL_ID_TYPE, u32), "Pool object member 'pool_id' must be of type u32.");
+  static_assert(SAME_TYPE(POOL_ID_TYPE, u32), "Pool object member '_pool_id' must be of type u32.");
 
   //---
   static constexpr u64 EMPTY_SLOT = 0xFFFF0000;
@@ -72,8 +72,7 @@ struct PoolUnsafe
   T* get_vacant(Args&&... constructor_args)
   {
     if (_count >= CAPACITY) {
-      get_errors().set_last_error(u8"Failed to alloc() from pool; it is already at capacity.");
-      get_errors().to_log();
+      get_errors().to_log(u8"Failed to alloc() from pool; it is already at capacity.");
       return nullptr;
     }
     ++_count;
@@ -118,6 +117,8 @@ struct PoolUnsafe
   template<typename Callable>
   bool iterate(Callable&& function)
   {
+    static_assert(HasTParameter<T&, Callable>::value, 
+                  "Pool iteration callback must take a parameter with a reference to the pool object type: '(T& object)'");
     static_assert(SAME_TYPE(result_of<Callable(T&)>::type, bool), 
                   "Pool iteration callback must return a bool for continuing or breaking from the iteration.");
     u32 objects_visited = 0;

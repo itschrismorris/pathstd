@@ -19,11 +19,15 @@
 #define SUBLANG_DEFAULT 0x01
 #define MAKELANGID(p, s) ((((WORD)(s)) << 10) | (WORD)(p))
 #define MAX_SYM_NAME 2000
+#define INFINITE 0xFFFFFFFF
+#define WAIT_TIMEOUT 0x00000102L
+#define WAIT_OBJECT_0 0x00000000L
 
 //---
 #define ERROR_IO_PENDING 0x3E5
 
 //---
+typedef unsigned __int64 SIZE_T;
 typedef __int64 LONG_PTR;
 typedef void* LPVOID;
 typedef void* PVOID;
@@ -55,6 +59,8 @@ typedef wchar_t TCHAR;
 typedef unsigned __int64 DWORD64;
 typedef DWORD64* PDWORD64;
 typedef BOOL(__stdcall* PHANDLER_ROUTINE)(DWORD dwCtrlType);
+typedef DWORD* LPDWORD;
+typedef DWORD(__stdcall* LPTHREAD_START_ROUTINE)(LPVOID lpParameter);
 
 extern "C" {
 
@@ -113,6 +119,18 @@ typedef struct _SYMBOL_INFO {
 __declspec(dllimport) HANDLE __stdcall GetCurrentProcess();
 __declspec(dllimport) DWORD __stdcall GetCurrentThreadId();
 __declspec(dllimport) BOOL __stdcall SwitchToThread();
+__declspec(dllimport) BOOL __stdcall GetExitCodeThread(HANDLE  hThread,
+                                                       LPDWORD lpExitCode);
+__declspec(dllimport) HANDLE __stdcall CreateThread(LPSECURITY_ATTRIBUTES lpThreadAttributes,
+                                                    SIZE_T dwStackSize,
+                                                    LPTHREAD_START_ROUTINE lpStartAddress,
+                                                    LPVOID lpParameter,
+                                                    DWORD dwCreationFlags,
+                                                    LPDWORD lpThreadId);
+__declspec(dllimport) BOOL __stdcall TerminateThread(HANDLE hThread,
+                                                     DWORD dwExitCode);
+__declspec(dllimport) DWORD WaitForSingleObject(HANDLE hHandle,
+                                                DWORD dwMilliseconds);
 __declspec(dllimport) void __stdcall Sleep(DWORD dwMilliseconds);
 __declspec(dllimport) BOOL __stdcall SymInitialize(HANDLE hProcess,
                                                    PCSTR UserSearchPath,
