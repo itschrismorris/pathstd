@@ -11,7 +11,7 @@ bool Thread::spawn(void* user_data,
 {
   _thread = CreateThread(nullptr, 0, (DWORD(*)(void*))thread_function, user_data, 0, nullptr);
   if (!_thread) {
-    get_errors().to_log(u8"Failed to spawn thread.");
+    get_errors().to_log_with_stacktrace(u8"Failed to spawn thread.");
     return false;
   }
   return true;

@@ -52,7 +52,7 @@ public:
     if (EXPECT(index < CAPACITY)) {
       return _data[index];
     } else {
-      get_errors().to_log(u8"Out of bounds access to Array.");
+      get_errors().to_log_with_stacktrace(u8"Out of bounds access to Array.");
       get_errors().kill_script();
       return _data[0];
     }
@@ -64,7 +64,7 @@ public:
     if (EXPECT(index < CAPACITY)) {
       return _data[index];
     } else {
-      get_errors().to_log(u8"Out of bounds access to Array.");
+      get_errors().to_log_with_stacktrace(u8"Out of bounds access to Array.");
       get_errors().kill_script();
       return _data[0];
     }
@@ -79,7 +79,7 @@ public:
       _count += count;
       return (_data + original_count);
     } else {
-      get_errors().to_log(u8"Failed to emplace_back() Array; it is already at capacity.");
+      get_errors().to_log_with_stacktrace(u8"Failed to emplace_back() Array; it is already at capacity.");
       get_errors().kill_script();
       return nullptr;
     }
@@ -92,7 +92,7 @@ public:
       --_count;
       memcpy_unsafe(_data + index, _data + _count, sizeof(T));
     } else {
-      get_errors().to_log(u8"Failed to remove() from Array; invalid index.");
+      get_errors().to_log_with_stacktrace(u8"Failed to remove() from Array; invalid index.");
       get_errors().kill_script();
     }
   }
@@ -108,7 +108,7 @@ public:
       _count -= count;
       memcpy_unsafe(start, end, sizeof(T) * count);
     } else {
-      get_errors().to_log(u8"Failed to remove() from Array; invalid region.");
+      get_errors().to_log_with_stacktrace(u8"Failed to remove() from Array; invalid region.");
       get_errors().kill_script();
     }
   }

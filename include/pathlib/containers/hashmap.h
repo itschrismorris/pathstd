@@ -46,9 +46,9 @@ public:
     _capacity = RESERVE_CAPACITY;
     _max_probe_length = 1 + (Math::log2(_capacity) >> 2);
     _slot_kv_index = (u32*)malloc_unsafe(sizeof(u32) * _capacity, 
-                                        ShortStringUnsafe<96>(name, u8"::slot_kv_index")._str);
+                                        ShortStringUnsafe<96>(name, u8"::_slot_kv_index")._str);
     _slot_distance_digest = (u32*)malloc_unsafe(sizeof(u32) * _capacity, 
-                                               ShortStringUnsafe<96>(name, u8"::slot_distance_digest")._str);
+                                               ShortStringUnsafe<96>(name, u8"::_slot_distance_digest")._str);
     I8 empty_slot = I8_SET1(EMPTY_SLOT);
     for (u32 r = 0; r < (_capacity >> 3); ++r) {
       I8_STORE(&((I8*)_slot_distance_digest)[r], empty_slot);

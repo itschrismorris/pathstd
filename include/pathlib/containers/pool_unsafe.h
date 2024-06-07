@@ -6,7 +6,7 @@
 #include "pathlib/types/types.h"
 #include "pathlib/errors/errors.h"
 #include "pathlib/memory/memory.h"
-#include "pathlib/memory/memset.h"
+#include "pathlib/memory/memset_unsafe.h"
 #include "pathlib/string/short_string_unsafe.h"
 
 //---
@@ -44,7 +44,7 @@ struct PoolUnsafe
     _free_head = 0;
     _pools_id = pools_id;
     _data = (T*)malloc_unsafe(sizeof(T) * CAPACITY, 
-                              name ? ShortStringUnsafe<96>(u8"[Pool]\"", name, u8"\"::[T*]data")._str : nullptr);
+                              name ? ShortStringUnsafe<96>(u8"[Pool]\"", name, u8"\"::[T*]_data")._str : nullptr);
     memset_unsafe(_data, 0xFF, sizeof(T) * CAPACITY);
   }
 
@@ -72,7 +72,7 @@ struct PoolUnsafe
   T* get_vacant(Args&&... constructor_args)
   {
     if (_count >= CAPACITY) {
-      get_errors().to_log(u8"Failed to alloc() from pool; it is already at capacity.");
+      get_errors().to_log_with_stacktrace(u8"Failed to alloc() from pool; it is already at capacity.");
       return nullptr;
     }
     ++_count;

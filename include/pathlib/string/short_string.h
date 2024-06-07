@@ -67,7 +67,7 @@ public:
   {
     if constexpr (IS_POINTER(T)) {
       if (!arg) {
-        get_errors().to_log(u8"Attempt to set ShortString to a null pointer.");
+        get_errors().to_log_with_stacktrace(u8"Attempt to set ShortString to a null pointer.");
         get_errors().kill_script();
         return false;
       }
@@ -82,7 +82,7 @@ public:
     if (EXPECT(string != nullptr)) {
       return String::compare<true, false>(_str, string, _size);
     } else {
-      get_errors().to_log(u8"Attempt to compare ShortString equality with a null pointer.");
+      get_errors().to_log_with_stacktrace(u8"Attempt to compare ShortString equality with a null pointer.");
       get_errors().kill_script();
       return false;
     }
@@ -122,7 +122,7 @@ public:
   {
     if constexpr (IS_POINTER(T)) {
       if (!arg) {
-        get_errors().to_log(u8"Attempt to append ShortString with a null pointer.");
+        get_errors().to_log_with_stacktrace(u8"Attempt to append ShortString with a null pointer.");
         get_errors().kill_script();
         return *this;
       }
@@ -148,7 +148,7 @@ public:
   {
     if constexpr (IS_POINTER(T)) {
       if (!arg) {
-        get_errors().to_log(u8"Attempt to append ShortString with a null pointer.");
+        get_errors().to_log_with_stacktrace(u8"Attempt to append ShortString with a null pointer.");
         get_errors().kill_script();
         return;
       }

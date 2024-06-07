@@ -15,7 +15,6 @@ _Internal::Errors& get_errors()
 }
 }
 
-
 namespace Pathlib::_Internal {
 
 //---

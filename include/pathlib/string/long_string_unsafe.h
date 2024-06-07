@@ -31,8 +31,8 @@ struct LongStringUnsafe
   {
     _capacity = RESERVE_CAPACITY;
     _str = (utf8*)malloc_unsafe(RESERVE_CAPACITY + 1, 
-                               ShortStringUnsafe<96>(u8"[LongString]\"", name, u8"\"::[utf8*]_str")._str);
-    u64 name_length = Math::max(95, String::size_of(name));
+                                name ? ShortStringUnsafe<96>(u8"[LongString]\"", name, u8"\"::[utf8*]_str")._str : nullptr);
+    u64 name_length = Math::min(95LLU, String::size_of(name));
     memcpy_unsafe(_name, name, name_length);
     _name[name_length] = u8'\0';
     clear();
@@ -50,7 +50,7 @@ struct LongStringUnsafe
   LongStringUnsafe(const LongStringUnsafe& string)
   {
     _str = (utf8*)malloc_unsafe(string._capacity + 1, 
-                                ShortStringUnsafe<96>(u8"[LongString]\"", _name, u8"(copy)::[utf8*]_str")._str);
+                                ShortStringUnsafe<96>(u8"[LongString]\"", string._name, u8"(copy)::[utf8*]_str")._str);
     _capacity = string._capacity;
     memcpy_unsafe<true, true>(_str, string._str, string._size + 1);
     _size = string._size;

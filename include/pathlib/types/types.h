@@ -138,6 +138,7 @@ template <> struct _is_integral<u32> : true_type {};
 template <> struct _is_integral<u64> : true_type {};
 template <> struct _is_integral<long> : true_type {};
 template <> struct _is_integral<unsigned long> : true_type {};
+template <> struct _is_integral<bool> : true_type {};
 template <typename T> struct _is_float : false_type {};
 template <> struct _is_float<f32> : true_type {};
 template <> struct _is_float<f64> : true_type {};

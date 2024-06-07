@@ -34,20 +34,20 @@ u64 get_callstack(utf8* string_out,
   if (!process) {
     ShortStringUnsafe<256> win32_err;
     get_errors().last_error_from_win32(win32_err._str, 256);
-    get_errors().to_log(win32_err._str);
+    get_errors().to_log_with_stacktrace(win32_err._str);
     return false;
   }
   if (!SymInitialize(process, nullptr, true)) {
     ShortStringUnsafe<256> win32_err;
     get_errors().last_error_from_win32(win32_err._str, 256);
-    get_errors().to_log(win32_err._str);
+    get_errors().to_log_with_stacktrace(win32_err._str);
     return false;
   }
   WORD frames = RtlCaptureStackBackTrace(0, 10, callstack, nullptr);
   if (frames == 0) {
     ShortStringUnsafe<256> win32_err;
     get_errors().last_error_from_win32(win32_err._str, 256);
-    get_errors().to_log(win32_err._str);
+    get_errors().to_log_with_stacktrace(win32_err._str);
     return false;
   }
   u8 buffer[sizeof(SYMBOL_INFO) + MAX_SYM_NAME * sizeof(TCHAR)];
@@ -60,7 +60,7 @@ u64 get_callstack(utf8* string_out,
     if (!SymFromAddr(process, address, nullptr, symbol)) {
       ShortStringUnsafe<256> win32_err;
       get_errors().last_error_from_win32(win32_err._str, 256);
-      get_errors().to_log(win32_err._str);
+      get_errors().to_log_with_stacktrace(win32_err._str);
       return false;
     }
     memcpy_unsafe(string_out + string_size, symbol->Name, Math::min((u64)symbol->NameLen, string_capacity - 2 - string_size));
@@ -176,7 +176,7 @@ u64 utf16_to_utf8(utf8* utf8_string_out,
   }
   ShortStringUnsafe<256> win32_err;
   get_errors().last_error_from_win32(win32_err._str, 256);
-  get_errors().to_log(win32_err._str);
+  get_errors().to_log_with_stacktrace(win32_err._str);
   utf8_string_out[0] = u8'\0';
   return 0;
 }
@@ -197,7 +197,7 @@ u64 utf8_to_utf16(wchar_t* utf16_string_out,
   }
   ShortStringUnsafe<256> win32_err;
   get_errors().last_error_from_win32(win32_err._str, 256);
-  get_errors().to_log(win32_err._str);
+  get_errors().to_log_with_stacktrace(win32_err._str);
   utf16_string_out[0] = u8'\0';
   return 0;
 }

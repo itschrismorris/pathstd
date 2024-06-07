@@ -25,7 +25,7 @@ struct VectorUnsafe
   {
     _capacity = reserve_capacity;
     _data = (T*)malloc_unsafe(sizeof(T) * reserve_capacity,
-                              name ? ShortStringUnsafe<96>(name, u8"::[T*]data")._str : nullptr);
+                              name ? ShortStringUnsafe<96>(name, u8"::[T*]_data")._str : nullptr);
     clear();
   }
 

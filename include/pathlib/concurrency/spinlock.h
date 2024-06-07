@@ -53,7 +53,7 @@ struct Spinlock
         _owner.store(Win32::get_current_thread_id());
         return true;
       } else {
-        get_errors().to_log(u8"Spinlock _queue overflowed; could not acquire lock.");
+        get_errors().to_log_with_stacktrace(u8"Spinlock _queue overflowed; could not acquire lock.");
         return false;
       }
     }

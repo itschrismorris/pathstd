@@ -26,9 +26,9 @@ public:
   LongString(const utf8* name)
   {
     _capacity = RESERVE_CAPACITY;
-    _str = (utf8*)malloc_unsafe(RESERVE_CAPACITY + 1, 
-                               ShortStringUnsafe<96>(u8"[LongString]\"", name, u8"\"::[utf8*]_str")._str);
-    u64 name_length = Math::max(95, String::size_of(name));
+    _str = (utf8*)malloc_unsafe(RESERVE_CAPACITY + 1,
+      name ? ShortStringUnsafe<96>(u8"[LongString]\"", name, u8"\"::[utf8*]_str")._str : nullptr);
+    u64 name_length = Math::min(95LLU, String::size_of(name));
     memcpy_unsafe(_name, name, name_length);
     _name[name_length] = u8'\0';
     clear();
@@ -46,7 +46,7 @@ public:
   LongString(const LongString& string)
   {
     _str = (utf8*)malloc_unsafe(string._capacity + 1, 
-                                ShortStringUnsafe<96>(u8"[LongString]\"", _name, u8"(copy)::[utf8*]_str")._str);
+                                ShortStringUnsafe<96>(u8"[LongString]\"", string._name, u8"(copy)::[utf8*]_str")._str);
     _capacity = string._capacity;
     memcpy_unsafe<true, true>(_str, string._str, string._size + 1);
     _size = string._size;
@@ -82,7 +82,7 @@ public:
   {
     if constexpr (IS_POINTER(T)) {
       if (!arg) {
-        get_errors().to_log(u8"Attempt to set LongString to a null pointer.");
+        get_errors().to_log_with_stacktrace(u8"Attempt to set LongString to a null pointer.");
         get_errors().kill_script();
         return false;
       }
@@ -102,7 +102,7 @@ public:
     if (EXPECT(string != nullptr)) {
       return String::compare<true, false>(_str, string, _size);
     } else {
-      get_errors().to_log(u8"Attempt to compare LongString equality with a null pointer.");
+      get_errors().to_log_with_stacktrace(u8"Attempt to compare LongString equality with a null pointer.");
       get_errors().kill_script();
       return false;
     }
@@ -157,7 +157,7 @@ public:
   {
     if constexpr (IS_POINTER(T)) {
       if (!arg) {
-        get_errors().to_log(u8"Attempt to append LongString with a null pointer.");
+        get_errors().to_log_with_stacktrace(u8"Attempt to append LongString with a null pointer.");
         get_errors().kill_script();
         return *this;
       }
@@ -201,7 +201,7 @@ public:
   {
     if constexpr (IS_POINTER(T)) {
       if (!arg) {
-        get_errors().to_log(u8"Attempt to append LongString with a null pointer.");
+        get_errors().to_log_with_stacktrace(u8"Attempt to append LongString with a null pointer.");
         get_errors().kill_script();
         return;
       }

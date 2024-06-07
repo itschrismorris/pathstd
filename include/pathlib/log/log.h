@@ -21,66 +21,11 @@ struct Log
   ~Log();
 
   //---
-  template <u64 CAPACITY>
-  inline bool log(const ShortString<CAPACITY>& string)
-  {
-    return (Win32::write_console(string._str, string._size) && 
-            Win32::write_console(u8"\n", 1) &&
-            Win32::write_log(string._str, string._size) &&  
-            Win32::write_log(u8"\n", 1));
-  }
-
-  //---
-  template <u64 CAPACITY>
-  inline bool log(const ShortStringUnsafe<CAPACITY>& string)
-  {
-    return (Win32::write_console(string._str, string._size) && 
-            Win32::write_console(u8"\n", 1) &&
-            Win32::write_log(string._str, string._size) && 
-            Win32::write_log(u8"\n", 1));
-  }
-
-  //---
-  template <u64 RESERVE_CAPACITY>
-  inline bool log(const LongString<RESERVE_CAPACITY>& string)
-  {
-    return (Win32::write_console(string._str, string._size) && 
-            Win32::write_console(u8"\n", 1) &&
-            Win32::write_log(string._str, string._size) &&
-            Win32::write_log(u8"\n", 1));
-  }
-
-  //---
-  template <u64 RESERVE_CAPACITY>
-  inline bool log(const LongStringUnsafe<RESERVE_CAPACITY>& string)
-  {
-    return  (Win32::write_console(string._str, string._size) && 
-             Win32::write_console(u8"\n", 1) &&
-             Win32::write_log(string._str, string._size) && 
-             Win32::write_log(u8"\n", 1));
-  }
-
-  //---
-  inline bool log(const utf8* string)
-  {
-    if (EXPECT(string != nullptr)) {
-      u64 size = String::size_of(string);
-      return  (Win32::write_console(string, size) && 
-               Win32::write_console(u8"\n", 1) &&
-               Win32::write_log(string, size) && 
-               Win32::write_log(u8"\n", 1));
-    } else {
-      get_errors().to_log(u8"Attempt to log() with a null pointer.");
-      return false;
-    }
-  }
-
-  //---
   template <typename... Args>
   inline bool log(Args&&... args)
   {
     if (_file) {
-      ShortStringUnsafe<512> buffer;
+      LongStringUnsafe<512> buffer(nullptr);
       (buffer._append(buffer, args), ...);
       buffer.append(u8'\n');
       return (Win32::write_console(buffer._str, buffer._size) &&
@@ -94,7 +39,7 @@ struct Log
   inline bool logt(Args&&... args)
   {
     if (_file) {
-      ShortStringUnsafe<512> buffer;
+      LongStringUnsafe<512> buffer(nullptr);
       SystemTime time;
       Win32::get_local_time(&time);
       buffer.append(time.wHour, u8":", time.wMinute, u8":", 

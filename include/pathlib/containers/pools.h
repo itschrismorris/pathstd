@@ -29,7 +29,7 @@ private:
   ShortStringUnsafe<96> _name;
 public:
   //---
-  Pools(const utf8* name) : _pools(name ? ShortStringUnsafe<96>(u8"[Pools]\"", name, u8"\"::[Vector]pools")._str : nullptr)
+  Pools(const utf8* name) : _pools(name ? ShortStringUnsafe<96>(u8"[Pools]\"", name, u8"\"::[Vector]_pools")._str : nullptr)
   {
     _count = 0;
     u32 pools_id = 0;
