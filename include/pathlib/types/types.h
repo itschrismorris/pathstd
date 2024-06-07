@@ -62,6 +62,7 @@ static constexpr u32 CACHE_LINE_SIZE = 64;
 #define IS_ARRAY(A) _is_array<A>::value
 #define ARRAY_TYPE(A) _array_type<A>::value
 #define EXPECT(A) __builtin_expect((A), 1)
+#define DONT_EXPECT(A) __builtin_expect((A), 0)
 #define DISALLOW_COPY_CONSTRUCTOR(T) T(const T&) = delete;
 #define DISALLOW_COPY(T) T(const T&) = delete;         \
                          T& operator=(const T&) = delete;

@@ -127,10 +127,12 @@ public:
   static void _append(ShortString& string_out, 
                       const T& arg)
   {
-    if (arg == nullptr) {
-      get_errors().to_log(u8"Attempt to _append() a nullptr to ShortString.");
-      get_errors().kill_script();
-      return;
+    if constexpr (IS_POINTER(T)) {
+      if (DONT_EXPECT(arg == nullptr)) {
+        get_errors().to_log(u8"Attempt to _append() a nullptr to ShortString.");
+        get_errors().kill_script();
+        return;
+      }
     }
     if constexpr (IS_UNSAFE_LONG_STRING(T) || IS_UNSAFE_SHORT_STRING(T)) {
       String::_Internal::from_type_grow(arg._str, &string_out._str, &string_out._size, &string_out._capacity);
