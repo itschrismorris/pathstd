@@ -19,13 +19,16 @@ struct PoolsUnsafe
   //---
   static_assert(POOL_CAPACITY <= Types::U16_MAX, "POOL_CAPACITY cannot exceed 65535 (16-bits used for pool_id).");
   static_assert(has_pool_id<T>::value, "Pool objects must contain a u32 member named '_pool_id' to be used in a pool.");
-  using POOL_ID_TYPE = _member_type<T, decltype(&T::_pool_id)>::type;
+  using POOL_ID_TYPE = _member_type<T, decltype(&T::_pool_id)>::value;
   static_assert(SAME_TYPE(POOL_ID_TYPE, u32), "Pool object member 'pool_id' must be of type u32.");
 
   //---
   VectorUnsafe<PoolUnsafe<T, POOL_CAPACITY>, POOLS_RESERVE_CAPACITY> _pools;
   u32 _count;
   ShortStringUnsafe<96> _name;
+
+  //---
+  DISALLOW_COPY(PoolsUnsafe);
   
   //---
   PoolsUnsafe(const utf8* name) : _pools(name ? ShortStringUnsafe<96>(u8"[Pools]\"", name, u8"\"::[Vector]_pools")._str : nullptr)

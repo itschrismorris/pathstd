@@ -22,9 +22,11 @@ private:
 
 public:
   //---
-  ShortString()
+  template <typename... Args>
+  ShortString(Args&&... args)
   {
     clear();
+    (_append(*this, args), ...);
   }
 
   //---
@@ -32,14 +34,6 @@ public:
   {
     memcpy_unsafe<true, true>(_str, string._str, string._size + 1);
     _size = string._size;
-  }
-
-  //---
-  template <typename... Args>
-  ShortString(Args&&... args)
-  {
-    _size = 0;
-    (_append(*this, args), ...);
   }
 
   //---
@@ -63,16 +57,10 @@ public:
 
   //---
   template <typename T>
-  ShortString& operator =(const T arg)
+  ShortString& operator =(const T& arg)
   {
-    if constexpr (IS_POINTER(T)) {
-      if (!arg) {
-        get_errors().to_log_with_stacktrace(u8"Attempt to set ShortString to a null pointer.");
-        get_errors().kill_script();
-        return false;
-      }
-    }
-    String::_Internal::from_type_clip(arg, _str, &_size, CAPACITY);
+    _size = 0;
+    _append(*this, arg);
     return *this;
   }
 
@@ -99,7 +87,7 @@ public:
 
   //---
   template <typename T>
-  const ShortString operator +(const T arg)
+  const ShortString operator +(const T& arg)
   {
     static_assert(!SAME_TYPE(T, const char*), "String literals must be prepended with u8 for utf-8 encoding: u8\"Hello world!\"");
     static_assert(!SAME_TYPE(T, char*), "Replace string usages of char with utf8, for utf-8 encoding.");
@@ -118,23 +106,16 @@ public:
 
   //---
   template <typename T>
-  ShortString& operator +=(const T arg)
+  ShortString& operator +=(const T& arg)
   {
-    if constexpr (IS_POINTER(T)) {
-      if (!arg) {
-        get_errors().to_log_with_stacktrace(u8"Attempt to append ShortString with a null pointer.");
-        get_errors().kill_script();
-        return *this;
-      }
-    }
-    String::_Internal::from_type_clip(arg, _str, &_size, CAPACITY);
+    _append(*this, arg);
     return *this;
   }
 
   //---
   template <u64 ARG_CAPACITY>
   static void _append(ShortString& string_out, 
-                             const ShortString<ARG_CAPACITY>& arg)
+                      const ShortString<ARG_CAPACITY>& arg)
   {
     u64 copy_size = Math::min((CAPACITY - 1) - string_out._size, arg.get_size());
     memcpy_unsafe<false, true>(&string_out._str[string_out._size], arg.get_str(), copy_size + 1);
@@ -144,16 +125,20 @@ public:
   //---
   template <typename T>
   static void _append(ShortString& string_out, 
-                             const T arg)
+                      const T& arg)
   {
-    if constexpr (IS_POINTER(T)) {
-      if (!arg) {
-        get_errors().to_log_with_stacktrace(u8"Attempt to append ShortString with a null pointer.");
-        get_errors().kill_script();
-        return;
-      }
+    if (arg == nullptr) {
+      get_errors().to_log(u8"Attempt to _append() a nullptr to ShortString.");
+      get_errors().kill_script();
+      return;
     }
-    String::_Internal::from_type_clip(arg, string_out._str, &string_out._size, string_out.get_capacity());
+    if constexpr (IS_UNSAFE_LONG_STRING(T) || IS_UNSAFE_SHORT_STRING(T)) {
+      String::_Internal::from_type_grow(arg._str, &string_out._str, &string_out._size, &string_out._capacity);
+    } else if constexpr (IS_LONG_STRING(T) || IS_SHORT_STRING(T)) {
+      String::_Internal::from_type_grow(arg.get_str().get_ptr(), &string_out._str, &string_out._size, &string_out._capacity);
+    }else {
+      String::_Internal::from_type_grow(arg, &string_out._str, &string_out._size, &string_out._capacity);
+    }
   }
 
   //---
@@ -166,7 +151,7 @@ public:
   //---
   template <typename... Args>
   static void append(ShortString& string_out,
-                            Args&&... args)
+                     Args&&... args)
   {
     (_append(string_out, args), ...);
   }
@@ -183,7 +168,7 @@ public:
   //---
   template <typename... Args>
   static ShortString format(ShortString& string_out,
-                                   Args&&... args)
+                            Args&&... args)
   {
     (_append(string_out, args), ...);
   }
@@ -196,7 +181,7 @@ public:
   }
 
   //---
-  constexpr u64 get_capacity()
+  constexpr u64 get_capacity() const
   {
     return CAPACITY;
   }

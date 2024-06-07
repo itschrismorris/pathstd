@@ -22,7 +22,7 @@ struct PoolUnsafe
   //---
   static_assert(CAPACITY <= Types::U16_MAX, "Pool CAPACITY cannot exceed 65535 (16-bits used for _'pool_id').");
   static_assert(has_pool_id<T>::value, "Pool objects must contain a u32 member named '_pool_id' to be used in a pool.");
-  using POOL_ID_TYPE = _member_type<T, decltype(&T::_pool_id)>::type;
+  using POOL_ID_TYPE = _member_type<T, decltype(&T::_pool_id)>::value;
   static_assert(SAME_TYPE(POOL_ID_TYPE, u32), "Pool object member '_pool_id' must be of type u32.");
 
   //---
@@ -34,7 +34,10 @@ struct PoolUnsafe
   u32 _free_count;
   u32 _free_head;
   u32 _pools_id;
-  
+
+  //---
+  DISALLOW_COPY(PoolUnsafe);
+
   //---
   PoolUnsafe(const utf8* name,
              u32 pools_id = 0)
@@ -119,7 +122,7 @@ struct PoolUnsafe
   {
     static_assert(HasTParameter<T&, Callable>::value, 
                   "Pool iteration callback must take a parameter with a reference to the pool object type: '(T& object)'");
-    static_assert(SAME_TYPE(result_of<Callable(T&)>::type, bool), 
+    static_assert(SAME_TYPE(result_of<Callable(T&)>::value, bool), 
                   "Pool iteration callback must return a bool for continuing or breaking from the iteration.");
     u32 objects_visited = 0;
     u32 original_count = _count;

@@ -21,6 +21,9 @@ private:
 
 public:
   //---
+  DISALLOW_COPY(Vector);
+
+  //---
   Vector(const utf8* name,
          u64 reserve_capacity = RESERVE_CAPACITY)
   {

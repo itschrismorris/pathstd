@@ -56,11 +56,30 @@ public:
   }
 
   //---
+  SafePtr(const SafePtr& ptr)
+  {
+    _ptr = ptr._ptr;
+    _offset_ptr = ptr._offset_ptr;
+    _count = ptr._count;
+    _allocated_memory = false;
+  }
+
+  //---
   ~SafePtr() 
   {
     if (_allocated_memory && is_valid()) {
       free_unsafe((void**)&_ptr);
     }
+  }
+  
+  //---
+  SafePtr& operator =(const SafePtr& ptr)
+  {
+    _ptr = ptr._ptr;
+    _offset_ptr = ptr._offset_ptr;
+    _count = ptr._count;
+    _allocated_memory = false;
+    return *this;
   }
 
   //---
@@ -71,7 +90,7 @@ public:
   }
 
   //---
-  T* operator->()
+  T* operator->() const
   {
     if (EXPECT(this->_ptr != nullptr)) {
       return this->_ptr;
@@ -95,7 +114,7 @@ public:
   }
 
   //---
-  T& operator[](u64 index)
+  T& operator[](u64 index) const
   {
     if (EXPECT(((_offset_ptr - _ptr + index) < _count))) {
       return _offset_ptr[index];
@@ -108,15 +127,6 @@ public:
       get_errors().kill_script();
       return _ptr[0];
     }
-  }
-
-  //---
-  SafePtr& operator =(const SafePtr& ptr)
-  {
-    _ptr = ptr._ptr;
-    _offset_ptr = ptr._offset_ptr;
-    _count = ptr._count;
-    return *this;
   }
 
   //---
@@ -144,7 +154,7 @@ public:
   }
 
   //---
-  const SafePtr operator-(u64 offset)
+  const SafePtr operator-(u64 offset) const
   {
     if (EXPECT(((_offset_ptr - offset) < _offset_ptr) &&
                ((_offset_ptr - offset) >= _ptr))) {
@@ -161,7 +171,7 @@ public:
   }
 
   //---
-  const SafePtr operator+(u64 offset)
+  const SafePtr operator+(u64 offset) const
   {
     if (EXPECT(((_offset_ptr + offset) > _offset_ptr) &&
                ((_offset_ptr + offset) < (_ptr + _count)))) {

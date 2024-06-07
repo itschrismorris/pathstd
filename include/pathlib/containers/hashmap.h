@@ -41,6 +41,9 @@ private:
 
 public:
   //---
+  DISALLOW_COPY(Hashmap);
+
+  //---
   Hashmap(const utf8* name)
   {
     _capacity = RESERVE_CAPACITY;

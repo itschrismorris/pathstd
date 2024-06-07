@@ -20,6 +20,10 @@ static constexpr u32 MEGABYTE = (1024 * 1024);
 static constexpr u32 GIGABYTE = (1024 * 1024 * 1024);
 
 //---
+bool clone_memory(void** dst_out,
+                  void* src);
+
+//---
 template <typename T,
           typename... Args>
 static inline T* call_constructor(void* obj,

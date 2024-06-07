@@ -28,7 +28,9 @@ struct Profiler
   ~Profiler() {}
 
   //---
-  static ShortStringUnsafe<96> get_memory_item_name(void* ptr);
+  static bool get_memory_item(void* ptr,
+                              ShortStringUnsafe<96>& name_out,
+                              u64& size_out);
 };
 }
 

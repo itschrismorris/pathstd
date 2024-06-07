@@ -126,9 +126,9 @@ static inline utf8* from_number(T value,
 #define __PATHLIB_DECORATE_GROW(DECORATE, DECORATE_SIZE) \
   { \
     u64 new_size = *string_size + DECORATE_SIZE; \
-    if (new_size > *string_capacity) { \
+    if (new_size >= *string_capacity) { \
       *string_capacity = new_size * 1.5; \
-      *string = (utf8*)realloc_unsafe(*string, *string_capacity + 1); \
+      *string = (utf8*)realloc_unsafe(*string, *string_capacity); \
     } \
     memcpy_unsafe(&(*string)[*string_size], &decorate[DECORATE], DECORATE_SIZE); \
     *string_size = new_size; \
@@ -139,9 +139,9 @@ static inline utf8* from_number(T value,
   { \
     utf8* buffer_str = from_number(ARG, buffer, &conversion_size); \
     u64 new_size = *string_size + DECORATE_SIZE + conversion_size; \
-    if (new_size > *string_capacity) { \
+    if (new_size >= *string_capacity) { \
       *string_capacity = new_size * 1.5; \
-      *string = (utf8*)realloc_unsafe(*string, *string_capacity + 1); \
+      *string = (utf8*)realloc_unsafe(*string, *string_capacity); \
     } \
     memcpy_unsafe(&(*string)[*string_size], &decorate[DECORATE], DECORATE_SIZE); \
     memcpy_unsafe(&(*string)[*string_size + DECORATE_SIZE], buffer_str, conversion_size); \
@@ -150,20 +150,21 @@ static inline utf8* from_number(T value,
 
 //---
 template <typename T>
-static inline void from_type_clip(const T arg,
+static inline void from_type_clip(const T& arg,
                                   utf8* string,
                                   u64* string_size,
                                   u64 string_capacity)
 {
   static_assert(!SAME_TYPE(T, const char*), "String literals must be prepended with 'u8' for utf-8 encoding: 'u8\"Hello world!\"'");
   static_assert(!SAME_TYPE(T, char*), "Replace string usages of char with utf8, for utf-8 encoding.");
-  if constexpr (SAME_TYPE(T, utf8)) {
-    if ((*string_size + 1) < string_capacity) {
+  if constexpr (SAME_TYPE(T, utf8) || SAME_TYPE(T&, utf8&)) {
+    if ((*string_size + 1) < string_capacity) { 
       string[*string_size] = arg;
       string[*string_size + 1] = u8'\0';
       *string_size += 1;
     }
-  } else if constexpr (SAME_TYPE(T, const utf8*) || SAME_TYPE(T, utf8*)) {
+  } else if constexpr (SAME_TYPE(ARRAY_TYPE(T), const utf8) || SAME_TYPE(ARRAY_TYPE(T), utf8) || 
+                       SAME_TYPE(T&, const utf8*&) || SAME_TYPE(T&, utf8*&)) {
     u64 copy_size = Math::min(string_capacity - *string_size - 1, String::size_of(arg));
     memcpy_unsafe(&string[*string_size], arg, copy_size);
     *string_size += copy_size;
@@ -233,28 +234,29 @@ static inline void from_type_clip(const T arg,
 
 //---
 template <typename T>
-static inline void from_type_grow(const T arg,
+static inline void from_type_grow(const T& arg,
                                   utf8** string,
                                   u64* string_size,
                                   u64* string_capacity)
 {
   static_assert(!SAME_TYPE(T, const char*), "String literals must be prepended with 'u8' for utf-8 encoding: 'u8\"Hello world!\"'");
   static_assert(!SAME_TYPE(T, char*), "Replace string usages of char with utf8, for utf-8 encoding.");
-  if constexpr (SAME_TYPE(T, utf8)) {
+  if constexpr (SAME_TYPE(T, utf8) || SAME_TYPE(T&, utf8&)) {
     u64 new_size = *string_size + 1;
-    if (new_size > *string_capacity) {
+    if (new_size >= *string_capacity) {
       *string_capacity = new_size * 1.5;
-      *string = (utf8*)realloc_unsafe(*string, *string_capacity + 1);
+      *string = (utf8*)realloc_unsafe(*string, *string_capacity);
     }
     (*string)[*string_size] = arg;
     (*string)[new_size] = u8'\0';
     *string_size = new_size;
-  } else if constexpr (SAME_TYPE(T, const utf8*) || SAME_TYPE(T, utf8*)) {
+  } else if constexpr (SAME_TYPE(ARRAY_TYPE(T), const utf8) || SAME_TYPE(ARRAY_TYPE(T), utf8) || 
+                       SAME_TYPE(T&, const utf8*&) || SAME_TYPE(T&, utf8*&)) {
     u64 arg_size = String::size_of(arg);
     u64 new_size = *string_size + arg_size;
-    if (new_size > *string_capacity) {
+    if (new_size >= *string_capacity) {
       *string_capacity = new_size * 1.5;
-      *string = (utf8*)realloc_unsafe(*string, *string_capacity + 1);
+      *string = (utf8*)realloc_unsafe(*string, *string_capacity);
     }
     memcpy_unsafe(&(*string)[*string_size], arg, arg_size);
     (*string)[new_size] = u8'\0';
@@ -266,7 +268,7 @@ static inline void from_type_grow(const T arg,
     u64 new_size = *string_size + conversion_size;
     if (new_size >= *string_capacity) {
       *string_capacity = new_size * 1.5;
-      *string = (utf8*)realloc_unsafe(*string, *string_capacity + 1);
+      *string = (utf8*)realloc_unsafe(*string, *string_capacity);
     }
     memcpy_unsafe(&(*string)[*string_size], buffer_str, conversion_size);
     (*string)[new_size] = u8'\0';

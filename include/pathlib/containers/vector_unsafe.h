@@ -20,6 +20,9 @@ struct VectorUnsafe
   u64 _capacity;
 
   //---
+  DISALLOW_COPY(VectorUnsafe);
+
+  //---
   VectorUnsafe(const utf8* name,
                u64 reserve_capacity = RESERVE_CAPACITY)
   {

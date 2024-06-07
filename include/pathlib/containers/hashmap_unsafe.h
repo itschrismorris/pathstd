@@ -39,6 +39,9 @@ struct HashmapUnsafe
   VectorUnsafe<u32, RESERVE_CAPACITY> _kv_slot_lookup;
 
   //---
+  DISALLOW_COPY(HashmapUnsafe);
+
+  //---
   HashmapUnsafe(const utf8* name)
   {
     _capacity = RESERVE_CAPACITY;

@@ -20,6 +20,9 @@ private:
 
 public:
   //---
+  DISALLOW_COPY(Array);
+
+  //---
   Array()
   {
     clear();

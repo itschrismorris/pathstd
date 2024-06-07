@@ -30,6 +30,9 @@ private:
 
 public:
   //---
+  DISALLOW_COPY(Pool);
+
+  //---
   Pool(const utf8* name,
        u32 pools_id = 0) 
   {

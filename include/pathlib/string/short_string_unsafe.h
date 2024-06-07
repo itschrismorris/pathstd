@@ -18,9 +18,11 @@ struct ShortStringUnsafe
   u64 _size;
   
   //---
-  ShortStringUnsafe()
+  template <typename... Args>
+  ShortStringUnsafe(Args&&... args)
   {
     clear();
+    (ShortStringUnsafe::_append(*this, args), ...);
   }
 
   //---
@@ -28,14 +30,6 @@ struct ShortStringUnsafe
   {
     memcpy_unsafe<true, true>(_str, string._str, string._size + 1);
     _size = string._size;
-  }
-
-  //---
-  template <typename... Args>
-  ShortStringUnsafe(Args&&... args)
-  {
-    _size = 0;
-    (ShortStringUnsafe::_append(*this, args), ...);
   }
 
   //---
@@ -53,9 +47,10 @@ struct ShortStringUnsafe
 
   //---
   template <typename T>
-  inline ShortStringUnsafe& operator =(const T arg)
+  inline ShortStringUnsafe& operator =(const T& arg)
   {
-    String::_Internal::from_type_clip(arg, _str, &_size, CAPACITY);
+    _size = 0;
+    _append(*this, arg);
     return *this;
   }
 
@@ -76,7 +71,7 @@ struct ShortStringUnsafe
 
   //---
   template <typename T>
-  inline const ShortStringUnsafe operator +(const T arg)
+  inline const ShortStringUnsafe operator +(const T& arg)
   {
     static_assert(!SAME_TYPE(T, const char*), "String literals must be prepended with u8 for utf-8 encoding: u8\"Hello world!\"");
     static_assert(!SAME_TYPE(T, char*), "Replace string usages of char with utf8, for utf-8 encoding.");
@@ -96,9 +91,9 @@ struct ShortStringUnsafe
 
   //---
   template <typename T>
-  inline ShortStringUnsafe& operator +=(const T arg)
+  inline ShortStringUnsafe& operator +=(const T& arg)
   {
-    String::_Internal::from_type_clip(arg, _str, &_size, CAPACITY);
+    _append(*this, arg);
     return *this;
   }
 
@@ -115,14 +110,15 @@ struct ShortStringUnsafe
   //---
   template <typename T>
   static inline void _append(ShortStringUnsafe& string_out, 
-                             const T arg)
+                             const T& arg)
   {
-    if constexpr (IS_POINTER(T)) {
-      if (!arg) {
-        return;
-      }
+    if constexpr (IS_UNSAFE_LONG_STRING(T) || IS_UNSAFE_SHORT_STRING(T)) {
+      String::_Internal::from_type_clip(arg._str, string_out._str, &string_out._size, string_out.get_capacity());
+    } else if constexpr (IS_LONG_STRING(T) || IS_SHORT_STRING(T)) {
+      String::_Internal::from_type_clip(arg.get_str().get_ptr(), string_out._str, &string_out._size, string_out.get_capacity());
+    } else {
+      String::_Internal::from_type_clip(arg, string_out._str, &string_out._size, string_out.get_capacity());
     }
-    String::_Internal::from_type_clip(arg, string_out._str, &string_out._size, string_out.get_capacity());
   }
 
   //---
@@ -165,7 +161,7 @@ struct ShortStringUnsafe
   }
 
   //---
-  constexpr u64 get_capacity()
+  constexpr u64 get_capacity() const
   {
     return CAPACITY;
   }
@@ -206,3 +202,4 @@ struct ShortStringUnsafe
 
 //---
 template <u64 CAPACITY> struct _is_short_string<Pathlib::ShortStringUnsafe<CAPACITY>> : true_type {};
+template <u64 CAPACITY> struct _is_unsafe_short_string<Pathlib::ShortStringUnsafe<CAPACITY>> : true_type {};

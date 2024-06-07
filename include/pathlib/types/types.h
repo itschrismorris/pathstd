@@ -55,8 +55,14 @@ static constexpr u32 CACHE_LINE_SIZE = 64;
 #define IS_FLOAT(A) _is_float<A>::value
 #define IS_SHORT_STRING(A) _is_short_string<A>::value
 #define IS_LONG_STRING(A) _is_long_string<A>::value
+#define IS_UNSAFE_SHORT_STRING(A) _is_unsafe_short_string<A>::value
+#define IS_UNSAFE_LONG_STRING(A) _is_unsafe_long_string<A>::value
 #define IS_POINTER(A) _is_pointer<A>::value
+#define IS_REFERENCE(A) _is_reference<A>::value
+#define IS_ARRAY(A) _is_array<A>::value
+#define ARRAY_TYPE(A) _array_type<A>::value
 #define EXPECT(A) __builtin_expect((A), 1)
+#define DISALLOW_COPY_CONSTRUCTOR(T) T(const T&) = delete;
 #define DISALLOW_COPY(T) T(const T&) = delete;         \
                          T& operator=(const T&) = delete;
 
@@ -66,7 +72,14 @@ struct true_type { static constexpr bool value = true; constexpr operator bool()
 
 //--
 template <typename T> struct _is_long_string : false_type {};
+template <typename T> struct _is_unsafe_long_string : false_type {};
 template <typename T> struct _is_short_string : false_type {};
+template <typename T> struct _is_unsafe_short_string : false_type {};
+
+//---
+template <class T> struct remove_reference { typedef T value; };
+template <class T> struct remove_reference<T&> { typedef T value; };
+template <class T> struct remove_reference<T&&> { typedef T value; };
 
 //---
 template <typename...>
@@ -80,10 +93,7 @@ T declval() noexcept {}
 template <typename>
 struct result_of;
 template <typename F, typename... Args>
-struct result_of<F(Args...)> 
-{
-  using type = decltype(declval<F>()(declval<Args>()...));
-};
+struct result_of<F(Args...)> { using value = decltype(declval<F>()(declval<Args>()...)); };
 
 //---
 template <typename T, 
@@ -122,11 +132,21 @@ struct HasTParameter<T, Func, void_t<decltype(declval<Func>()(declval<T>()))>> :
 
 //---
 template <typename T, typename U> struct _member_type;
-template <typename T, typename U> struct _member_type<T, U T::*> { using type = U; };
+template <typename T, typename U> struct _member_type<T, U T::*> { using value = U; };
 
 //---
+template <class T> struct _array_type { typedef T value; };
+template <class T> struct _array_type<T[]> { typedef T value; };
+template <class T, u64 N> struct _array_type<T[N]> { typedef T value;};
+
+//---
+template <class T> struct _is_array : false_type {};
+template <class T> struct _is_array<T[]> : true_type {};
+template <class T, u64 N> struct _is_array<T[N]> : true_type {};
 template <typename T> struct _is_pointer { static constexpr bool value = false; };
 template <typename T> struct _is_pointer<T*> { static constexpr bool value = true; };
+template <typename T> struct _is_reference { static constexpr bool value = false; };
+template <typename T> struct _is_reference<T&> { static constexpr bool value = true; };
 template <typename T> struct _is_integral : false_type {};
 template <> struct _is_integral<i8> : true_type {};
 template <> struct _is_integral<i16> : true_type {};

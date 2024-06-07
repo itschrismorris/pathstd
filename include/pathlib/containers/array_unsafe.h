@@ -18,6 +18,9 @@ struct ArrayUnsafe
   u64 _count;
 
   //---
+  DISALLOW_COPY(ArrayUnsafe);
+
+  //---
   ArrayUnsafe()
   {
     clear();
