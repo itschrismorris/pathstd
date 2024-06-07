@@ -155,16 +155,16 @@ static inline void from_type_clip(const T& arg,
                                   u64* string_size,
                                   u64 string_capacity)
 {
-  static_assert(!SAME_TYPE(T, const char*), "String literals must be prepended with 'u8' for utf-8 encoding: 'u8\"Hello world!\"'");
-  static_assert(!SAME_TYPE(T, char*), "Replace string usages of char with utf8, for utf-8 encoding.");
   if constexpr (SAME_TYPE(T, utf8) || SAME_TYPE(T&, utf8&)) {
     if ((*string_size + 1) < string_capacity) { 
       string[*string_size] = arg;
       string[*string_size + 1] = u8'\0';
       *string_size += 1;
     }
-  } else if constexpr (SAME_TYPE(ARRAY_TYPE(T), const utf8) || SAME_TYPE(ARRAY_TYPE(T), utf8) || 
-                       SAME_TYPE(T&, const utf8*&) || SAME_TYPE(T&, utf8*&)) {
+  } else if constexpr (SAME_TYPE(ARRAY_TYPE(T), const utf8) || 
+                       SAME_TYPE(ARRAY_TYPE(T), utf8) || 
+                       SAME_TYPE(T&, const utf8*&) || 
+                       SAME_TYPE(T&, utf8*&)) {
     u64 copy_size = Math::min(string_capacity - *string_size - 1, String::size_of(arg));
     memcpy_unsafe(&string[*string_size], arg, copy_size);
     *string_size += copy_size;
@@ -228,7 +228,10 @@ static inline void from_type_clip(const T& arg,
     *string_size += size_added;
     string[*string_size] = u8'\0';
   } else {
-    static_assert(return_false<T>::value, "Unsupported type used for formatting a string.");
+    static_assert(return_false<T>::value, 
+                  "Unsupported type used for formatting a string. Note for enforced "
+                  "utf-8 encoding: Use utf8 instead of char, and prepend string "
+                  "literals with 'u8': u8\"Hello world!\"");
   }
 }
 
@@ -239,8 +242,6 @@ static inline void from_type_grow(const T& arg,
                                   u64* string_size,
                                   u64* string_capacity)
 {
-  static_assert(!SAME_TYPE(T, const char*), "String literals must be prepended with 'u8' for utf-8 encoding: 'u8\"Hello world!\"'");
-  static_assert(!SAME_TYPE(T, char*), "Replace string usages of char with utf8, for utf-8 encoding.");
   if constexpr (SAME_TYPE(T, utf8) || SAME_TYPE(T&, utf8&)) {
     u64 new_size = *string_size + 1;
     if (new_size >= *string_capacity) {
@@ -316,7 +317,10 @@ static inline void from_type_grow(const T& arg,
     __PATHLIB_DECORATE_GROW(25LLU, 2LLU);
     (*string)[*string_size] = u8'\0';
   } else {
-    static_assert(return_false<T>::value, "Unsupported type used for formatting a string.");
+    static_assert(return_false<T>::value, 
+                  "Unsupported type used for formatting a string. Note for enforced "
+                  "utf-8 encoding: Use utf8 instead of char, and prepend string "
+                  "literals with 'u8': u8\"Hello world!\"");
   }
 }
 }

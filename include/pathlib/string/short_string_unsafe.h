@@ -33,17 +33,7 @@ struct ShortStringUnsafe
   }
 
   //---
-  ~ShortStringUnsafe()
-  {
-  }
-
-  //---
-  inline ShortStringUnsafe& operator =(const ShortStringUnsafe& string)
-  {
-    memcpy_unsafe<true, true>(_str, string._str, string._size + 1);
-    _size = string._size;
-    return *this;
-  }
+  ~ShortStringUnsafe() {}
 
   //---
   template <typename T>
@@ -55,38 +45,30 @@ struct ShortStringUnsafe
   }
 
   //---
-  inline bool operator ==(const utf8* string) const
+  template <typename T>
+  inline bool operator ==(T& string)
   {
-    return String::compare<true, false>(_str, string, _size);
-  }
-
-  //---
-  inline bool operator ==(const ShortStringUnsafe& string) const
-  {
-    if (_size != string._size) {
-      return false;
+    if constexpr (IS_UNSAFE_LONG_STRING(T) || IS_UNSAFE_SHORT_STRING(T)) {
+      return String::compare<true, true>(_str, string._str, _size, string._size);
+    } else if constexpr (IS_SAFE_LONG_STRING(T) || IS_SAFE_SHORT_STRING(T)) {
+      return String::compare<true, true>(_str, string.get_str(), _size, string.get_size());
+    } else if constexpr (SAME_TYPE(ARRAY_TYPE(T), const utf8) || SAME_TYPE(ARRAY_TYPE(T), utf8) || 
+                         SAME_TYPE(T&, const utf8*&) || SAME_TYPE(T&, utf8*&)) {
+      return String::compare<true, false>(_str, string, _size, String::size_of(string));
+    } else {
+      static_assert(false, "Cannot compare ShortString with provided type. Note for enforced "
+                           "utf-8 encoding: Use utf8 instead of char, "
+                           "and prepend string literals with 'u8': u8\"Hello world!\"");
     }
-    return String::compare<true, true>(_str, string._str);
   }
 
   //---
   template <typename T>
   inline const ShortStringUnsafe operator +(const T& arg)
   {
-    static_assert(!SAME_TYPE(T, const char*), "String literals must be prepended with u8 for utf-8 encoding: u8\"Hello world!\"");
-    static_assert(!SAME_TYPE(T, char*), "Replace string usages of char with utf8, for utf-8 encoding.");
     ShortStringUnsafe new_string = *this;
     ShortStringUnsafe::_append(&new_string, arg);
     return new_string;
-  }
-
-  //---
-  inline ShortStringUnsafe& operator +=(const ShortStringUnsafe& arg)
-  {
-    u64 copy_size = Math::min((CAPACITY - 1) - _size, arg._size);
-    memcpy_unsafe<false, true>(&_str[_size], arg._str, copy_size);
-    _size += copy_size;
-    return *this;
   }
 
   //---
@@ -95,16 +77,6 @@ struct ShortStringUnsafe
   {
     _append(*this, arg);
     return *this;
-  }
-
-  //---
-  template <u64 ARG_CAPACITY>
-  static inline void _append(ShortStringUnsafe& string_out, 
-                             const ShortStringUnsafe<ARG_CAPACITY>& arg)
-  {
-    u64 copy_size = Math::min((CAPACITY - 1) - string_out._size, arg._size);
-    memcpy_unsafe<false, true>(&string_out._str[string_out._size], arg._str, copy_size + 1);
-    string_out._size += copy_size;
   }
 
   //---
@@ -130,31 +102,6 @@ struct ShortStringUnsafe
   inline void append(Args&&... args)
   {
     (_append(*this, args), ...);
-  }
-
-  //---
-  template <typename... Args>
-  static inline void append(ShortStringUnsafe& string_out,
-                            Args&&... args)
-  {
-    (_append(string_out, args), ...);
-  }
-  
-  //---
-  template <typename... Args>
-  inline ShortStringUnsafe& format(Args&&... args)
-  {
-    _size = 0;
-    (ShortStringUnsafe::_append(*this, args), ...);
-    return *this;
-  }
-
-  //---
-  template <typename... Args>
-  static inline ShortStringUnsafe format(ShortStringUnsafe& string_out,
-                                         Args&&... args)
-  {
-    (_append(string_out, args), ...);
   }
 
   //---

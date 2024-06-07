@@ -37,23 +37,7 @@ public:
   }
 
   //---
-  ~ShortString()
-  {
-  }
-
-  //---
-  operator utf8*() const
-  {
-    return _str;
-  }
-
-  //---
-  ShortString& operator =(const ShortString& string)
-  {
-    memcpy_unsafe<true, true>(_str, string._str, string._size + 1);
-    _size = string._size;
-    return *this;
-  }
+  ~ShortString() {}
 
   //---
   template <typename T>
@@ -65,42 +49,28 @@ public:
   }
 
   //---
-  bool operator ==(const utf8* string) const
+  template <typename T>
+  inline bool operator ==(T& string)
   {
-    if (EXPECT(string != nullptr)) {
-      return String::compare<true, false>(_str, string, _size);
+    if constexpr (IS_UNSAFE_LONG_STRING(T) || IS_UNSAFE_SHORT_STRING(T)) {
+      return String::compare<true, true>(_str, string._str, _size, string._size);
+    } else if constexpr (IS_SAFE_LONG_STRING(T) || IS_SAFE_SHORT_STRING(T)) {
+      return String::compare<true, true>(_str, string.get_str(), _size, string.get_size());
+    } else if constexpr (SAME_TYPE(ARRAY_TYPE(T), const utf8) || SAME_TYPE(ARRAY_TYPE(T), utf8) || 
+                         SAME_TYPE(T&, const utf8*&) || SAME_TYPE(T&, utf8*&)) {
+      return String::compare<true, false>(_str, string, _size, String::size_of(string));
     } else {
-      get_errors().to_log_with_stacktrace(u8"Attempt to compare ShortString equality with a null pointer.");
-      get_errors().kill_script();
-      return false;
+      static_assert(false, "Cannot compare ShortString with provided type. Note for enforced "
+                           "utf-8 encoding: Use utf8 instead of char, "
+                           "and prepend string literals with 'u8': u8\"Hello world!\"");
     }
-  }
-
-  //---
-  bool operator ==(const ShortString& string) const
-  {
-    if (_size != string._size) {
-      return false;
-    }
-    return String::compare<true, true>(_str, string._str);
   }
 
   //---
   template <typename T>
   const ShortString operator +(const T& arg)
   {
-    static_assert(!SAME_TYPE(T, const char*), "String literals must be prepended with u8 for utf-8 encoding: u8\"Hello world!\"");
-    static_assert(!SAME_TYPE(T, char*), "Replace string usages of char with utf8, for utf-8 encoding.");
     ShortString::_append(*this, arg);
-    return *this;
-  }
-
-  //---
-  ShortString& operator +=(const ShortString& arg)
-  {
-    u64 copy_size = Math::min((CAPACITY - 1) - _size, arg._size);
-    memcpy_unsafe<false, true>(&_str[_size], arg._str, copy_size);
-    _size += copy_size;
     return *this;
   }
 
@@ -113,20 +83,12 @@ public:
   }
 
   //---
-  template <u64 ARG_CAPACITY>
-  static void _append(ShortString& string_out, 
-                      const ShortString<ARG_CAPACITY>& arg)
-  {
-    u64 copy_size = Math::min((CAPACITY - 1) - string_out._size, arg.get_size());
-    memcpy_unsafe<false, true>(&string_out._str[string_out._size], arg.get_str(), copy_size + 1);
-    string_out._size += copy_size;
-  }
-
-  //---
   template <typename T>
   static void _append(ShortString& string_out, 
                       const T& arg)
   {
+    static_assert(!SAME_TYPE(T, const char*) && !SAME_TYPE(T, char*), 
+                  "UTF-8 encoding is enforced, please prepend string literals with 'u8': u8\"Hello world!\"");
     if constexpr (IS_POINTER(T)) {
       if (DONT_EXPECT(arg == nullptr)) {
         get_errors().to_log(u8"Attempt to _append() a nullptr to ShortString.");
@@ -152,31 +114,6 @@ public:
   void append(Args&&... args)
   {
     (_append(*this, args), ...);
-  }
-
-  //---
-  template <typename... Args>
-  static void append(ShortString& string_out,
-                     Args&&... args)
-  {
-    (_append(string_out, args), ...);
-  }
-
-  //---
-  template <typename... Args>
-  ShortString& format(Args&&... args)
-  {
-    _size = 0;
-    (ShortString::_append(*this, args), ...);
-    return *this;
-  }
-
-  //---
-  template <typename... Args>
-  static ShortString format(ShortString& string_out,
-                            Args&&... args)
-  {
-    (_append(string_out, args), ...);
   }
 
   //---
