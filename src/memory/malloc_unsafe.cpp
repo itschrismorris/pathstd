@@ -12,7 +12,7 @@ void* malloc_unsafe(u64 size,
                     const utf8* name)
 {
   u64 good_size = mi_malloc_good_size(size + sizeof(u32));
-  u8* ptr = (u8*)mi_malloc_aligned(good_size, 128);
+  u8* ptr = (u8*)mi_malloc_aligned(size + sizeof(u32), 128);
   u64 usable_size = mi_usable_size(ptr);
   if (EXPECT(name != nullptr)) {
     _Internal::Profiler::MemoryItem* memory_item = get_profiler()._memory_items.get_vacant();
@@ -32,7 +32,7 @@ void* realloc_unsafe(void* ptr,
   u64 previous_size = mi_usable_size(ptr);
   u32 pool_id = *(u32*)(&((u8*)ptr)[previous_size - sizeof(u32)]);
   u64 good_size = mi_malloc_good_size(size + sizeof(u32));
-  u8* new_ptr = (u8*)mi_realloc_aligned(ptr, good_size, 128);
+  u8* new_ptr = (u8*)mi_realloc_aligned(ptr, size + sizeof(u32), 128);
   u64 usable_size = mi_usable_size(new_ptr);
   if (EXPECT(pool_id != NOT_TRACKED)) {
     _Internal::Profiler::MemoryItem* memory_item = get_profiler()._memory_items[pool_id];

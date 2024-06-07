@@ -83,7 +83,8 @@ void free(SafePtr<T>& _ptr)
   if (Memory::_Internal::scripting_mode) {
     if (_ptr.is_valid()) {
       _ptr.set_allocated_memory(false);
-      free_unsafe((void**)&_ptr);
+      void* p = (void*)_ptr.get_ptr();
+      free_unsafe((void**)&p);
     } else {
       get_errors().to_log_with_stacktrace(u8"Attempt to free() a null SafePtr.");
       get_errors().kill_script();
@@ -91,7 +92,8 @@ void free(SafePtr<T>& _ptr)
   } else {
     if (_ptr.is_valid()) {
       _ptr.set_allocated_memory(false);
-      free_unsafe((void**)&_ptr);
+      void* p = (void*)_ptr.get_ptr();
+      free_unsafe((void**)&p);
     } else {
       get_errors().to_log_with_stacktrace(u8"Attempt to free() a null SafePtr.");
       get_errors().kill_script();

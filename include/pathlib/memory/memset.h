@@ -20,7 +20,8 @@ static inline void memset(SafePtr<T> dst,
                           u64 count)
 {
   T* dst_ptr = dst;
-  if (EXPECT(((dst_ptr + count) >= dst_ptr) &&
+  if (EXPECT((dst_ptr != nullptr) &&
+             ((dst_ptr + count) >= dst_ptr) &&
              ((dst_ptr + count) <= (dst_ptr + dst.get_count())))) {
     memset_unsafe(dst_ptr, value, count * sizeof(T));
   } else {

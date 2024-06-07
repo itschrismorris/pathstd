@@ -21,7 +21,9 @@ static inline void memcpy(SafePtr<T> dst,
 {
   T* dst_ptr = dst;
   T* src_ptr = src;
-  if (EXPECT(((dst_ptr + count) >= dst_ptr) &&
+  if (EXPECT((dst_ptr != nullptr) &&
+             (src_ptr != nullptr) &&
+             ((dst_ptr + count) >= dst_ptr) &&
              ((src_ptr + count) >= src_ptr) &&
              ((src_ptr + count) <= (src_ptr + src.get_count())) &&
              ((dst_ptr + count) <= (dst_ptr + dst.get_count())))) {
