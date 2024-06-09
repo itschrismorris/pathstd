@@ -91,8 +91,7 @@ public:
                   "UTF-8 encoding is enforced, please prepend string literals with 'u8': u8\"Hello world!\"");
     if constexpr (IS_POINTER(T)) {
       if (DONT_EXPECT(arg == nullptr)) {
-        get_errors().to_log(u8"Attempt to _append() a nullptr to ShortString.");
-        get_errors().kill_script();
+        get_errors().fatal(u8"Attempt to _append() a nullptr to ShortString.");
         return;
       }
     }

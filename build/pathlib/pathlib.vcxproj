@@ -19,7 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\include\pathlib\concurrency\atomics.h" />
+    <ClInclude Include="..\..\include\pathlib\concurrency\atomic.h" />
     <ClInclude Include="..\..\include\pathlib\concurrency\spsc_queue.h" />
     <ClInclude Include="..\..\include\pathlib\concurrency\mpsc_queue.h" />
     <ClInclude Include="..\..\include\pathlib\concurrency\spinlock.h" />
@@ -47,6 +47,7 @@
     <ClInclude Include="..\..\include\pathlib\math\intrinsics\xmmintrin.h" />
     <ClInclude Include="..\..\include\pathlib\math\math.h" />
     <ClInclude Include="..\..\include\pathlib\math\simd_math.h" />
+    <ClInclude Include="..\..\include\pathlib\memory\arena.h" />
     <ClInclude Include="..\..\include\pathlib\memory\malloc.h" />
     <ClInclude Include="..\..\include\pathlib\memory\malloc_unsafe.h" />
     <ClInclude Include="..\..\include\pathlib\memory\memcpy.h" />
@@ -77,14 +78,17 @@
     <ClInclude Include="..\..\src\win32\mindows.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\src\concurrency\atomic.cpp" />
     <ClCompile Include="..\..\src\concurrency\thread.cpp" />
     <ClCompile Include="..\..\src\errors\errors.cpp" />
     <ClCompile Include="..\..\src\log\log.cpp" />
+    <ClCompile Include="..\..\src\memory\arena.cpp" />
     <ClCompile Include="..\..\src\memory\malloc_unsafe.cpp" />
     <ClCompile Include="..\..\src\memory\memory.cpp" />
     <ClCompile Include="..\..\src\profiler\profiler.cpp" />
     <ClCompile Include="..\..\src\timer\timer.cpp" />
     <ClCompile Include="..\..\src\win32\console.cpp" />
+    <ClCompile Include="..\..\src\win32\mindows.cpp" />
     <ClCompile Include="..\..\src\win32\safe_win32.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

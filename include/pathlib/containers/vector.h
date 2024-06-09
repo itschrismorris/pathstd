@@ -50,8 +50,7 @@ public:
     if (EXPECT(index < _count)) {
       return _data[index];
     } else {
-      get_errors().to_log_with_stacktrace(u8"Out of bounds access to Vector.");
-      get_errors().kill_script();
+      get_errors().fatal(u8"Out of bounds access to Vector.");
       return _data[0];
     }
   }
@@ -62,8 +61,7 @@ public:
     if (EXPECT(index < _count)) {
       return _data[index];
     } else {
-      get_errors().to_log_with_stacktrace(u8"Out of bounds access to Vector.");
-      get_errors().kill_script();
+      get_errors().fatal(u8"Out of bounds access to Vector.");
       return _data[0];
     }
   }
@@ -83,8 +81,7 @@ public:
       Memory::call_constructor<T>(_data + original_count, constructor_args...);
       return SafePtr<T>(_data + original_count, 1);
     } else {
-      get_errors().to_log_with_stacktrace(u8"Failed to emplace_back() Vector; it is already at capacity.");
-      get_errors().kill_script();
+      get_errors().fatal(u8"Failed to emplace_back() Vector; it is already at capacity.");
       return SafePtr<T>(nullptr, 0);
     }
   }
@@ -97,8 +94,7 @@ public:
       --_count;
       memcpy_unsafe(index, _data + _count, sizeof(T));
     } else {
-      get_errors().to_log_with_stacktrace(u8"Failed to remove() from Vector; index is out of bounds.");
-      get_errors().kill_script();
+      get_errors().fatal(u8"Failed to remove() from Vector; index is out of bounds.");
     }
   }
 
@@ -116,8 +112,7 @@ public:
       _count -= count;
       memcpy_unsafe(start, end, sizeof(T) * count);
     } else {
-      get_errors().to_log_with_stacktrace(u8"Failed to remove() from Vector; removal is out of bounds.");
-      get_errors().kill_script();
+      get_errors().fatal(u8"Failed to remove() from Vector; removal is out of bounds.");
     }
   }
 

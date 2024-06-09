@@ -137,6 +137,22 @@ static inline constexpr T next_multiple_of(T value)
     return ((value + (value == 0) + (MULTIPLE - 1)) / MULTIPLE) * MULTIPLE;
   }
 }
+
+//---
+template <typename T>
+static inline constexpr T previous_multiple_of_pot(T value,
+                                                   T multiple)
+{
+  return (value & ~(multiple - 1));
+}
+
+//---
+template <typename T>
+static inline constexpr T next_multiple_of_pot(T value,
+                                               T multiple)
+{
+  return (value + (value == 0) + (multiple - 1)) & -multiple;
+}
   
 //---
 template <typename T>

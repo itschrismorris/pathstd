@@ -63,10 +63,14 @@ u64 get_callstack(utf8* string_out,
       get_errors().to_log_with_stacktrace(win32_err._str);
       return false;
     }
-    memcpy_unsafe(string_out + string_size, symbol->Name, Math::min((u64)symbol->NameLen, string_capacity - 2 - string_size));
-    string_size += symbol->NameLen + 1;
-    string_out[string_size - 1] = u8'\n';
-    string_out[string_size] = u8'\0';
+    if (string_size + symbol->NameLen + 2 < string_capacity) {
+      memcpy_unsafe(string_out + string_size, symbol->Name, symbol->NameLen);
+      string_size += symbol->NameLen + 1;
+      string_out[string_size - 1] = u8'\n';
+      string_out[string_size] = u8'\0';
+    } else {
+      break;
+    }
   }
   if (!SymCleanup(process)) {
     FixedStringUnsafe<256> win32_err;

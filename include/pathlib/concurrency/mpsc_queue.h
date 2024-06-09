@@ -4,7 +4,7 @@
 
 #pragma once
 #include "pathlib/types/types.h"
-#include "pathlib/concurrency/atomics.h"
+#include "pathlib/concurrency/atomic.h"
 
 namespace Pathlib {
 

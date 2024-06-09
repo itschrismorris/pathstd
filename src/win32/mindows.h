@@ -4,6 +4,7 @@
 */
 
 #pragma once
+#include "pathlib/types/types.h"
 
 //---
 #define STD_OUTPUT_HANDLE  ((unsigned long) - 11)
@@ -22,6 +23,11 @@
 #define INFINITE 0xFFFFFFFF
 #define WAIT_TIMEOUT 0x00000102L
 #define WAIT_OBJECT_0 0x00000000L
+#define MEM_COMMIT 0x00001000
+#define MEM_RESERVE 0x00002000
+#define MEM_LARGE_PAGES 0x20000000
+#define PAGE_READWRITE 0x04
+#define MEM_RELEASE 0x00008000
 
 //---
 #define ERROR_IO_PENDING 0x3E5
@@ -115,8 +121,24 @@ typedef struct _SYMBOL_INFO {
   CHAR        Name[1];
 } SYMBOL_INFO, *PSYMBOL_INFO;
 
+i32 enable_large_pages();
+
 //---
 __declspec(dllimport) HANDLE __stdcall GetCurrentProcess();
+__declspec(dllimport) LPVOID __stdcall VirtualAlloc(LPVOID lpAddress,
+                                                    SIZE_T dwSize,
+                                                    DWORD  flAllocationType,
+                                                    DWORD  flProtect);
+__declspec(dllimport) BOOL __stdcall VirtualFree(LPVOID lpAddress,
+                                                 SIZE_T dwSize,
+                                                 DWORD  dwFreeType);
+__declspec(dllimport) SIZE_T __stdcall GetLargePageMinimum();
+__declspec(dllimport) BOOL __stdcall AdjustTokenPrivileges(HANDLE TokenHandle,
+                                                           BOOL DisableAllPrivileges,
+                                                           PTOKEN_PRIVILEGES NewState,
+                                                           DWORD BufferLength,
+                                                           PTOKEN_PRIVILEGES PreviousState,
+                                                           PDWORD ReturnLength);
 __declspec(dllimport) DWORD __stdcall GetCurrentThreadId();
 __declspec(dllimport) BOOL __stdcall SwitchToThread();
 __declspec(dllimport) BOOL __stdcall GetExitCodeThread(HANDLE  hThread,

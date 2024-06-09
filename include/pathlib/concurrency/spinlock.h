@@ -4,7 +4,7 @@
 
 #pragma once
 #include "pathlib/types/types.h"
-#include "pathlib/concurrency/atomics.h"
+#include "pathlib/concurrency/atomic.h"
 #include "pathlib/concurrency/mpsc_queue.h"
 #include "pathlib/concurrency/threadpool.h"
 #include "pathlib/errors/errors.h"

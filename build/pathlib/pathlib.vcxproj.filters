@@ -25,18 +25,6 @@
     <Filter Include="include\win32">
       <UniqueIdentifier>{9cc8f082-5005-4d43-942d-bfa730da8cc5}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\log">
-      <UniqueIdentifier>{338e94cd-b7ab-4e99-af0c-d5c6cf1d2c5e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\memory">
-      <UniqueIdentifier>{97291b7b-8a35-4e02-b3ac-e7372acdf444}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\timer">
-      <UniqueIdentifier>{e3bc1941-8dcc-4048-aa05-1020530d9ca3}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\win32">
-      <UniqueIdentifier>{77590d47-cd89-4013-b328-b6fcd8895471}</UniqueIdentifier>
-    </Filter>
     <Filter Include="src\third_party">
       <UniqueIdentifier>{9e96712c-7f6f-4f07-954e-2b7c2b8d6e6a}</UniqueIdentifier>
     </Filter>
@@ -52,12 +40,6 @@
     <Filter Include="include\profiler">
       <UniqueIdentifier>{fe9c90cd-340e-490c-a2bc-29fcf6b3dc70}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\errors">
-      <UniqueIdentifier>{183fdfd9-c6e7-40e3-88e6-c833164048db}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\profiler">
-      <UniqueIdentifier>{b38a053e-57a0-4598-98ab-c6be87742d25}</UniqueIdentifier>
-    </Filter>
     <Filter Include="include\containers">
       <UniqueIdentifier>{120208f1-b6c3-4554-ae38-845f291f2fad}</UniqueIdentifier>
     </Filter>
@@ -69,9 +51,6 @@
     </Filter>
     <Filter Include="include\concurrency">
       <UniqueIdentifier>{a1c02161-807f-4ce1-ab46-ccd17d2f3664}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\concurrency">
-      <UniqueIdentifier>{55279530-18e5-484e-92b7-4f5cd6ee200f}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -122,9 +101,6 @@
     </ClInclude>
     <ClInclude Include="..\..\include\pathlib\pathlib.h">
       <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\win32\mindows.h">
-      <Filter>src\win32</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\third_party\mimalloc\mimalloc\atomic.h">
       <Filter>src\third_party\mimalloc\mimalloc</Filter>
@@ -219,7 +195,7 @@
     <ClInclude Include="..\..\include\pathlib\types\types.h">
       <Filter>include\types</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\include\pathlib\concurrency\atomics.h">
+    <ClInclude Include="..\..\include\pathlib\concurrency\atomic.h">
       <Filter>include\concurrency</Filter>
     </ClInclude>
     <ClInclude Include="..\..\include\pathlib\concurrency\thread.h">
@@ -243,34 +219,49 @@
     <ClInclude Include="..\..\include\pathlib\memory\memset_unsafe.h">
       <Filter>include\memory</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\src\win32\mindows.h">
+      <Filter>include\win32</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\pathlib\memory\arena.h">
+      <Filter>include\memory</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\src\log\log.cpp">
-      <Filter>src\log</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\win32\console.cpp">
-      <Filter>src\win32</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\win32\safe_win32.cpp">
-      <Filter>src\win32</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\timer\timer.cpp">
-      <Filter>src\timer</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\memory\memory.cpp">
-      <Filter>src\memory</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\memory\malloc_unsafe.cpp">
-      <Filter>src\memory</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\profiler\profiler.cpp">
-      <Filter>src\profiler</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\errors\errors.cpp">
-      <Filter>src\errors</Filter>
+    <ClCompile Include="..\..\src\concurrency\atomic.cpp">
+      <Filter>include\concurrency</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\concurrency\thread.cpp">
-      <Filter>src\concurrency</Filter>
+      <Filter>include\concurrency</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\errors\errors.cpp">
+      <Filter>include\errors</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\log\log.cpp">
+      <Filter>include\log</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\memory\malloc_unsafe.cpp">
+      <Filter>include\memory</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\memory\memory.cpp">
+      <Filter>include\memory</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\profiler\profiler.cpp">
+      <Filter>include\profiler</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\timer\timer.cpp">
+      <Filter>include\timer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\win32\console.cpp">
+      <Filter>include\win32</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\win32\safe_win32.cpp">
+      <Filter>include\win32</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\memory\arena.cpp">
+      <Filter>include\memory</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\win32\mindows.cpp">
+      <Filter>include\win32</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

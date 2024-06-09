@@ -14,9 +14,9 @@ namespace Pathlib::_Internal {
 struct Errors 
 {
   //---
-  void last_error_from_win32(utf8* string_out,
-                             u64 string_capacity);
-  void kill_script();
+  u64 last_error_from_win32(utf8* string_out,
+                            u64 string_capacity);
+  void fatal(const utf8* error_msg);
 
   //---
   template <typename... Args>
@@ -37,10 +37,10 @@ struct Errors
   template <typename... Args>
   bool to_log_with_stacktrace(Args... args)
   {
-    StringUnsafe<256> buffer(Memory::Name(u8""), u8"\n************\n");
+    StringUnsafe<512> buffer(Memory::Name(u8""), u8"\n************\n");
     (buffer._append(buffer, args), ...);
     buffer.append(u8"\n\n");
-    buffer._size += Win32::get_callstack(buffer._str + buffer._size, 512 - buffer._size);
+    buffer._size += Win32::get_callstack(buffer._str + buffer._size, buffer.get_capacity() - buffer._size);
     buffer.append(u8"\n************");
     if (!get_console().set_text_color(get_console().RED) ||
         !get_log().logt(buffer._str) ||

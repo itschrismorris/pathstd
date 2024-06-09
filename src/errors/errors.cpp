@@ -18,15 +18,16 @@ _Internal::Errors& get_errors()
 namespace Pathlib::_Internal {
 
 //---
-void Errors::last_error_from_win32(utf8* string_out,
-                                   u64 string_capacity)
+u64 Errors::last_error_from_win32(utf8* string_out,
+                                  u64 string_capacity)
 {
-  Win32::get_last_error_string(string_out, string_capacity);
+  return Win32::get_last_error_string(string_out, string_capacity);
 }
 
 //
-void Errors::kill_script()
+void Errors::fatal(const utf8* error_msg)
 {
+  to_log_with_stacktrace(error_msg);
   ExitProcess(0);
 }
 } 

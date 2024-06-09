@@ -95,8 +95,7 @@ public:
       object->pool_id = _free_head | 0xFFFF0000;
       _free_head = (object - _data);
     } else {
-      get_errors().to_log_with_stacktrace(u8"Attempt to free an invalid pool_id from Pool.");
-      get_errors().kill_script();
+      get_errors().fatal(u8"Attempt to free an invalid pool_id from Pool.");
     }
   }
 
@@ -107,8 +106,7 @@ public:
       free(object->pool_id);
       object = nullptr;
     } else {
-      get_errors().to_log_with_stacktrace(u8"Attempt to free a null SafePtr from Pool.");
-      get_errors().kill_script();
+      get_errors().fatal(u8"Attempt to free a null SafePtr from Pool.");
     }
   }
 

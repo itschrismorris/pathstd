@@ -68,6 +68,25 @@ static constexpr u32 CACHE_LINE_SIZE = 64;
                          T& operator=(const T&) = delete;
 
 //---
+#define INSTANTIATE_FOR_INTEGERS(T) \
+  template struct T<i8>; \
+  template struct T<u8>; \
+  template struct T<i16>; \
+  template struct T<u16>; \
+  template struct T<i32>; \
+  template struct T<u32>; \
+  template struct T<i64>;
+#define INSTANTIATE_FOR_FLOATS(T) \
+  template struct T<f32>; \
+  template struct T<f64>;
+#define INSTANTIATE_FOR_STRINGS(T) \
+  template struct T<const utf8>; \
+  template struct T<utf8>; \
+  template struct T<const utf8*>; \
+  template struct T<utf8*>; \
+  template struct T<utf8[]>;
+
+//---
 struct false_type { static constexpr bool value = false; constexpr operator bool() const { return value; } };
 struct true_type { static constexpr bool value = true; constexpr operator bool() const { return value; } };
 
