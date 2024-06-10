@@ -338,7 +338,7 @@ static inline void memset_unsafe(void* dst,
     dst_v = (I8*)((u8*)dst + padding);
     size -= padding;
   }
-  if (size <= (Memory::MEGABYTE << 4)) {
+  if (size <= (_Internal::Memory::MEGABYTE << 4)) {
     u32 loop_count = (size >> 6);
     for (u32 r = 0; r < loop_count; ++r) {
       I8_STORE(dst_v, v);

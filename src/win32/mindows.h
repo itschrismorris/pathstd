@@ -7,6 +7,8 @@
 #include "pathlib/types/types.h"
 
 //---
+#define TRUE 1
+#define FALSE 0
 #define STD_OUTPUT_HANDLE  ((unsigned long) - 11)
 #define CP_UTF8 65001
 #define CREATE_ALWAYS 2
@@ -28,6 +30,12 @@
 #define MEM_LARGE_PAGES 0x20000000
 #define PAGE_READWRITE 0x04
 #define MEM_RELEASE 0x00008000
+#define ANYSIZE_ARRAY 1
+#define TOKEN_ADJUST_PRIVILEGES 0x0020
+#define SE_PRIVILEGE_ENABLED 0x00000002L
+#define TEXT(quote) L##quote
+#define SE_LOCK_MEMORY_NAME TEXT("SeLockMemoryPrivilege")
+#define ERROR_SUCCESS 0L
 
 //---
 #define ERROR_IO_PENDING 0x3E5
@@ -67,6 +75,10 @@ typedef DWORD64* PDWORD64;
 typedef BOOL(__stdcall* PHANDLER_ROUTINE)(DWORD dwCtrlType);
 typedef DWORD* LPDWORD;
 typedef DWORD(__stdcall* LPTHREAD_START_ROUTINE)(LPVOID lpParameter);
+typedef HANDLE* PHANDLE;
+typedef DWORD* PDWORD;
+typedef LPCWSTR LPCTSTR;
+typedef unsigned long long DWORD_PTR;
 
 extern "C" {
 
@@ -121,10 +133,47 @@ typedef struct _SYMBOL_INFO {
   CHAR        Name[1];
 } SYMBOL_INFO, *PSYMBOL_INFO;
 
-i32 enable_large_pages();
+//---
+typedef struct _LUID {
+  DWORD LowPart;
+  LONG  HighPart;
+} LUID, *PLUID;
+
+//---
+typedef struct _LUID_AND_ATTRIBUTES {
+  LUID  Luid;
+  DWORD Attributes;
+} LUID_AND_ATTRIBUTES, *PLUID_AND_ATTRIBUTES;
+
+//---
+typedef struct _TOKEN_PRIVILEGES {
+  DWORD               PrivilegeCount;
+  LUID_AND_ATTRIBUTES Privileges[ANYSIZE_ARRAY];
+} TOKEN_PRIVILEGES, *PTOKEN_PRIVILEGES;
+
+//---
+typedef struct _SYSTEM_INFO {
+  union {
+    DWORD dwOemId;
+    struct {
+      WORD wProcessorArchitecture;
+      WORD wReserved;
+    };
+  };
+  DWORD dwPageSize;
+  LPVOID  lpMinimumApplicationAddress;
+  LPVOID lpMaximumApplicationAddress;
+  DWORD_PTR dwActiveProcessorMask;
+  DWORD dwNumberOfProcessors;
+  DWORD dwProcessorType;
+  DWORD dwAllocationGranularity;
+  WORD wProcessorLevel;
+  WORD wProcessorRevision;
+} SYSTEM_INFO, * LPSYSTEM_INFO;
 
 //---
 __declspec(dllimport) HANDLE __stdcall GetCurrentProcess();
+__declspec(dllimport) void __stdcall GetSystemInfo(LPSYSTEM_INFO lpSystemInfo);
 __declspec(dllimport) LPVOID __stdcall VirtualAlloc(LPVOID lpAddress,
                                                     SIZE_T dwSize,
                                                     DWORD  flAllocationType,
@@ -133,12 +182,18 @@ __declspec(dllimport) BOOL __stdcall VirtualFree(LPVOID lpAddress,
                                                  SIZE_T dwSize,
                                                  DWORD  dwFreeType);
 __declspec(dllimport) SIZE_T __stdcall GetLargePageMinimum();
+__declspec(dllimport) BOOL __stdcall OpenProcessToken(HANDLE ProcessHandle,
+                                                      DWORD DesiredAccess,
+                                                      PHANDLE TokenHandle);
 __declspec(dllimport) BOOL __stdcall AdjustTokenPrivileges(HANDLE TokenHandle,
                                                            BOOL DisableAllPrivileges,
                                                            PTOKEN_PRIVILEGES NewState,
                                                            DWORD BufferLength,
                                                            PTOKEN_PRIVILEGES PreviousState,
                                                            PDWORD ReturnLength);
+__declspec(dllimport) BOOL __stdcall LookupPrivilegeValueW(LPCTSTR lpSystemName,
+                                                           LPCTSTR lpName,
+                                                           PLUID   lpLuid);
 __declspec(dllimport) DWORD __stdcall GetCurrentThreadId();
 __declspec(dllimport) BOOL __stdcall SwitchToThread();
 __declspec(dllimport) BOOL __stdcall GetExitCodeThread(HANDLE  hThread,
@@ -159,9 +214,9 @@ __declspec(dllimport) BOOL __stdcall SymInitialize(HANDLE hProcess,
                                                    BOOL fInvadeProcess);
 __declspec(dllimport) BOOL __stdcall SymCleanup(HANDLE hProcess);
 __declspec(dllimport) USHORT __stdcall RtlCaptureStackBackTrace(ULONG FramesToSkip,
-                                                             ULONG FramesToCapture,
-                                                             PVOID* BackTrace,
-                                                             PULONG BackTraceHash);
+                                                                ULONG FramesToCapture,
+                                                                PVOID* BackTrace,
+                                                                PULONG BackTraceHash);
 __declspec(dllimport) BOOL __stdcall SymFromAddr(HANDLE hProcess,
                                                  DWORD64 Address,
                                                  PDWORD64 Displacement,
@@ -169,7 +224,7 @@ __declspec(dllimport) BOOL __stdcall SymFromAddr(HANDLE hProcess,
 __declspec(dllimport) int __stdcall SetConsoleOutputCP(UINT wCodePageID);
 __declspec(dllimport) HANDLE __stdcall GetStdHandle(DWORD nStdHandle);
 __declspec(dllimport) int __stdcall CloseHandle(HANDLE hObject);
-__declspec(dllimport) int __stdcall WriteConsoleA(HANDLE  hConsoleOutput,
+__declspec(dllimport) int __stdcall WriteConsoleW(HANDLE  hConsoleOutput,
                                                   const void* lpBuffer,
                                                   DWORD nNumberOfCharsToWrite,
                                                   DWORD* lpNumberOfCharsWritten,

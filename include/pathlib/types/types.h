@@ -75,7 +75,8 @@ static constexpr u32 CACHE_LINE_SIZE = 64;
   template struct T<u16>; \
   template struct T<i32>; \
   template struct T<u32>; \
-  template struct T<i64>;
+  template struct T<i64>; \
+  template struct T<u64>;
 #define INSTANTIATE_FOR_FLOATS(T) \
   template struct T<f32>; \
   template struct T<f64>;

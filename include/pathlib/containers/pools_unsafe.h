@@ -31,7 +31,7 @@ struct PoolsUnsafe
   DISALLOW_COPY(PoolsUnsafe);
   
   //---
-  explicit PoolsUnsafe(const Memory::Name& name) : _pools(FixedStringUnsafe<64>(u8"\"", name(), u8"\"::_pools")._str)
+  explicit PoolsUnsafe(const MemoryName& name) : _pools(FixedStringUnsafe<64>(u8"\"", name(), u8"\"::_pools")._str)
   {
     _count = 0;
     u32 pools_id = 0;

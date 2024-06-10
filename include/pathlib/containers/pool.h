@@ -30,7 +30,7 @@ private:
 
 public:
   //---
-  explicit Pool(const Memory::Name& name,
+  explicit Pool(const MemoryName& name,
                 u32 pools_id = 0) 
   {
     _count = 0;
@@ -49,7 +49,7 @@ public:
   {
     iterate([&](T& object)
       {
-        Memory::call_destructor<T>(&object);
+        call_destructor<T>(&object);
         return true;
       });
     if (_data) {
@@ -79,7 +79,7 @@ public:
     } else {
       _free_head = new_object->_pool_id;
     }
-    Memory::call_constructor<T>(new_object, constructor_args...);
+    call_constructor<T>(new_object, constructor_args...);
     new_object->_pool_id = (new_object - _data) | (_pools_id << 16);
     return SafePtr<T>(new_object);
   }
@@ -91,7 +91,7 @@ public:
       --_count;
       ++_free_count;
       T* object = &_data[id & 0xFFFF];
-      Memory::call_destructor<T>(object);
+      call_destructor<T>(object);
       object->pool_id = _free_head | 0xFFFF0000;
       _free_head = (object - _data);
     } else {

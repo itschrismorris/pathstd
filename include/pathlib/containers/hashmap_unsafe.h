@@ -5,7 +5,7 @@
 #pragma once
 #include "pathlib/types/types.h"
 #include "pathlib/containers/vector_unsafe.h"
-#include "pathlib/string/length_of.h"
+#include "pathlib/string/strlen.h"
 #include "pathlib/string/string_unsafe.h"
 
 namespace Pathlib {
@@ -39,7 +39,7 @@ struct HashmapUnsafe
   VectorUnsafe<u32, RESERVE_CAPACITY> _kv_slot_lookup;
 
   //---
-  explicit HashmapUnsafe(const Memory::Name& name)
+  explicit HashmapUnsafe(const MemoryName& name)
   {
     _capacity = RESERVE_CAPACITY;
     _max_probe_length = 1 + (Math::log2(_capacity) >> 2);

@@ -139,5 +139,4 @@ inline void AtomicFlag::clear(i32 mem_order)
 
 //---
 INSTANTIATE_FOR_INTEGERS(Atomic);
-
 }

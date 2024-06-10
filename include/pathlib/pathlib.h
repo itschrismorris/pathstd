@@ -11,6 +11,7 @@
 #include "pathlib/concurrency/spinlock.h"
 #include "pathlib/concurrency/thread.h"
 #include "pathlib/memory/arena.h"
+#include "pathlib/memory/scoped_memory.h"
 #include "pathlib/log/log.h"
 #include "pathlib/math/math.h"
 #include "pathlib/memory/malloc.h"
@@ -35,7 +36,7 @@
 #include "pathlib/string/string_unsafe.h"
 #include "pathlib/string/fixed_string.h"
 #include "pathlib/string/fixed_string_unsafe.h"
-#include "pathlib/string/length_of.h"
+#include "pathlib/string/strlen.h"
 #include "pathlib/profiler/profiler.h"
 #include "pathlib/timer/timer.h"
 

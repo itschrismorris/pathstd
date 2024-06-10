@@ -36,7 +36,7 @@ struct PoolUnsafe
   u32 _pools_id;
 
   //---
-  explicit PoolUnsafe(const Memory::Name& name,
+  explicit PoolUnsafe(const MemoryName& name,
                       u32 pools_id = 0) 
   {
     _count = 0;
@@ -55,7 +55,7 @@ struct PoolUnsafe
   {
     iterate([&](T& object)
       {
-        Memory::call_destructor<T>(&object);
+        call_destructor<T>(&object);
         return true;
       });
     if (_data) {
@@ -85,7 +85,7 @@ struct PoolUnsafe
     } else {
       _free_head = new_object->_pool_id;
     }
-    Memory::call_constructor<T>(new_object, constructor_args...);
+    call_constructor<T>(new_object, constructor_args...);
     new_object->_pool_id = (new_object - _data) | (_pools_id << 16);
     return new_object;
   }
@@ -96,7 +96,7 @@ struct PoolUnsafe
     --_count;
     ++_free_count;
     T* object = &_data[id & 0xFFFF];
-    Memory::call_destructor<T>(object);
+    call_destructor<T>(object);
     object->_pool_id = _free_head | 0xFFFF0000;
     _free_head = (object - _data);
   }

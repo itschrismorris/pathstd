@@ -23,7 +23,7 @@ private:
 public:
   //---
   template <typename... Args>
-  explicit String(const Memory::Name& name,
+  explicit String(const MemoryName& name,
                   Args&&... args)
   {
     _capacity = RESERVE_CAPACITY;
@@ -57,12 +57,12 @@ public:
   inline bool operator ==(T& string)
   {
     if constexpr (IS_UNSAFE_STRING(T) || IS_UNSAFE_FIXED_STRING(T)) {
-      return StringUtilities::compare<true, true>(_str, string._str, _size, string._size);
+      return strcmp<true, true>(_str, string._str, _size, string._size);
     } else if constexpr (IS_SAFE_STRING(T) || IS_SAFE_FIXED_STRING(T)) {
-      return StringUtilities::compare<true, true>(_str, string.get_str(), _size, string.get_size());
+      return strcmp<true, true>(_str, string.get_str(), _size, string.get_size());
     } else if constexpr (SAME_TYPE(ARRAY_TYPE(T), const utf8) || SAME_TYPE(ARRAY_TYPE(T), utf8) || 
                          SAME_TYPE(T&, const utf8*&) || SAME_TYPE(T&, utf8*&)) {
-      return StringUtilities::compare<true, false>(_str, string, _size, StringUtilities::length_of(string));
+      return strcmp<true, false>(_str, string, _size, strlen(string));
     } else {
       static_assert(false, "Cannot compare LongString with provided type. Note for enforced "
                            "utf-8 encoding: Use utf8 instead of char, "
@@ -116,7 +116,7 @@ public:
       memcpy_unsafe<false, true>(&string_out._str[string_out._size], arg.get_str(), arg.get_size() + 1);
       string_out._size = new_size;
     } else {
-      StringUtilities::_Internal::from_type_grow(arg, &string_out._str, &string_out._size, &string_out._capacity);
+      _Internal::from_type_grow(arg, &string_out._str, &string_out._size, &string_out._capacity);
     }
   }
 
@@ -155,7 +155,7 @@ public:
   //---
   static inline u32 hash(const utf8* value)
   {
-    return Math::hash(value, StringUtilities::length_of(value));
+    return Math::hash(value, strlen(value));
   }
 
   //---

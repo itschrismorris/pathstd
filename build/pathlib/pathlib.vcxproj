@@ -55,6 +55,7 @@
     <ClInclude Include="..\..\include\pathlib\memory\memory.h" />
     <ClInclude Include="..\..\include\pathlib\memory\memset.h" />
     <ClInclude Include="..\..\include\pathlib\memory\memset_unsafe.h" />
+    <ClInclude Include="..\..\include\pathlib\memory\scoped_memory.h" />
     <ClInclude Include="..\..\include\pathlib\pathlib.h" />
     <ClInclude Include="..\..\include\pathlib\profiler\profiler.h" />
     <ClInclude Include="..\..\include\pathlib\string\compare.h" />
@@ -63,7 +64,7 @@
     <ClInclude Include="..\..\include\pathlib\string\string_unsafe.h" />
     <ClInclude Include="..\..\include\pathlib\string\fixed_string.h" />
     <ClInclude Include="..\..\include\pathlib\string\fixed_string_unsafe.h" />
-    <ClInclude Include="..\..\include\pathlib\string\length_of.h" />
+    <ClInclude Include="..\..\include\pathlib\string\strlen.h" />
     <ClInclude Include="..\..\include\pathlib\timer\timer.h" />
     <ClInclude Include="..\..\include\pathlib\types\types.h" />
     <ClInclude Include="..\..\include\pathlib\win32\console.h" />
@@ -88,7 +89,6 @@
     <ClCompile Include="..\..\src\profiler\profiler.cpp" />
     <ClCompile Include="..\..\src\timer\timer.cpp" />
     <ClCompile Include="..\..\src\win32\console.cpp" />
-    <ClCompile Include="..\..\src\win32\mindows.cpp" />
     <ClCompile Include="..\..\src\win32\safe_win32.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

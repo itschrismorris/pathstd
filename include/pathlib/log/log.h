@@ -25,7 +25,7 @@ struct Log
   inline bool log(Args&&... args)
   {
     if (_file) {
-      StringUnsafe<256> buffer(Memory::Name(u8""));
+      StringUnsafe<256> buffer(MemoryName(u8""));
       (buffer._append(buffer, args), ...);
       buffer.append(u8'\n');
       return (Win32::write_console(buffer._str, buffer._size) &&
@@ -39,7 +39,7 @@ struct Log
   inline bool logt(Args&&... args)
   {
     if (_file) {
-      StringUnsafe<256> buffer(Memory::Name(u8""));
+      StringUnsafe<256> buffer(MemoryName(u8""));
       SystemTime time;
       Win32::get_local_time(&time);
       buffer.append(time.wHour, u8":", time.wMinute, u8":", 

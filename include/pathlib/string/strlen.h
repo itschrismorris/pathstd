@@ -1,17 +1,17 @@
 /* 
-  Documentation: https://www.path.blog/docs/length_of.html
+  Documentation: https://www.path.blog/docs/strlen.html
 */
 
 #pragma once
 #include "pathlib/types/types.h"
 #include "pathlib/math/math.h"
 
-namespace Pathlib::StringUtilities {
+namespace Pathlib {
 
 //---
 template <bool ALIGNED_32 = false,
           typename T>
-static inline u64 length_of(const T arg)
+static inline u64 strlen(const T arg)
 {
   static_assert(!SAME_TYPE(T, const char*), "String literals must be prepended with 'u8' for utf-8 encoding: 'u8\"Hello world!\"'");
   static_assert(!SAME_TYPE(T, char*), "Replace string usages of char with utf8, for utf-8 encoding.");

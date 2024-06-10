@@ -30,7 +30,7 @@ private:
 
 public:
   //---
-  explicit Pools(const Memory::Name& name) : _pools(FixedStringUnsafe<64>(u8"\"", name(), u8"\"::_pools")._str)
+  explicit Pools(const MemoryName& name) : _pools(FixedStringUnsafe<64>(u8"\"", name(), u8"\"::_pools")._str)
   {
     _count = 0;
     u32 pools_id = 0;

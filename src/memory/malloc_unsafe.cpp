@@ -13,7 +13,7 @@ void* malloc_unsafe(u64 size,
 {
   u8* ptr = (u8*)mi_malloc_aligned(size + 64, 64);
   if (EXPECT(name != nullptr)) {
-    u64 copy_size = Math::min(63LLU, StringUtilities::length_of(name));
+    u64 copy_size = Math::min(63LLU, strlen(name));
     memcpy_unsafe(ptr, name, copy_size);
     ptr[copy_size] = '\0';
   } else {

@@ -5,9 +5,9 @@
 #pragma once
 #include "pathlib/types/types.h"
 #include "pathlib/math/math.h"
-#include "pathlib/string/length_of.h"
+#include "pathlib/string/strlen.h"
 
-namespace Pathlib::StringUtilities {
+namespace Pathlib {
 namespace _Internal {
 
 //---
@@ -319,13 +319,13 @@ static inline bool compare_256(const utf8* first,
 //---
 template <bool FIRST_ALIGNED_32 = false, 
           bool SECOND_ALIGNED_32 = false>
-static inline bool compare(const utf8* first,
+static inline bool strcmp(const utf8* first,
                            const utf8* second,
                            u64 first_size = 0,
                            u64 second_size = 0)
 {
-  first_size = (first_size > 0) ? first_size : length_of(first);
-  second_size = (second_size > 0) ? second_size : length_of(second);
+  first_size = (first_size > 0) ? first_size : strlen(first);
+  second_size = (second_size > 0) ? second_size : strlen(second);
   if (first_size != second_size) {
     return false;
   }

@@ -189,7 +189,7 @@
     <ClInclude Include="..\..\include\pathlib\string\fixed_string_unsafe.h">
       <Filter>include\string</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\include\pathlib\string\length_of.h">
+    <ClInclude Include="..\..\include\pathlib\string\strlen.h">
       <Filter>include\string</Filter>
     </ClInclude>
     <ClInclude Include="..\..\include\pathlib\types\types.h">
@@ -223,6 +223,9 @@
       <Filter>include\win32</Filter>
     </ClInclude>
     <ClInclude Include="..\..\include\pathlib\memory\arena.h">
+      <Filter>include\memory</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\pathlib\memory\scoped_memory.h">
       <Filter>include\memory</Filter>
     </ClInclude>
   </ItemGroup>
@@ -259,9 +262,6 @@
     </ClCompile>
     <ClCompile Include="..\..\src\memory\arena.cpp">
       <Filter>include\memory</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\win32\mindows.cpp">
-      <Filter>include\win32</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

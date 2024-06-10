@@ -36,7 +36,7 @@ struct VectorUnsafe
   ~VectorUnsafe()
   {
     for (u64 c = 0; c < _count; ++c) {
-      Memory::call_destructor<T>(&_data[c]);
+      call_destructor<T>(&_data[c]);
     }
     free_unsafe((void**)&_data);
   }
@@ -64,14 +64,14 @@ struct VectorUnsafe
       _capacity = _count * 1.5;
       _data = (T*)realloc_unsafe(_data, sizeof(T) * _capacity);
     }
-    Memory::call_constructor<T>(_data + original_count, constructor_args...);
+    call_constructor<T>(_data + original_count, constructor_args...);
     return (_data + original_count);
   }
 
   //---
   inline void remove(u64 index)
   {
-    Memory::call_destructor<T>(&_data[index]);
+    call_destructor<T>(&_data[index]);
     --_count;
     memcpy_unsafe(index, _data + _count, sizeof(T));
   }
@@ -81,7 +81,7 @@ struct VectorUnsafe
                      u64 count)
   {
     for (u64 c = index; c < count; ++c) {
-      Memory::call_destructor<T>(&_data[c]);
+      call_destructor<T>(&_data[c]);
     }
     T* start = (_data + index);
     T* end = (_data + _count - count);

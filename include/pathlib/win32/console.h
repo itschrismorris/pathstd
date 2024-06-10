@@ -31,7 +31,7 @@ struct Console
   template <typename... Args>
   inline bool write(Args&&... args)
   {
-    StringUnsafe<256> buffer(Memory::Name(Memory::Name(u8"")));
+    StringUnsafe<256> buffer(MemoryName(u8""));
     (buffer._append(buffer, args), ...);
     buffer.append(u8'\n');
     return Win32::write_console(buffer._str, buffer._size);

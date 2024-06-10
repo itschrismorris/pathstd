@@ -325,7 +325,7 @@ static inline void memcpy_unsafe(void* dst,
     size -= padding;
   }
   u32 loop_count = (size >> 6);
-  if (size <= Memory::MEGABYTE) {
+  if (size <= _Internal::Memory::MEGABYTE) {
     if (SRC_ALIGNED_32 || Math::is_aligned<32>(src_v)) {
       for (u32 r = 0; r < loop_count; ++r) {
         I8 m[2] = { I8_LOAD(src_v), I8_LOAD(src_v + 1) };

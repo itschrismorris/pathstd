@@ -32,22 +32,22 @@ u64 get_callstack(utf8* string_out,
   HANDLE callstack[10];
   HANDLE process = GetCurrentProcess();
   if (!process) {
-    FixedStringUnsafe<256> win32_err;
-    get_errors().last_error_from_win32(win32_err._str, 256);
-    get_errors().to_log_with_stacktrace(win32_err._str);
+    utf8 win_err[128];
+    get_errors().last_error_from_win32(win_err, 128);
+    get_errors().to_log(u8"Failed to get callstack on error; GetCurrentProcess() failed: ", win_err);
     return false;
   }
   if (!SymInitialize(process, nullptr, true)) {
-    FixedStringUnsafe<256> win32_err;
-    get_errors().last_error_from_win32(win32_err._str, 256);
-    get_errors().to_log_with_stacktrace(win32_err._str);
+    utf8 win_err[128];
+    get_errors().last_error_from_win32(win_err, 128);
+    get_errors().to_log(u8"Failed to get callstack on error; SymInitialize() failed: ", win_err);
     return false;
   }
   WORD frames = RtlCaptureStackBackTrace(0, 10, callstack, nullptr);
   if (frames == 0) {
-    FixedStringUnsafe<256> win32_err;
-    get_errors().last_error_from_win32(win32_err._str, 256);
-    get_errors().to_log_with_stacktrace(win32_err._str);
+    utf8 win_err[128];
+    get_errors().last_error_from_win32(win_err, 128);
+    get_errors().to_log(u8"Failed to get callstack on error; RtlCaptureStackBackTrace() failed: ", win_err);
     return false;
   }
   u8 buffer[sizeof(SYMBOL_INFO) + MAX_SYM_NAME * sizeof(TCHAR)];
@@ -58,9 +58,9 @@ u64 get_callstack(utf8* string_out,
   for (WORD i = 0; i < frames; ++i) {
     DWORD64 address = (DWORD64)(callstack[i]);
     if (!SymFromAddr(process, address, nullptr, symbol)) {
-      FixedStringUnsafe<256> win32_err;
-      get_errors().last_error_from_win32(win32_err._str, 256);
-      get_errors().to_log_with_stacktrace(win32_err._str);
+      utf8 win_err[128];
+      get_errors().last_error_from_win32(win_err, 128);
+      get_errors().to_log(u8"Failed to get callstack on error; SymFromAddr() failed: ", win_err);
       return false;
     }
     if (string_size + symbol->NameLen + 2 < string_capacity) {
@@ -73,9 +73,9 @@ u64 get_callstack(utf8* string_out,
     }
   }
   if (!SymCleanup(process)) {
-    FixedStringUnsafe<256> win32_err;
-    get_errors().last_error_from_win32(win32_err._str, 256);
-    get_console().write(win32_err._str);
+    utf8 win_err[128];
+    get_errors().last_error_from_win32(win_err, 128);
+    get_errors().to_log(u8"Failed to get callstack on error; SymCleanup() failed: ", win_err);
     return 0;
   }
   return string_size;
@@ -97,12 +97,12 @@ u64 get_last_error_string(utf8* string_out,
   if (utf16_string && (utf16_size > 0)) {
     u64 utf8_size = utf16_to_utf8(string_out, string_capacity, utf16_string, (u64)utf16_size);
     LocalFree(utf16_string);
-    string_out[utf8_size] = u8'\0';
+    string_out[utf8_size - 2] = u8'\0';
     return utf8_size;
   } else {
-    FixedStringUnsafe<256> win32_err;
-    get_errors().last_error_from_win32(win32_err._str, 256);
-    get_console().write(win32_err._str);
+    utf8 win_err[128];
+    get_errors().last_error_from_win32(win_err, 128);
+    get_errors().to_log(u8"Failed to get get last win32 error string; FormatMessage() failed: ", win_err);
     string_out[0] = u8'\0';
     return 0;
   }
@@ -115,9 +115,9 @@ bool write_log(const utf8* string,
   if (get_log()._file) {
     if (WriteFile((HANDLE)get_log()._file, (HANDLE)string, size, nullptr, nullptr) == 0) {
       if (get_last_error() != ERROR_IO_PENDING) {
-        FixedStringUnsafe<256> win32_err;
-        get_errors().last_error_from_win32(win32_err._str, 256);
-        get_console().write(win32_err._str);
+        utf8 win_err[128];
+        get_errors().last_error_from_win32(win_err, 128);
+        get_console().write(win_err);
         return false;
       }
     }
@@ -145,20 +145,22 @@ bool write_console(const utf8* string,
                    u64 size)
 {
   if (size == Types::U64_MAX) {
-    size = StringUtilities::length_of(string);
+    size = strlen(string);
   }
   void* out = GetStdHandle(STD_OUTPUT_HANDLE);
   if (out) {
-    if (WriteConsoleA(out, string, size, nullptr, nullptr) == 0) {
-      FixedStringUnsafe<256> win32_err;
-      get_errors().last_error_from_win32(win32_err._str, 256);
-      get_console().write(win32_err._str);
+    wchar_t* utf16_string = (wchar_t*)malloc(size * 2 + 1);
+    u64 count = utf8_to_utf16(utf16_string, size * 2 + 1, string, size);
+    if (WriteConsoleW(out, utf16_string, count, nullptr, nullptr) == 0) {
+      utf8 win_err[128];
+      get_errors().last_error_from_win32(win_err, 128);
+      get_errors().to_log(u8"Failed to write to console; WriteConsoleW() failed: ", win_err);
       return false;
     }
   } else {
-    FixedStringUnsafe<256> win32_err;
-    get_errors().last_error_from_win32(win32_err._str, 256);
-    get_console().write(win32_err._str);
+    utf8 win_err[128];
+    get_errors().last_error_from_win32(win_err, 128);
+    get_errors().to_log(u8"Failed to write to console; GetStdHandle() failed: ", win_err);
     return false;
   }
   return true;
@@ -178,9 +180,9 @@ u64 utf16_to_utf8(utf8* utf8_string_out,
       return (utf8_size - (utf16_size == -1));
     }
   }
-  FixedStringUnsafe<256> win32_err;
-  get_errors().last_error_from_win32(win32_err._str, 256);
-  get_errors().to_log_with_stacktrace(win32_err._str);
+  utf8 win_err[128];
+  get_errors().last_error_from_win32(win_err, 128);
+  get_errors().to_log(u8"Failed to convert utf-16 to utf-8 string: ", win_err);
   utf8_string_out[0] = u8'\0';
   return 0;
 }
@@ -199,9 +201,9 @@ u64 utf8_to_utf16(wchar_t* utf16_string_out,
       return (utf16_size - (utf8_size == -1));
     }
   }
-  FixedStringUnsafe<256> win32_err;
-  get_errors().last_error_from_win32(win32_err._str, 256);
-  get_errors().to_log_with_stacktrace(win32_err._str);
+  utf8 win_err[128];
+  get_errors().last_error_from_win32(win_err, 128);
+  get_errors().to_log(u8"Failed to convert utf-8 to utf-16 string: ", win_err);
   utf16_string_out[0] = u8'\0';
   return 0;
 }
