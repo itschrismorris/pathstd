@@ -64,8 +64,10 @@ static constexpr u32 CACHE_LINE_SIZE = 64;
 #define EXPECT(A) __builtin_expect((A), 1)
 #define DONT_EXPECT(A) __builtin_expect((A), 0)
 #define DISALLOW_COPY_CONSTRUCTOR(T) T(const T&) = delete;
-#define DISALLOW_COPY(T) T(const T&) = delete;         \
-                         T& operator=(const T&) = delete;
+#define DISALLOW_COPY(TYPE) TYPE(const TYPE&) = delete; \
+                            TYPE& operator=(const TYPE&) = delete; \
+                            TYPE(TYPE&&) = delete; \
+                            TYPE& operator=(TYPE&&) = delete;
 
 //---
 #define INSTANTIATE_FOR_INTEGERS(T) \
