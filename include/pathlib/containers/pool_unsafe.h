@@ -55,7 +55,6 @@ struct PoolUnsafe
   {
     iterate([&](T& object)
       {
-        call_destructor<T>(&object);
         return true;
       });
     if (_data) {
@@ -85,7 +84,6 @@ struct PoolUnsafe
     } else {
       _free_head = new_object->_pool_id;
     }
-    call_constructor<T>(new_object, constructor_args...);
     new_object->_pool_id = (new_object - _data) | (_pools_id << 16);
     return new_object;
   }
@@ -96,7 +94,6 @@ struct PoolUnsafe
     --_count;
     ++_free_count;
     T* object = &_data[id & 0xFFFF];
-    call_destructor<T>(object);
     object->_pool_id = _free_head | 0xFFFF0000;
     _free_head = (object - _data);
   }

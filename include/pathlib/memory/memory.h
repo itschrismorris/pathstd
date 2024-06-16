@@ -6,12 +6,6 @@
 #include "pathlib/types/types.h"
 #include "pathlib/memory/arena.h"
 
-//---
-inline void* operator new(size_t, void* ptr)
-{
-  return ptr;
-}
-
 namespace Pathlib {
   
 //---
@@ -52,26 +46,6 @@ struct Memory
   //---
   bool enable_large_pages();
 };
-}
-
-//---
-template <typename T,
-          typename... Args>
-static inline void call_constructor(void* obj,
-                                    Args&&... args)
-{
-  if constexpr (has_constructor<T, Args...>::value) {
-    new (obj) T(args...);
-  }
-}
-
-//---
-template <typename T>
-static inline void call_destructor(T* obj)
-{
-  if constexpr (has_destructor<T>::value) {
-    obj->~T();
-  }
 }
 }
 

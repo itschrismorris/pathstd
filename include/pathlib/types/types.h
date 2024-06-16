@@ -123,21 +123,11 @@ template <typename T,
           typename... Args>
 struct has_constructor 
 {
-  template <typename U, typename... UArgs>
-  static auto test(U* u) -> decltype(new U(declval<UArgs>()...), true_type{});
-  template <typename, typename...>
-  static false_type test(...);
-  static constexpr bool value = decltype(test<T, Args...>(nullptr))::value;
 };
 
 //---
 template <typename T>
 struct has_destructor {
-  template <typename U>
-  static auto test(U* u) -> decltype(u->~U(), true_type{});
-  template <typename>
-  static false_type test(...);
-  static constexpr bool value = decltype(test<T>(nullptr))::value;
 };
 
 //---
